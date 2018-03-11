@@ -12,12 +12,11 @@ namespace ZumtenSoft.Mindex.Tests.Stubs
     {
         private static List<SiteRanking> _instance;
 
-        public static List<SiteRanking> Instance => _instance ?? (_instance = MajesticMillionCache.LoadSiteRankings(@"..\..\..\ZumtenSoft.Mindex.Tests\majestic_million.csv.gz").ToList());
+        public static List<SiteRanking> Instance => _instance ?? (_instance = MajesticMillionCache.LoadSiteRankings(@"..\..\..\ZumtenSoft.Mindex.Tests\App_Data\majestic_million.csv").ToList());
 
         public static IEnumerable<SiteRanking> LoadSiteRankings(string fileName)
         {
             using (FileStream file = File.OpenRead(fileName))
-            using (GZipStream gzip = new GZipStream(file, CompressionMode.Decompress))
             using (StreamReader reader = new StreamReader(file))
             {
                 if (reader.ReadLine() != null)

@@ -48,14 +48,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Stubs\MajesticMillionCsvHelper.cs" />
+    <Compile Include="Stubs\MajesticMillionCache.cs" />
     <Compile Include="Stubs\SiteRanking.cs" />
     <Compile Include="Stubs\SiteRankingTable.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="majestic_million.csv" />
+    <None Include="App_Data\majestic_million.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
