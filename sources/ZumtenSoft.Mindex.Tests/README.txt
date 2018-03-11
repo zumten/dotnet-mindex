@@ -1,0 +1,1 @@
+The file majestic_million.csv can be downloaded from http://downloads.majestic.com/majestic_million.csv
