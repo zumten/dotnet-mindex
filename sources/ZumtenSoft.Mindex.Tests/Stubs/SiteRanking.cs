@@ -1,7 +1,9 @@
-﻿using ZumtenSoft.Mindex.Criterias;
+﻿using System.Diagnostics;
+using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Tests.Stubs
 {
+    [DebuggerDisplay(@"\{SiteRanking DomainName={DomainName}, GlobalRank={GlobalRank}, TopLevelDomainRank={TopLevelDomainRank} \}")]
     public class SiteRanking
     {
         public int GlobalRank { get; set; }

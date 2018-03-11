@@ -153,6 +153,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ZumtenSoft.Mindex.Tests\ZumtenSoft.Mindex.Tests.csproj">
+      <Project>{bb4314f6-d466-449f-85b1-3d7dd7ffa75e}</Project>
+      <Name>ZumtenSoft.Mindex.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ZumtenSoft.Mindex\ZumtenSoft.Mindex.csproj">
       <Project>{6fe945f9-7ee2-4be8-96b3-af29d9a67877}</Project>
       <Name>ZumtenSoft.Mindex</Name>

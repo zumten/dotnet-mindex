@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ZumtenSoft.Mindex.Criterias;
+using ZumtenSoft.Mindex.Tests.Stubs;
 
 namespace ZumtenSoft.Mindex.Benchmark
 {
@@ -28,31 +29,31 @@ namespace ZumtenSoft.Mindex.Benchmark
         [GlobalSetup]
         public void Setup()
         {
-            _rankings = MajesticMillionCsvHelper.LoadSiteRankings(@"..\..\majestic_million.csv").ToList();
+            _rankings = MajesticMillionCache.Instance;
             _table = new SiteRankingTable(_rankings);
         }
 
+        [Benchmark]
+        public List<SiteRanking> LinqWhere() => _rankings.Where(r => String.Equals(r.TopLevelDomain, "ca", StringComparison.OrdinalIgnoreCase) && r.TopLevelDomainRank >= 1 && r.TopLevelDomainRank <= 2000).ToList();
 
         [Benchmark]
-        public List<SiteRanking> LinqWhere() => _rankings.Where(r => String.Equals(r.TopLevelDomain, "ca", StringComparison.OrdinalIgnoreCase) && r.TopLevelDomainRank >= 1001 && r.TopLevelDomainRank <= 2000).ToList();
+        public List<SiteRanking> LinqMultiWhere() => _rankings.Where(r => String.Equals(r.TopLevelDomain, "ca", StringComparison.OrdinalIgnoreCase)).Where(r => r.TopLevelDomainRank >= 1 && r.TopLevelDomainRank <= 2000).ToList();
 
         [Benchmark]
-        public List<SiteRanking> LinqMultiWhere() => _rankings.Where(r => String.Equals(r.TopLevelDomain, "ca", StringComparison.OrdinalIgnoreCase)).Where(r => r.TopLevelDomainRank >= 1001 && r.TopLevelDomainRank <= 2000).ToList();
+        public List<SiteRanking> SearchFullScan() => _table.IndexFullScan.Search(new SiteRankingSearch { TopLevelDomain = "ca", TopLevelDomainRank = SearchCriteria.ByRange(1, 2000) }).ToList();
 
         [Benchmark]
-        public List<SiteRanking> SearchFullScan() => _table.IndexFullScan.Search(new SiteRankingSearch { TopLevelDomain = "ca", TopLevelDomainRank = SearchCriteria.ByRange(1001, 2000) }).ToList();
-
-        [Benchmark]
-        public List<SiteRanking> SearchIndex() => _table.IndexTopLevelDomain.Search(new SiteRankingSearch { TopLevelDomain = "ca", TopLevelDomainRank = SearchCriteria.ByRange(1001, 2000) }).ToList();
+        public List<SiteRanking> SearchIndex() => _table.IndexTopLevelDomain.Search(new SiteRankingSearch { TopLevelDomain = "ca", TopLevelDomainRank = SearchCriteria.ByRange(1, 2000) }).ToList();
     }
 
     class Program
     {
         static void Main(string[] args)
         {
-            //BenchmarkSiteRanking bench = new BenchmarkSiteRanking();
-            //bench.Setup();
-            //bench.WithoutIndex();
+            BenchmarkSiteRanking bench = new BenchmarkSiteRanking();
+            bench.Setup();
+            var transat = MajesticMillionCache.Instance.Where(x => x.DomainName.Contains("transat")).ToList();
+            var searchWithIndex = bench.SearchIndex();
             BenchmarkRunner.Run<BenchmarkSiteRanking>();
             Console.ReadLine();
         }

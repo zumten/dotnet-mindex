@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ZumtenSoft.Mindex.Tests
 {
     [TestClass]
-    public class Benchmark
+    public class UnitTest1
     {
         [TestMethod]
         public void TestMethod1()
