@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
@@ -12,12 +13,14 @@ namespace ZumtenSoft.Mindex.Columns
         public Expression<Func<TTable, TColumn>> GetColumnExpression { get; }
         public Func<TSearch, SearchCriteria<TColumn>> GetCriteriaValue { get; }
         public IComparer<TColumn> Comparer { get; }
+        public MemberInfo SearchProperty { get; }
 
-        public TableColumn(Expression<Func<TTable, TColumn>> getColumnValue, Func<TSearch, SearchCriteria<TColumn>> getCriteriaValue, IComparer<TColumn> comparer)
+        public TableColumn(Expression<Func<TTable, TColumn>> getColumnValue, Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer)
         {
+            SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
             GetColumnValue = getColumnValue.Compile();
             GetColumnExpression = getColumnValue;
-            GetCriteriaValue = getCriteriaValue;
+            GetCriteriaValue = getCriteriaValue.Compile();
             Comparer = comparer;
         }
 

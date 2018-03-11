@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Tests.Stubs
 {
     public class SiteRankingTable : Table<SiteRanking, SiteRankingSearch>
     {
-        public SiteRankingTable(IReadOnlyCollection<SiteRanking> rankings)
+        public SiteRankingTable(IReadOnlyCollection<SiteRanking> rankings) : base(rankings)
         {
-            var columnGlobalRank = MapSearchCriteria(c => c.GlobalRank, r => r.GlobalRank);
-            var columnTopLevelDomainRank = MapSearchCriteria(c => c.TopLevelDomainRank, r => r.TopLevelDomainRank);
-            var columnDomainName = MapSearchCriteria(c => c.DomainName, r => r.DomainName, StringComparer.OrdinalIgnoreCase);
-            var columnTopLevelDomain = MapSearchCriteria(c => c.TopLevelDomain, r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
-            var columnReferringSubNets = MapSearchCriteria(c => c.ReferringSubNets, r => r.ReferringSubNets);
-            var columnReferringIps = MapSearchCriteria(c => c.ReferringIps, r => r.ReferringIps);
+            MapSearchCriteria(s => s.GlobalRank, r => r.GlobalRank);
+            MapSearchCriteria(s => s.TopLevelDomainRank, r => r.TopLevelDomainRank);
+            MapSearchCriteria(s => s.DomainName, r => r.DomainName, StringComparer.OrdinalIgnoreCase);
+            MapSearchCriteria(s => s.TopLevelDomain, r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
 
-            IndexFullScan = BuildIndex(rankings);
-            IndexTopLevelDomain = BuildIndex(rankings, columnTopLevelDomain, columnTopLevelDomainRank);
-            IndexGlobalRank = BuildIndex(rankings, columnGlobalRank);
+            IndexFullScan = BuildIndex(new ITableColumn<SiteRanking, SiteRankingSearch>[0]);
+            IndexTopLevelDomain = BuildIndex(s => s.TopLevelDomain);
+            IndexGlobalRank = BuildIndex(s => s.GlobalRank);
         }
 
         public TableIndex<SiteRanking, SiteRankingSearch> IndexFullScan { get; }

@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
     public class TableMultiValuesColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
-        private readonly Func<TSearch, SearchCriteriaByValue<TColumn>> _getColumnValue;
+        private readonly Func<TSearch, SearchCriteriaByValue<TColumn>> _getCriteriaValue;
         private readonly Expression<Func<TRow, TColumn, bool>> _predicate;
+        public MemberInfo SearchProperty { get; }
 
-        public TableMultiValuesColumn(Func<TSearch, SearchCriteriaByValue<TColumn>> getColumnValue, Expression<Func<TRow, TColumn, bool>> predicate)
+        public TableMultiValuesColumn(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate)
         {
-            _getColumnValue = getColumnValue;
+            _getCriteriaValue = getCriteriaValue.Compile();
             _predicate = predicate;
+            SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
         }
 
         public Tuple<float, bool> GetScore(TSearch search)
@@ -34,7 +37,7 @@ namespace ZumtenSoft.Mindex.Columns
 
         public Expression BuildCondition(ParameterExpression paramExpr, TSearch criteria)
         {
-            var value = _getColumnValue(criteria);
+            var value = _getCriteriaValue(criteria);
             if (value != null)
                 return BuildConditionExpression(value, paramExpr, true);
             return null;
