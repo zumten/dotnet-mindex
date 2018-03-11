@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZumtenSoft.Mindex", "ZumtenSoft.Mindex\ZumtenSoft.Mindex.csproj", "{6FE945F9-7EE2-4BE8-96B3-AF29D9A67877}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FE945F9-7EE2-4BE8-96B3-AF29D9A67877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FE945F9-7EE2-4BE8-96B3-AF29D9A67877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FE945F9-7EE2-4BE8-96B3-AF29D9A67877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FE945F9-7EE2-4BE8-96B3-AF29D9A67877}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41EF0F99-F162-410C-8782-F119D2FCC412}
+	EndGlobalSection
+EndGlobal
