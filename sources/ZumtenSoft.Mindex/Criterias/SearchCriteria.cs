@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
-    public class SearchCriteria
+    public abstract class SearchCriteria
     {
         public static SearchCriteriaByValue<TColumn> ByValues<TColumn>(params TColumn[] values)
         {

@@ -7,7 +7,7 @@ using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex
 {
-    public class Table<TRow, TSearch>
+    public abstract class Table<TRow, TSearch>
     {
         public List<ITableColumn<TRow, TSearch>> Columns { get; }
         public List<TableIndex<TRow, TSearch>> Indexes { get; }
@@ -18,7 +18,7 @@ namespace ZumtenSoft.Mindex
             Indexes = new List<TableIndex<TRow, TSearch>>();
         }
 
-        public TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
+        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
             Func<TSearch, SearchCriteria<TColumn>> getSearchValue, Expression<Func<TRow, TColumn>> getColumnValue,
             IComparer<TColumn> comparer = null)
         {
@@ -27,12 +27,12 @@ namespace ZumtenSoft.Mindex
             return column;
         }
 
-        public void MapMultiValuesSearchCriteria<TColumn>(Func<TSearch, SearchCriteriaByValue<TColumn>> getColumnCriteria, Expression<Func<TRow, TColumn, bool>> predicate)
+        protected void MapMultiValuesSearchCriteria<TColumn>(Func<TSearch, SearchCriteriaByValue<TColumn>> getColumnCriteria, Expression<Func<TRow, TColumn, bool>> predicate)
         {
             Columns.Add(new TableMultiValuesColumn<TRow, TSearch, TColumn>(getColumnCriteria, predicate));
         }
 
-        public TableIndex<TRow, TSearch> BuildIndex(IReadOnlyCollection<TRow> items, params ITableColumn<TRow, TSearch>[] tableColumns)
+        protected TableIndex<TRow, TSearch> BuildIndex(IReadOnlyCollection<TRow> items, params ITableColumn<TRow, TSearch>[] tableColumns)
         {
             var index = new TableIndex<TRow, TSearch>(this, items, tableColumns);
             Indexes.Add(index);
