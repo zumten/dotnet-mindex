@@ -38,7 +38,7 @@ public class SiteRankingSearch
 }
 ```
 
-2. Build the table by extending the class Table
+2. Build the table by extending the class `Table<TRow, TSearch>`
     1. Configure the schema of your table by mapping every field
     2. Configure the indexes by enumerating every criteria
 
@@ -69,15 +69,61 @@ SiteRankingTable table = new SiteRankingTable(rankings);
 4. Search the table.
 ```csharp
 // Will use the index "TopLevelDomainRank"
+// - TopLevelDomainRank: Extract 1 ArraySegment using BinarySearch
 var top10OfEachTLD = table.Search(new SiteRankingSearch
 {
     TopLevelDomainRank = SearchCriteria.ByRange(1, 10)
 });
 
 // Will use the index "TopLevelDomain_TopLevelDomainRank"
+// - TopLevelDomain: Will extract 3 ArraySegments using BinarySearch
+// - TopLevelDomainRank: For each ArraySegment, a new BinarySearch is applied
 var top1000OfMainDomains = table.Search(new SiteRankingSearch
 {
     TopLevelDomain = new [] { "com", "org", "net" },
     TopLevelDomainRank = SearchCriteria.ByRange(1, 1000)
 });
+
+// Will use the index "TopLevelDomain_TopLevelDomainRank":
+// - TopLevelDomain: Will extract 1 ArraySegment using BinarySearch
+// - GlobalRank: Filter the ArraySegment using a full scan
+var canadianDomainsInTop1000 = table.Search(new SiteRankingSearch
+{
+    TopLevelDomain = "ca",
+    GlobalRank = SearchCriteria.ByRange(1, 1000)
+});
 ```
+
+# Performance
+
+The main point of this library is to provide easy search criterias without impacting the performance. You could always optimize a LookupTable for your specific needs and it will always be faster than Mindex. If you have to support multiple criterias, then this is when Mindex will shine because you can improve your performances with only one line of code.
+
+
+1. Top 10 domains for each top level domain
+
+ Method |    N |        Mean |      Error |     StdDev |
+------- |----- |------------:|-----------:|-----------:|
+   Linq | 1000 | 26,075.3 us | 131.068 us | 122.601 us |
+ Lookup | 1000 |    270.5 us |   1.723 us |   1.612 us |
+ Search | 1000 |    163.5 us |   1.117 us |   1.045 us |
+
+
+2. Top 1000 domains for each top level domain .com, .org and .net
+
+ Method |    N |         Mean |       Error |      StdDev |
+------- |----- |-------------:|------------:|------------:|
+   Linq | 1000 | 59,399.82 us | 389.2275 us | 364.0836 us |
+ Lookup | 1000 |     85.42 us |   0.6370 us |   0.5647 us |
+ Search | 1000 |     75.47 us |   0.4397 us |   0.4113 us |
+
+
+3. Canadian sites part of the top 1000 global websites
+
+|                        Method |    N |            Mean |          Error |         StdDev |
+|------------------------------ |----- |----------------:|---------------:|---------------:|
+|                          Linq | 1000 | 28,240,356.7 ns | 263,440.000 ns | 246,421.916 ns |
+|                        Lookup | 1000 |        509.0 ns |       3.115 ns |       2.432 ns |
+|                        Search | 1000 |      3,788.4 ns |      29.451 ns |      27.548 ns |
+|               IndexGlobalRank | 1000 |    187,289.7 ns |   1,286.063 ns |   1,202.984 ns |
+|           IndexTopLevelDomain | 1000 |    506,596.8 ns |   4,577.985 ns |   4,282.250 ns |
+| IndexTopLevelDomainGlobalRank | 1000 |      3,355.8 ns |      27.983 ns |      23.367 ns |
