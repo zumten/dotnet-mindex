@@ -5,10 +5,11 @@ using System.Linq;
 
 namespace ZumtenSoft.Mindex
 {
-    public class BinarySearchResult<TRow> : IEnumerable<TRow>
+    public class BinarySearchResult<TRow> : IReadOnlyCollection<TRow>
     {
         private readonly IReadOnlyList<ArraySegment<TRow>> _segments;
         public bool CanSearch { get; }
+        public int Count => _segments.Sum(s => s.Count);
 
         public BinarySearchResult(TRow[] items)
         {

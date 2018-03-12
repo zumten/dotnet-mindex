@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinarySearchResultTests.cs" />
     <Compile Include="Stubs\MajesticMillionCache.cs" />
     <Compile Include="Stubs\SiteRanking.cs" />
     <Compile Include="Stubs\SiteRankingTable.cs" />

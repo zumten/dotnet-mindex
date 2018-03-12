@@ -5,8 +5,12 @@ Mindex: C# Library to search through big in-memory collections
 
 This library tries to mimmick the way you can search inside a table in SQL through multiple criterias, while providing the full performance of in-memory objects.
 
-
 ## How it works?
+
+The inner workings of Mindex is similar to SQL. Each index is simply a list of items sorted with multiple criterias. The search is then done using BinarySearch for each criteria. When you don't specify which index to use, Mindex will score each index and choose the best one.
+
+
+## Build your first table
 
 There are 4 simple steps to build your own table with indexes
 
@@ -96,10 +100,11 @@ var canadianDomainsInTop1000 = table.Search(new SiteRankingSearch
 
 # Performance
 
-The main point of this library is to provide easy search criterias without impacting the performance. You could always optimize a LookupTable for your specific needs and it will always be faster than Mindex. If you have to support multiple criterias, then this is when Mindex will shine because you can improve your performances with only one line of code.
+The main point of this library is to provide easy search criterias without impacting the performance. You could always optimize a LookupTable for your specific needs and it will always be faster than Mindex. If you have to support multiple criterias, then this is when Mindex will shine because you can improve your performances with only one or two lines of code.
 
+## Benchmarks
 
-1. Top 10 domains for each top level domain
+1. Top 10 domains for each top level domain ([SiteRankingSearchTopDomainByTLD.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopDomainByTLD.cs))
 
  Method |    N |        Mean |      Error |     StdDev |
 ------- |----- |------------:|-----------:|-----------:|
@@ -108,7 +113,7 @@ The main point of this library is to provide easy search criterias without impac
  Search | 1000 |    163.5 us |   1.117 us |   1.045 us |
 
 
-2. Top 1000 domains for each top level domain .com, .org and .net
+2. Top 1000 domains for each top level domain .com, .org and .net ([SiteRankingSearchTopDomainByComOrgNet.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopDomainByComOrgNet.cs))
 
  Method |    N |         Mean |       Error |      StdDev |
 ------- |----- |-------------:|------------:|------------:|
@@ -117,7 +122,7 @@ The main point of this library is to provide easy search criterias without impac
  Search | 1000 |     75.47 us |   0.4397 us |   0.4113 us |
 
 
-3. Canadian sites part of the top 1000 global websites
+3. Canadian sites part of the top 1000 global websites ([SiteRankingSearchTopCanadianDomain.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopCanadianDomain.cs))
 
 |                        Method |    N |            Mean |          Error |         StdDev |
 |------------------------------ |----- |----------------:|---------------:|---------------:|
