@@ -7,7 +7,7 @@ This library tries to mimmick the way you can search inside a table in SQL throu
 
 ## How it works?
 
-The inner workings of Mindex is similar to SQL. Each index is simply a list of items sorted with multiple criterias. The search is then done using BinarySearch for each criteria. When you don't specify which index to use, Mindex will score each index and choose the best one.
+The inner workings of Mindex is similar to SQL. Each index is simply a list of items sorted with multiple criterias. The search is then done using BinarySearch for each criteria. When you don't specify which index to use, Mindex will analyze the search, give a score to each index and choose the best one.
 
 
 ## Build your first table

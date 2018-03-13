@@ -89,7 +89,5 @@ namespace ZumtenSoft.Mindex
 
             return num1;
         }
-
     }
-
 }

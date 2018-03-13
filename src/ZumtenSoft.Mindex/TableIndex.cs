@@ -1,67 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex
 {
-    public class TableIndex<TRow, TSearch>
+    public class TableIndex<TRow, TSearch> : TableRowCollection<TRow, TSearch>
     {
-        private readonly Table<TRow, TSearch> _table;
-        private readonly ITableColumn<TRow, TSearch>[] _tableColumns;
-        private readonly BinarySearchResult<TRow> _items;
+        private readonly IReadOnlyCollection<ITableColumn<TRow, TSearch>> _sortColumns;
 
-        public TableIndex(Table<TRow, TSearch> table, IEnumerable<TRow> items, ITableColumn<TRow, TSearch>[] tableColumns)
+        public TableIndex(TRow[] items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> columns, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
+            : base(SortRows(items, sortColumns), columns)
         {
-            _table = table;
-            _tableColumns = tableColumns;
-
-            foreach (var criteria in tableColumns)
-                items = criteria.Sort(items);
-
-            _items = new BinarySearchResult<TRow>(items.ToArray());
+            _sortColumns = sortColumns;
         }
 
-        public IEnumerable<TRow> Search(TSearch search)
+        private static TRow[] SortRows(IEnumerable<TRow> items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
         {
-            var binaryResult = _items;
+            foreach (var criteria in sortColumns)
+                items = criteria.Sort(items);
+            return items.ToArray();
+        }
+
+        public override IEnumerable<TRow> Search(TSearch search)
+        {
+            if (_sortColumns.Count == 0)
+                return base.Search(search);
+
+            var binaryResult = new BinarySearchResult<TRow>(Rows);
             List<ITableColumn<TRow, TSearch>> processedColumns = new List<ITableColumn<TRow, TSearch>>();
-            foreach (var column in _tableColumns)
+            foreach (var column in _sortColumns)
             {
                 if (!binaryResult.CanSearch || !column.Reduce(search, ref binaryResult))
                     break;
                 processedColumns.Add(column);
             }
 
-            var remainingColumns = _table.Columns.Except(processedColumns).ToList();
-            return FilterRemainingColumns(binaryResult, search, remainingColumns);
-        }
-
-        private static IEnumerable<TRow> FilterRemainingColumns(IEnumerable<TRow> items, TSearch search,
-            IEnumerable<ITableColumn<TRow, TSearch>> columns)
-        {
-            ParameterExpression paramExpr = Expression.Parameter(typeof(TRow), "row");
-            IList<Expression> conditions = new List<Expression>();
-            foreach (var column in columns)
-            {
-                var condition = column.BuildCondition(paramExpr, search);
-                if (condition != null)
-                    conditions.Add(condition);
-            }
-
-            if (conditions.Count == 0)
-                return items;
-
-            var joinedConditions = conditions.Reverse().Aggregate((x, y) => Expression.AndAlso(y, x));
-            var lambda = Expression.Lambda<Func<TRow, bool>>(joinedConditions, paramExpr);
-            return items.Where(lambda.Compile());
+            var remainingColumns = Columns.Except(processedColumns).ToList();
+            return FilterRowsWithCustomExpression(binaryResult, search, remainingColumns);
         }
 
         public float GetScore(TSearch search)
         {
             float score = 0;
-            foreach (var column in _tableColumns)
+            foreach (var column in _sortColumns)
             {
                 var columnScore = column.GetScore(search);
                 score += columnScore.Item1;

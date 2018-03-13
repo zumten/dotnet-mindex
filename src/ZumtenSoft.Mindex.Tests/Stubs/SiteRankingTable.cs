@@ -16,13 +16,11 @@ namespace ZumtenSoft.Mindex.Tests.Stubs
             MapSearchCriteria(s => s.DomainName, r => r.DomainName, StringComparer.OrdinalIgnoreCase);
             MapSearchCriteria(s => s.TopLevelDomain, r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
 
-            IndexFullScan = BuildIndex(new ITableColumn<SiteRanking, SiteRankingSearch>[0]);
-            IndexTopLevelDomain = BuildIndex(s => s.TopLevelDomain, s => s.TopLevelDomainRank);
-            IndexGlobalRank = BuildIndex(s => s.GlobalRank);
-            IndexTopLevelDomainGlobalRank = BuildIndex(s => s.TopLevelDomain, s => s.GlobalRank);
+            IndexTopLevelDomain = ConfigureIndex().IncludeColumns(s => s.TopLevelDomain, s => s.TopLevelDomainRank).Build();
+            IndexGlobalRank = ConfigureIndex().IncludeColumns(s => s.GlobalRank).Build();
+            IndexTopLevelDomainGlobalRank = ConfigureIndex().IncludeColumns(s => s.TopLevelDomain, s => s.GlobalRank).Build();
         }
 
-        public TableIndex<SiteRanking, SiteRankingSearch> IndexFullScan { get; }
         public TableIndex<SiteRanking, SiteRankingSearch> IndexTopLevelDomain { get; }
         public TableIndex<SiteRanking, SiteRankingSearch> IndexGlobalRank { get; }
         public TableIndex<SiteRanking, SiteRankingSearch> IndexTopLevelDomainGlobalRank { get; }

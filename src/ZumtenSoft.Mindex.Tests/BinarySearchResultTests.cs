@@ -37,7 +37,7 @@ namespace ZumtenSoft.Mindex.Tests
         {
             BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(Sample.OrderBy(s => s.DomainName).ToArray());
             var search = new[] { "microsoft.com", "apple.com", "google.com" };
-            var found = initial.ReduceIn(r => r.DomainName, search, StringComparer.OrdinalIgnoreCase);
+            var found = initial.ReduceIn(r => r.DomainName, search, Comparer<string>.Default);
             Assert.AreEqual(search.Length, found.Count);
         }
 

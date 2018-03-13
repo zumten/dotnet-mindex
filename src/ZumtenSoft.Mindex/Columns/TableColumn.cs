@@ -7,15 +7,15 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
-    public class TableColumn<TTable, TSearch, TColumn> : ITableColumn<TTable, TSearch>
+    public class TableColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
-        public Func<TTable, TColumn> GetColumnValue { get; }
-        public Expression<Func<TTable, TColumn>> GetColumnExpression { get; }
+        public Func<TRow, TColumn> GetColumnValue { get; }
+        public Expression<Func<TRow, TColumn>> GetColumnExpression { get; }
         public Func<TSearch, SearchCriteria<TColumn>> GetCriteriaValue { get; }
         public IComparer<TColumn> Comparer { get; }
         public MemberInfo SearchProperty { get; }
 
-        public TableColumn(Expression<Func<TTable, TColumn>> getColumnValue, Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer)
+        public TableColumn(Expression<Func<TRow, TColumn>> getColumnValue, Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer)
         {
             SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
             GetColumnValue = getColumnValue.Compile();
@@ -32,12 +32,12 @@ namespace ZumtenSoft.Mindex.Columns
                 : Tuple.Create(0f, false);
         }
 
-        public IEnumerable<TTable> Sort(IEnumerable<TTable> items)
+        public IEnumerable<TRow> Sort(IEnumerable<TRow> items)
         {
-            return items is IOrderedEnumerable<TTable> orderedItems ? orderedItems.ThenBy(GetColumnValue, Comparer) : items.OrderBy(GetColumnValue, Comparer);
+            return items is IOrderedEnumerable<TRow> orderedItems ? orderedItems.ThenBy(GetColumnValue, Comparer) : items.OrderBy(GetColumnValue, Comparer);
         }
 
-        public bool Reduce(TSearch search, ref BinarySearchResult<TTable> items)
+        public bool Reduce(TSearch search, ref BinarySearchResult<TRow> items)
         {
             var criteria = GetCriteriaValue(search);
             if (criteria != null)
