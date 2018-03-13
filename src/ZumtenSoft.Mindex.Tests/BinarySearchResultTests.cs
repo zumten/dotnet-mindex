@@ -11,7 +11,7 @@ namespace ZumtenSoft.Mindex.Tests
     [TestClass]
     public class BinarySearchResultTests
     {
-        private SiteRanking[] Sample = new SiteRanking[]
+        private readonly SiteRanking[] _sample =
         {
             new SiteRanking { GlobalRank = 1, DomainName = "google.com" },
             new SiteRanking { GlobalRank = 2, DomainName = "facebook.com" },
@@ -28,14 +28,14 @@ namespace ZumtenSoft.Mindex.Tests
         [TestMethod]
         public void TestConstructor_WhenInitializing_ShouldHaveSameCount()
         {
-            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(Sample);
-            Assert.AreEqual(Sample.Length, initial.Count);
+            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(_sample);
+            Assert.AreEqual(_sample.Length, initial.Count);
         }
 
         [TestMethod]
         public void TestReduceIn_WhenFiltering_ShouldReturnOnlyMatchingResults()
         {
-            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(Sample.OrderBy(s => s.DomainName).ToArray());
+            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(_sample.OrderBy(s => s.DomainName).ToArray());
             var search = new[] { "microsoft.com", "apple.com", "google.com" };
             var found = initial.ReduceIn(r => r.DomainName, search, Comparer<string>.Default);
             Assert.AreEqual(search.Length, found.Count);
@@ -44,7 +44,7 @@ namespace ZumtenSoft.Mindex.Tests
         [TestMethod]
         public void TestReduceRange_WhenFiltering_ShouldReturnOnlyMatchingResults()
         {
-            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(Sample);
+            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(_sample);
             var found = initial.ReduceRange(r => r.GlobalRank, 3, 7, Comparer<int>.Default);
             Assert.AreEqual(5, found.Count);
         }

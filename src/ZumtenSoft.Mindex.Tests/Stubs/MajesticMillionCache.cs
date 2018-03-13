@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZumtenSoft.Mindex.Tests.Stubs
 {
@@ -12,7 +9,7 @@ namespace ZumtenSoft.Mindex.Tests.Stubs
     {
         private static List<SiteRanking> _instance;
 
-        public static List<SiteRanking> Instance => _instance ?? (_instance = MajesticMillionCache.LoadSiteRankings(@"..\..\..\ZumtenSoft.Mindex.Tests\App_Data\majestic_million.csv").ToList());
+        public static List<SiteRanking> Instance => _instance ?? (_instance = LoadSiteRankings(@"App_Data\majestic_million.csv").ToList());
 
         public static IEnumerable<SiteRanking> LoadSiteRankings(string fileName)
         {

@@ -1,13 +1,7 @@
-﻿using BenchmarkDotNet.Attributes.Columns;
-using BenchmarkDotNet.Attributes.Exporters;
-using BenchmarkDotNet.Attributes.Jobs;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Horology;
-using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 using System;
-using System.IO;
 using ZumtenSoft.Mindex.Benchmark.Benchmarks;
+using ZumtenSoft.Mindex.Tests.Stubs;
 
 namespace ZumtenSoft.Mindex.Benchmark
 {
@@ -18,6 +12,7 @@ namespace ZumtenSoft.Mindex.Benchmark
         {
             // BenchmarkRunner.Run<SiteRankingSearchTopDomainByTLD>();
             // BenchmarkRunner.Run<SiteRankingSearchTopDomainByComOrgNet>();
+            var rows = MajesticMillionCache.Instance;
             BenchmarkRunner.Run<SiteRankingSearchCanadianDomainInGlobalTop1000>();
             Console.ReadLine();
         }

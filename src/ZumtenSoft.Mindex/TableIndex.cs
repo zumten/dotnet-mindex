@@ -7,11 +7,13 @@ namespace ZumtenSoft.Mindex
     public class TableIndex<TRow, TSearch> : TableRowCollection<TRow, TSearch>
     {
         private readonly IReadOnlyCollection<ITableColumn<TRow, TSearch>> _sortColumns;
+        private readonly BinarySearchResult<TRow> _rootResult;
 
         public TableIndex(TRow[] items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> columns, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
             : base(SortRows(items, sortColumns), columns)
         {
             _sortColumns = sortColumns;
+            _rootResult = new BinarySearchResult<TRow>(Rows);
         }
 
         private static TRow[] SortRows(IEnumerable<TRow> items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
@@ -26,7 +28,7 @@ namespace ZumtenSoft.Mindex
             if (_sortColumns.Count == 0)
                 return base.Search(search);
 
-            var binaryResult = new BinarySearchResult<TRow>(Rows);
+            var binaryResult = _rootResult;
             List<ITableColumn<TRow, TSearch>> processedColumns = new List<ITableColumn<TRow, TSearch>>();
             foreach (var column in _sortColumns)
             {
