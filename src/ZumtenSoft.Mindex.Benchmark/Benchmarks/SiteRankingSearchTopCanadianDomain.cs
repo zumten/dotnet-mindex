@@ -11,7 +11,7 @@ namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
     {
         private static string CriteriaTopLevelDomain = "ca";
         private static int CriteriaGlobalRank = 1000;
-        private static SiteRankingSearch SearchCriterias = new SiteRankingSearch { TopLevelDomain = CriteriaTopLevelDomain, GlobalRank = SearchCriteria.ByRange(1, CriteriaGlobalRank) };
+        private static readonly SiteRankingSearch SearchCriterias = new SiteRankingSearch { TopLevelDomain = CriteriaTopLevelDomain, GlobalRank = SearchCriteria.ByRange(1, CriteriaGlobalRank) };
 
         [Benchmark]
         public List<SiteRanking> Linq() => Rankings.Where(r => r.GlobalRank <= CriteriaGlobalRank && String.Equals(r.TopLevelDomain, CriteriaTopLevelDomain, StringComparison.OrdinalIgnoreCase)).ToList();

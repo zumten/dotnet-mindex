@@ -7,6 +7,7 @@ namespace ZumtenSoft.Mindex
 {
     public class BinarySearchResult<TRow> : IReadOnlyCollection<TRow>
     {
+        private static readonly ArraySegment<TRow> EmptySegment = new ArraySegment<TRow>(new TRow[0]);
         private readonly IReadOnlyList<ArraySegment<TRow>> _segments;
         public bool CanSearch { get; }
         public int Count => _segments.Sum(s => s.Count);
@@ -47,7 +48,7 @@ namespace ZumtenSoft.Mindex
             foreach (var segment in _segments)
             {
                 int end = segment.Offset + segment.Count;
-                TRow[] array = segment.Array ?? Array.Empty<TRow>();
+                TRow[] array = segment.Array;
                 for (int i = segment.Offset; i < end; i++)
                     yield return array[i];
             }
@@ -66,7 +67,7 @@ namespace ZumtenSoft.Mindex
             var searchStart = InternalBinarySearch(array.Array, getCompared, array.Offset, array.Count, start, comparer, 1);
             var searchEnd = InternalBinarySearch(array.Array, getCompared, searchStart, array.Offset + array.Count - searchStart, end, comparer, -1);
             if (searchStart >= searchEnd)
-                return new ArraySegment<TRow>(Array.Empty<TRow>());
+                return EmptySegment;
 
             return new ArraySegment<TRow>(array.Array, searchStart, searchEnd - searchStart);
         }
