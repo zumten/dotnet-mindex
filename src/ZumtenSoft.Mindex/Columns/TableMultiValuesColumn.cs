@@ -23,7 +23,7 @@ namespace ZumtenSoft.Mindex.Columns
 
         public TableColumnScore GetScore(TSearch search)
         {
-            return new TableColumnScore(1f, false);
+            return new TableColumnScore(1, false);
         }
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)

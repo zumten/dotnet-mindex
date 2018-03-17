@@ -41,13 +41,13 @@ namespace ZumtenSoft.Mindex.Indexes
             return FilterRowsWithCustomExpression(binaryResult, search, remainingColumns);
         }
 
-        public float GetScore(TSearch search)
+        public float? GetScore(TSearch search)
         {
             float score = 0;
             foreach (var column in _sortColumns)
             {
                 var columnScore = column.GetScore(search);
-                score += columnScore.Value;
+                score *= columnScore.Value;
                 if (!columnScore.CanContinue)
                     break;
             }

@@ -12,11 +12,11 @@ namespace ZumtenSoft.Mindex.Tests
     public class TableColumnTests
     {
         [TestMethod]
-        public void GetScore_WhenNoSearch_ShouldReturnZero()
+        public void GetScore_WhenEmptyList_ShouldReturnZero()
         {
-            TableColumn<SiteRanking, SiteRankingSearch, string> column = new TableColumn<SiteRanking, SiteRankingSearch, string>(new SiteRanking[0], x => x.DomainName, x => x.DomainName, StringComparer.OrdinalIgnoreCase);
+            TableColumn<SiteRanking, SiteRankingSearch, string> column = new TableColumn<SiteRanking, SiteRankingSearch, string>(new SiteRanking[0], x => x.DomainName, x => x.DomainName, StringComparer.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase);
             var actual = column.GetScore(new SiteRankingSearch());
-            var expected = new TableColumnScore(0f, false);
+            var expected = new TableColumnScore(0, false);
 
             Assert.AreEqual(expected.Value, actual.Value);
             Assert.AreEqual(expected.CanContinue, actual.CanContinue);

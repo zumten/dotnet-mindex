@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -37,6 +38,13 @@ namespace ZumtenSoft.Mindex.Criterias
                         Expression.Constant(0))));
         }
 
+        public override TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer)
+        {
+            var resultRange = new BinarySearchResult<TColumn>(possibleValues).ReduceRange(x => x, Start, End, comparer);
+            if (resultRange.Count == 0)
+                return new TableColumnScore(0, false);
+            return new TableColumnScore((float)resultRange.Count / possibleValues.Length, false);
+        }
     }
 
 

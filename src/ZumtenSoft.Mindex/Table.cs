@@ -29,17 +29,23 @@ namespace ZumtenSoft.Mindex
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
             Expression<Func<TRow, TColumn>> getColumnValue)
         {
-            var column = new TableColumn<TRow, TSearch, TColumn>(DefaultIndex.Rows, getColumnValue, getSearchValue, Comparer<TColumn>.Default);
-            _columns.Add(column);
-            return column;
+            return MapSearchCriteria(getSearchValue, getColumnValue, Comparer<TColumn>.Default, EqualityComparer<TColumn>.Default);
         }
 
         protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn, TComparer>(
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
             Expression<Func<TRow, TColumn>> getColumnValue,
-            TComparer comparer) where TComparer : IComparer<TColumn>, IEqualityComparer<TColumn>
+            TComparer hybridComparer) where TComparer : IComparer<TColumn>, IEqualityComparer<TColumn>
         {
-            var column = new TableColumn<TRow, TSearch, TColumn>(DefaultIndex.Rows, getColumnValue, getSearchValue, comparer);
+            return MapSearchCriteria(getSearchValue, getColumnValue, hybridComparer, hybridComparer);
+        }
+
+        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
+            Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
+            Expression<Func<TRow, TColumn>> getColumnValue,
+            IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        {
+            var column = new TableColumn<TRow, TSearch, TColumn>(DefaultIndex.Rows, getColumnValue, getSearchValue, comparer, equalityComparer);
             _columns.Add(column);
             return column;
         }
@@ -68,7 +74,11 @@ namespace ZumtenSoft.Mindex
         {
             // If no index was provided, we try to find the best one
             if (index == null)
-                index = Indexes.OrderByDescending(x => x.GetScore(criteria)).First();
+            {
+                var bestIndexWithScore = Indexes
+                    .Select(i => new { score = i.GetScore(criteria), index = i })
+                    .Aggregate((x, y) => x.score > y.score ? x : y);
+            }
 
             // If no index was built, we will use the default rows collection
             return (index ?? DefaultIndex).Search(criteria);
