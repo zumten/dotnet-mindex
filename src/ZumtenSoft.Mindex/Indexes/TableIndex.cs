@@ -47,8 +47,8 @@ namespace ZumtenSoft.Mindex.Indexes
             foreach (var column in _sortColumns)
             {
                 var columnScore = column.GetScore(search);
-                score += columnScore.Item1;
-                if (!columnScore.Item2)
+                score += columnScore.Value;
+                if (!columnScore.CanContinue)
                     break;
             }
 

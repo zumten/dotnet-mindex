@@ -7,7 +7,8 @@ namespace ZumtenSoft.Mindex
 {
     public class BinarySearchResult<TRow> : IReadOnlyCollection<TRow>
     {
-        private static readonly ArraySegment<TRow> EmptySegment = new ArraySegment<TRow>(new TRow[0]);
+        private static readonly TRow[] EmptyArray = new TRow[0];
+        private static readonly ArraySegment<TRow> EmptySegment = new ArraySegment<TRow>(EmptyArray);
         private readonly IReadOnlyList<ArraySegment<TRow>> _segments;
         public bool CanSearch { get; }
         public int Count => _segments.Sum(s => s.Count);
@@ -18,10 +19,10 @@ namespace ZumtenSoft.Mindex
             CanSearch = true;
         }
 
-        public BinarySearchResult(IReadOnlyList<ArraySegment<TRow>> segments, bool canSearch)
+        public BinarySearchResult(IEnumerable<ArraySegment<TRow>> segments, bool canSearch)
         {
             CanSearch = canSearch;
-            _segments = segments;
+            _segments = segments as IReadOnlyList<ArraySegment<TRow>> ?? segments.ToList();
         }
 
         public BinarySearchResult<TRow> ReduceIn<TColumn>(Func<TRow, TColumn> getColumn, TColumn[] values, IComparer<TColumn> comparer)
@@ -43,14 +44,24 @@ namespace ZumtenSoft.Mindex
             return new BinarySearchResult<TRow>(result, true);
         }
 
+        public static BinarySearchResult<TRow> Merge(IReadOnlyList<BinarySearchResult<TRow>> results)
+        {
+            if (results.Count == 0)
+                return new BinarySearchResult<TRow>(EmptySegment.Array);
+            if (results.Count == 1)
+                return results[0];
+            return new BinarySearchResult<TRow>(results.SelectMany(r => r._segments), false);
+        }
+
         public IEnumerator<TRow> GetEnumerator()
         {
             foreach (var segment in _segments)
             {
                 int end = segment.Offset + segment.Count;
                 TRow[] array = segment.Array;
-                for (int i = segment.Offset; i < end; i++)
-                    yield return array[i];
+                if (array != null)
+                    for (int i = segment.Offset; i < end; i++)
+                        yield return array[i];
             }
         }
 

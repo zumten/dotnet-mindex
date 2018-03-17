@@ -64,6 +64,13 @@ namespace ZumtenSoft.Mindex
             // If no index was built, we will use the default rows collection
             return (index ?? DefaultIndex).Search(criteria);
         }
+
+        public IEnumerable<TRow> Search(IEnumerable<TSearch> criterias)
+        {
+            foreach (var criteria in criterias)
+                foreach (var result in Search(criteria))
+                    yield return result;
+        }
     }
 
 }

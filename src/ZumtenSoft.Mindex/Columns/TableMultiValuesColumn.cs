@@ -20,9 +20,9 @@ namespace ZumtenSoft.Mindex.Columns
             SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
         }
 
-        public Tuple<float, bool> GetScore(TSearch search)
+        public TableColumnScore GetScore(TSearch search)
         {
-            return Tuple.Create(0f, false);
+            return new TableColumnScore(0f, false);
         }
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)
