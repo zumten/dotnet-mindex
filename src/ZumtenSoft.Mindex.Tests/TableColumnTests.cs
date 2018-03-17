@@ -16,9 +16,10 @@ namespace ZumtenSoft.Mindex.Tests
         {
             TableColumn<SiteRanking, SiteRankingSearch, string> column = new TableColumn<SiteRanking, SiteRankingSearch, string>(x => x.DomainName, x => x.DomainName, StringComparer.OrdinalIgnoreCase);
             var actual = column.GetScore(new SiteRankingSearch());
-            var expected = Tuple.Create(0f, false);
+            var expected = new TableColumnScore(0f, false);
 
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected.Value, actual.Value);
+            Assert.AreEqual(expected.CanContinue, actual.CanContinue);
         }
     }
 }
