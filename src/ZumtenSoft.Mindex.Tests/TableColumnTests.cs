@@ -14,7 +14,7 @@ namespace ZumtenSoft.Mindex.Tests
         [TestMethod]
         public void GetScore_WhenNoSearch_ShouldReturnZero()
         {
-            TableColumn<SiteRanking, SiteRankingSearch, string> column = new TableColumn<SiteRanking, SiteRankingSearch, string>(x => x.DomainName, x => x.DomainName, StringComparer.OrdinalIgnoreCase);
+            TableColumn<SiteRanking, SiteRankingSearch, string> column = new TableColumn<SiteRanking, SiteRankingSearch, string>(new SiteRanking[0], x => x.DomainName, x => x.DomainName, StringComparer.OrdinalIgnoreCase);
             var actual = column.GetScore(new SiteRankingSearch());
             var expected = new TableColumnScore(0f, false);
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ZumtenSoft.Mindex.Columns
+﻿namespace ZumtenSoft.Mindex.Columns
 {
     public class TableColumnScore
     {

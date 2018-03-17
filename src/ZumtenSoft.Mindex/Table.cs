@@ -27,10 +27,19 @@ namespace ZumtenSoft.Mindex
 
         protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
-            Expression<Func<TRow, TColumn>> getColumnValue,
-            IComparer<TColumn> comparer = null)
+            Expression<Func<TRow, TColumn>> getColumnValue)
         {
-            var column = new TableColumn<TRow, TSearch, TColumn>(getColumnValue, getSearchValue, comparer ?? Comparer<TColumn>.Default);
+            var column = new TableColumn<TRow, TSearch, TColumn>(DefaultIndex.Rows, getColumnValue, getSearchValue, Comparer<TColumn>.Default);
+            _columns.Add(column);
+            return column;
+        }
+
+        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn, TComparer>(
+            Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
+            Expression<Func<TRow, TColumn>> getColumnValue,
+            TComparer comparer) where TComparer : IComparer<TColumn>, IEqualityComparer<TColumn>
+        {
+            var column = new TableColumn<TRow, TSearch, TColumn>(DefaultIndex.Rows, getColumnValue, getSearchValue, comparer);
             _columns.Add(column);
             return column;
         }

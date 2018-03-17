@@ -9,40 +9,41 @@ namespace ZumtenSoft.Mindex.Columns
 {
     public class TableColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
-        public Func<TRow, TColumn> GetColumnValue { get; }
-        public Expression<Func<TRow, TColumn>> GetColumnExpression { get; }
-        public Func<TSearch, SearchCriteria<TColumn>> GetCriteriaValue { get; }
-        public IComparer<TColumn> Comparer { get; }
+        private readonly Func<TRow, TColumn> _getColumnValue;
+        private readonly Expression<Func<TRow, TColumn>> _getColumnExpression;
+        private readonly Func<TSearch, SearchCriteria<TColumn>> _getCriteriaValue;
+        private readonly IComparer<TColumn> _comparer;
+
         public MemberInfo SearchProperty { get; }
 
-        public TableColumn(Expression<Func<TRow, TColumn>> getColumnValue, Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer)
+        public TableColumn(IReadOnlyCollection<TRow> rows, Expression<Func<TRow, TColumn>> getColumnValue, Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer)
         {
             SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
-            GetColumnValue = getColumnValue.Compile();
-            GetColumnExpression = getColumnValue;
-            GetCriteriaValue = getCriteriaValue.Compile();
-            Comparer = comparer;
+            _getColumnValue = getColumnValue.Compile();
+            _getColumnExpression = getColumnValue;
+            _getCriteriaValue = getCriteriaValue.Compile();
+            _comparer = comparer;
         }
 
         public TableColumnScore GetScore(TSearch search)
         {
-            var criteria = GetCriteriaValue(search);
-            return criteria is SearchCriteriaByRange<TColumn> ? new TableColumnScore(1.5f, false)
+            var criteria = _getCriteriaValue(search);
+            return criteria is SearchCriteriaByRange<TColumn> ? new TableColumnScore(4f, false)
                 : criteria is SearchCriteriaByValue<TColumn> ? new TableColumnScore(1f, true)
-                : new TableColumnScore(0f, false);
+                : new TableColumnScore(1f, false);
         }
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)
         {
-            return items is IOrderedEnumerable<TRow> orderedItems ? orderedItems.ThenBy(GetColumnValue, Comparer) : items.OrderBy(GetColumnValue, Comparer);
+            return items is IOrderedEnumerable<TRow> orderedItems ? orderedItems.ThenBy(_getColumnValue, _comparer) : items.OrderBy(_getColumnValue, _comparer);
         }
 
         public bool Reduce(TSearch search, ref BinarySearchResult<TRow> items)
         {
-            var criteria = GetCriteriaValue(search);
+            var criteria = _getCriteriaValue(search);
             if (criteria != null)
             {
-                items = criteria.Search(items, GetColumnValue, Comparer);
+                items = criteria.Search(items, _getColumnValue, _comparer);
                 return true;
             }
             return false;
@@ -50,8 +51,8 @@ namespace ZumtenSoft.Mindex.Columns
 
         public Expression BuildCondition(ParameterExpression paramExpr, TSearch search)
         {
-            var criteria = GetCriteriaValue(search);
-            return criteria?.BuildPredicateExpression(paramExpr, GetColumnExpression, Comparer);
+            var criteria = _getCriteriaValue(search);
+            return criteria?.BuildPredicateExpression(paramExpr, _getColumnExpression, _comparer);
         }
     }
 
