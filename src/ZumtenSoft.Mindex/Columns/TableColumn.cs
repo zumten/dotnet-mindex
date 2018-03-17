@@ -24,12 +24,12 @@ namespace ZumtenSoft.Mindex.Columns
             Comparer = comparer;
         }
 
-        public Tuple<float, bool> GetScore(TSearch search)
+        public TableColumnScore GetScore(TSearch search)
         {
             var criteria = GetCriteriaValue(search);
-            return criteria is SearchCriteriaByRange<TColumn> ? Tuple.Create(1.5f, false)
-                : criteria is SearchCriteriaByValue<TColumn> ? Tuple.Create(1f, true)
-                : Tuple.Create(0f, false);
+            return criteria is SearchCriteriaByRange<TColumn> ? new TableColumnScore(1.5f, false)
+                : criteria is SearchCriteriaByValue<TColumn> ? new TableColumnScore(1f, true)
+                : new TableColumnScore(0f, false);
         }
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)

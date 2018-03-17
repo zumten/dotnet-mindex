@@ -1,5 +1,8 @@
 # mindex
-Mindex: C# Library to search through big in-memory collections
+Mindex: DotNet High-performance in-memory multi-criteria collection search
+
+[![Build Status](https://zumten.visualstudio.com/_apis/public/build/definitions/d6fe51c2-2715-43c8-8bff-5cb5575470b4/1/badge)](https://zumten.visualstudio.com/ZumtenSoft/_build/index?definitionId=1)
+
 
 ## Objective
 

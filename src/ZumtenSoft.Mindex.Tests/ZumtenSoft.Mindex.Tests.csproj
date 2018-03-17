@@ -16,10 +16,4 @@
     <ProjectReference Include="..\ZumtenSoft.Mindex\ZumtenSoft.Mindex.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="App_Data\majestic_million.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

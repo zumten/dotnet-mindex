@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using ZumtenSoft.Mindex.Criterias;
 using ZumtenSoft.Mindex.Columns;
+using ZumtenSoft.Mindex.Indexes;
 
 namespace ZumtenSoft.Mindex
 {
@@ -43,10 +44,10 @@ namespace ZumtenSoft.Mindex
 
         protected TableIndexConfigurator<TRow, TSearch> ConfigureIndex()
         {
-            return new TableIndexConfigurator<TRow, TSearch>(this, AddIndex);
+            return new TableIndexConfigurator<TRow, TSearch>(this);
         }
 
-        private void AddIndex(TableIndex<TRow, TSearch> index)
+        internal void AddIndex(TableIndex<TRow, TSearch> index)
         {
             _indexes.Add(index);
             // First index overrides the default collection to save memory
@@ -62,6 +63,13 @@ namespace ZumtenSoft.Mindex
 
             // If no index was built, we will use the default rows collection
             return (index ?? DefaultIndex).Search(criteria);
+        }
+
+        public IEnumerable<TRow> Search(IEnumerable<TSearch> criterias)
+        {
+            foreach (var criteria in criterias)
+                foreach (var result in Search(criteria))
+                    yield return result;
         }
     }
 

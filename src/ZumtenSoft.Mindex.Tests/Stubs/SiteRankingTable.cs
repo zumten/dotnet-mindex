@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZumtenSoft.Mindex.Indexes;
 
 namespace ZumtenSoft.Mindex.Tests.Stubs
 {
