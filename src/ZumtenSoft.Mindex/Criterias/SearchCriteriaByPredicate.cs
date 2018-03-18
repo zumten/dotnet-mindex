@@ -7,25 +7,29 @@ namespace ZumtenSoft.Mindex.Criterias
 {
     public class SearchCriteriaByPredicate<TColumn> : SearchCriteria<TColumn>
     {
-        private readonly Expression<Func<TColumn, bool>> _predicate;
+        private readonly Func<TColumn, bool> _predicate;
 
-        public SearchCriteriaByPredicate(Expression<Func<TColumn, bool>> predicate)
+        public SearchCriteriaByPredicate(Func<TColumn, bool> predicate)
         {
             _predicate = predicate;
         }
 
-        public override BinarySearchResult<TRow> Search<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
+        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
         {
             return null;
         }
 
         public override Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer)
         {
-            return Expression.Invoke(_predicate,
-                Expression.Invoke(getColumnValue, paramRow));
+            return Expression.Call(_predicate.Method, getColumnValue);
         }
 
-        public override TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer)
+        public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        {
+            return this;
+        }
+
+        public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
         {
             return new TableColumnScore(1, false);
         }

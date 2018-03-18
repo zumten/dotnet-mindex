@@ -17,7 +17,7 @@ namespace ZumtenSoft.Mindex.Criterias
             return new SearchCriteriaByRange<TColumn>(start, end);
         }
 
-        public static SearchCriteriaByPredicate<TColumn> ByPredicate<TColumn>(Expression<Func<TColumn, bool>> predicate)
+        public static SearchCriteriaByPredicate<TColumn> ByPredicate<TColumn>(Func<TColumn, bool> predicate)
         {
             return new SearchCriteriaByPredicate<TColumn>(predicate);
         }
@@ -35,8 +35,14 @@ namespace ZumtenSoft.Mindex.Criterias
             return ByValues(values);
         }
 
-        public abstract BinarySearchResult<TRow> Search<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer);
+        public static implicit operator SearchCriteria<TColumn>(Func<TColumn, bool> predicate)
+        {
+            return ByPredicate(predicate);
+        }
+
+        public abstract BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer);
         public abstract Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer);
-        public abstract TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer);
+        public abstract SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer);
+        public abstract TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer);
     }
 }

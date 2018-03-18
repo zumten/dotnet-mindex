@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Indexes
 {
     public class TableIndex<TRow, TSearch> : TableRowCollection<TRow, TSearch>
     {
-        private readonly IReadOnlyCollection<ITableColumn<TRow, TSearch>> _sortColumns;
+        private readonly ITableColumn<TRow, TSearch>[] _sortColumns;
         private readonly BinarySearchResult<TRow> _rootResult;
 
-        public TableIndex(TRow[] items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> columns, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
-            : base(SortRows(items, sortColumns), columns)
+        public TableIndex(TRow[] items, ITableColumn<TRow, TSearch>[] sortColumns)
+            : base(SortRows(items, sortColumns))
         {
             _sortColumns = sortColumns;
             _rootResult = new BinarySearchResult<TRow>(Rows);
@@ -26,36 +27,53 @@ namespace ZumtenSoft.Mindex.Indexes
             return sortedRows.ToArray();
         }
 
-        public override IEnumerable<TRow> Search(TSearch search)
+        public override IEnumerable<TRow> Search(IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> criterias)
         {
-            if (_sortColumns.Count == 0)
-                return base.Search(search);
+            if (_sortColumns.Length == 0)
+                return base.Search(criterias);
 
             var binaryResult = _rootResult;
-            List<ITableColumn<TRow, TSearch>> processedColumns = new List<ITableColumn<TRow, TSearch>>();
-            foreach (var column in _sortColumns)
+            var remainingCriterias = criterias.ToList();
+            for (var indexSortColumn = 0; binaryResult.CanSearch && indexSortColumn < _sortColumns.Length; indexSortColumn++)
             {
-                if (!binaryResult.CanSearch || !column.Reduce(search, ref binaryResult))
-                    break;
-                processedColumns.Add(column);
+                var sortColumn = _sortColumns[indexSortColumn];
+                var indexRemainingColumn = remainingCriterias.FindIndex(x => x.Column == sortColumn);
+                if (indexRemainingColumn >= 0)
+                {
+                    var criteria = remainingCriterias[indexRemainingColumn];
+                    var reducedResult = criteria.Reduce(binaryResult);
+                    if (reducedResult == null)
+                    {
+                        binaryResult = new BinarySearchResult<TRow>(binaryResult.Segments, false);
+                    }
+                    else
+                    {
+                        binaryResult = reducedResult;
+                        remainingCriterias.RemoveAt(indexRemainingColumn);
+                    }
+                }
             }
 
-            var remainingColumns = Columns.Except(processedColumns).ToList();
-            return FilterRowsWithCustomExpression(binaryResult, search, remainingColumns);
+            return FilterRowsWithCustomExpression(binaryResult, remainingCriterias);
         }
 
-        public float GetScore(TSearch search)
+        public float GetScore(IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> criterias)
         {
-            float score = 0;
-            foreach (var column in _sortColumns)
+            TableColumnScore score = TableColumnScore.Initial;
+            var remainingCriterias = criterias.ToList();
+            for (var indexSortColumn = 0; score.CanContinue && indexSortColumn < _sortColumns.Length; indexSortColumn++)
             {
-                var columnScore = column.GetScore(search);
-                score *= columnScore.Value;
-                if (!columnScore.CanContinue)
-                    break;
+                var sortColumn = _sortColumns[indexSortColumn];
+                var indexRemainingColumn = remainingCriterias.FindIndex(x => x.Column == sortColumn);
+                if (indexRemainingColumn >= 0)
+                {
+                    var criteria = remainingCriterias[indexRemainingColumn];
+                    score *= criteria.Score;
+                    remainingCriterias.RemoveAt(indexRemainingColumn);
+                }
             }
 
-            return score;
+            return score.Value;
         }
     }
 

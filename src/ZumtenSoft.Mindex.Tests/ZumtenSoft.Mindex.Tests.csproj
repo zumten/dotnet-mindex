@@ -16,4 +16,8 @@
     <ProjectReference Include="..\ZumtenSoft.Mindex\ZumtenSoft.Mindex.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Criterias\" />
+  </ItemGroup>
+
 </Project>

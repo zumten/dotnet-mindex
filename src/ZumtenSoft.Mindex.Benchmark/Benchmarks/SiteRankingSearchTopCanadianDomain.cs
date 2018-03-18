@@ -23,12 +23,12 @@ namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
         public List<SiteRanking> Search() => Table.Search(SearchCriterias).ToList();
 
         [Benchmark]
-        public List<SiteRanking> IndexGlobalRank() => Table.IndexGlobalRank.Search(SearchCriterias).ToList();
+        public List<SiteRanking> IndexGlobalRank() => Table.Search(SearchCriterias, Table.IndexGlobalRank).ToList();
 
         [Benchmark]
-        public List<SiteRanking> IndexTopLevelDomain() => Table.IndexTopLevelDomain.Search(SearchCriterias).ToList();
+        public List<SiteRanking> IndexTopLevelDomain() => Table.Search(SearchCriterias, Table.IndexTopLevelDomain).ToList();
 
         [Benchmark]
-        public List<SiteRanking> IndexTopLevelDomainGlobalRank() => Table.IndexTopLevelDomainGlobalRank.Search(SearchCriterias).ToList();
+        public List<SiteRanking> IndexTopLevelDomainGlobalRank() => Table.Search(SearchCriterias, Table.IndexTopLevelDomainGlobalRank).ToList();
     }
 }
