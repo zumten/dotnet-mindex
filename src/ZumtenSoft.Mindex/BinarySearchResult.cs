@@ -7,7 +7,7 @@ namespace ZumtenSoft.Mindex
 {
     public class BinarySearchResult<TRow> : IReadOnlyCollection<TRow>
     {
-        private static readonly TRow[] EmptyArray = new TRow[0];
+        public static readonly TRow[] EmptyArray = new TRow[0];
         private static readonly ArraySegment<TRow> EmptySegment = new ArraySegment<TRow>(EmptyArray);
         private readonly ArraySegment<TRow>[] _segments;
         public bool CanSearch { get; }

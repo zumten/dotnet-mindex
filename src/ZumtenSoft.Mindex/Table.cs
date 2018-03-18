@@ -70,18 +70,21 @@ namespace ZumtenSoft.Mindex
                 DefaultIndex = index;
         }
 
-        public IEnumerable<TRow> Search(TSearch criteria, TableRowCollection<TRow, TSearch> index = null)
+        public IEnumerable<TRow> Search(TSearch criteria)
         {
-            // If no index was provided, we try to find the best one
-            if (index == null)
-            {
-                var bestIndexWithScore = Indexes
-                    .Select(i => new { score = i.GetScore(criteria), index = i })
-                    .Aggregate((x, y) => x.score > y.score ? x : y);
-            }
+            if (_indexes.Count == 0)
+                return DefaultIndex.Search(criteria);
+
+            var bestMatch = _indexes
+                .Select(i => new {score = i.GetScore(criteria), index = i})
+                .Aggregate((x, y) => x.score < y.score ? x : y);
+
+            // If we receive a score of 0, it means one of the criteria is impossible
+            if (bestMatch.score <= 0f)
+                return BinarySearchResult<TRow>.EmptyArray;
 
             // If no index was built, we will use the default rows collection
-            return (index ?? DefaultIndex).Search(criteria);
+            return bestMatch.index.Search(criteria);
         }
 
         public IEnumerable<TRow> Search(IEnumerable<TSearch> criterias)
