@@ -109,29 +109,55 @@ The main point of this library is to provide easy search criterias without impac
 
 1. Top 10 domains for each top level domain ([SiteRankingSearchTopDomainByTLD.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopDomainByTLD.cs))
 
- Method |    N |        Mean |      Error |     StdDev |
-------- |----- |------------:|-----------:|-----------:|
-   Linq | 1000 | 26,075.3 us | 131.068 us | 122.601 us |
- Lookup | 1000 |    270.5 us |   1.723 us |   1.612 us |
- Search | 1000 |    163.5 us |   1.117 us |   1.045 us |
+``` ini
+BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
+Intel Core i7-8550U CPU 1.80GHz (Kaby Lake R), 1 CPU, 8 logical cores and 4 physical cores
+Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
+.NET Core SDK=2.1.2
+  [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
+  DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
+```
+| Method |    N |        Mean |      Error |     StdDev |
+|------- |----- |------------:|-----------:|-----------:|
+|   Linq | 1000 | 27,658.2 us | 477.536 us | 446.687 us |
+| Lookup | 1000 |    370.9 us |   7.208 us |   9.867 us |
+| Search | 1000 |    185.3 us |   3.533 us |   3.927 us |
+
 
 
 2. Top 1000 domains for each top level domain .com, .org and .net ([SiteRankingSearchTopDomainByComOrgNet.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopDomainByComOrgNet.cs))
 
- Method |    N |         Mean |       Error |      StdDev |
-------- |----- |-------------:|------------:|------------:|
-   Linq | 1000 | 59,399.82 us | 389.2275 us | 364.0836 us |
- Lookup | 1000 |     85.42 us |   0.6370 us |   0.5647 us |
- Search | 1000 |     75.47 us |   0.4397 us |   0.4113 us |
+``` ini
+BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
+Intel Core i7-8550U CPU 1.80GHz (Kaby Lake R), 1 CPU, 8 logical cores and 4 physical cores
+Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
+.NET Core SDK=2.1.2
+  [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
+  DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
+```
+| Method |    N |         Mean |      Error |      StdDev |
+|------- |----- |-------------:|-----------:|------------:|
+|   Linq | 1000 | 84,992.30 us | 853.119 us | 712.3928 us |
+| Lookup | 1000 |     68.78 us |   1.274 us |   0.9946 us |
+| Search | 1000 |     60.63 us |   1.199 us |   2.0996 us |
+
 
 
 3. Canadian sites part of the top 1000 global websites ([SiteRankingSearchTopCanadianDomain.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopCanadianDomain.cs))
 
-|                        Method |    N |            Mean |          Error |         StdDev |
-|------------------------------ |----- |----------------:|---------------:|---------------:|
-|                          Linq | 1000 | 28,240,356.7 ns | 263,440.000 ns | 246,421.916 ns |
-|                        Lookup | 1000 |        509.0 ns |       3.115 ns |       2.432 ns |
-|                        Search | 1000 |      3,788.4 ns |      29.451 ns |      27.548 ns |
-|               IndexGlobalRank | 1000 |    187,289.7 ns |   1,286.063 ns |   1,202.984 ns |
-|           IndexTopLevelDomain | 1000 |    506,596.8 ns |   4,577.985 ns |   4,282.250 ns |
-| IndexTopLevelDomainGlobalRank | 1000 |      3,355.8 ns |      27.983 ns |      23.367 ns |
+``` ini
+BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
+Intel Core i7-8550U CPU 1.80GHz (Kaby Lake R), 1 CPU, 8 logical cores and 4 physical cores
+Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
+.NET Core SDK=2.1.2
+  [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
+  DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
+```
+|                        Method |    N |            Mean |         Error |        StdDev |
+|------------------------------ |----- |----------------:|--------------:|--------------:|
+|                          Linq | 1000 | 29,218,023.0 ns | 213,604.01 ns | 199,805.30 ns |
+|                        Lookup | 1000 |        705.2 ns |      14.96 ns |      27.36 ns |
+|                        Search | 1000 |      4,038.0 ns |      80.33 ns |     160.43 ns |
+|               IndexGlobalRank | 1000 |    367,965.2 ns |   6,460.89 ns |   6,043.52 ns |
+|           IndexTopLevelDomain | 1000 |    763,976.0 ns |  18,818.39 ns |  15,714.21 ns |
+| IndexTopLevelDomainGlobalRank | 1000 |      2,522.2 ns |      50.26 ns |      82.57 ns |

@@ -5,18 +5,15 @@ using ZumtenSoft.Mindex.Tests.Stubs;
 
 namespace ZumtenSoft.Mindex.Benchmark
 {
-
     class Program
     {
         static void Main(string[] args)
         {
-            // BenchmarkRunner.Run<SiteRankingSearchTopDomainByTLD>();
-            // BenchmarkRunner.Run<SiteRankingSearchTopDomainByComOrgNet>();
             var rows = MajesticMillionCache.Instance;
+            BenchmarkRunner.Run<SiteRankingSearchTopDomainByTLD>();
+            BenchmarkRunner.Run<SiteRankingSearchTopDomainByComOrgNet>();
             BenchmarkRunner.Run<SiteRankingSearchCanadianDomainInGlobalTop1000>();
             Console.ReadLine();
         }
-
-  
     }
 }

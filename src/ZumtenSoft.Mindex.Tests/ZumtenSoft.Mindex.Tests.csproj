@@ -16,4 +16,14 @@
     <ProjectReference Include="..\ZumtenSoft.Mindex\ZumtenSoft.Mindex.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ColumnCriterias\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App_Data\majestic_million_reduced.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

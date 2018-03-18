@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq.Expressions;
 using System.Reflection;
+using ZumtenSoft.Mindex.ColumnCriterias;
+using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
     public interface ITableColumn<TRow, in TSearch>
     {
+        string Name { get; }
         MemberInfo SearchProperty { get; }
-        TableColumnScore GetScore(TSearch search);
         IEnumerable<TRow> Sort(IEnumerable<TRow> items);
-        bool Reduce(TSearch search, ref BinarySearchResult<TRow> items);
-        Expression BuildCondition(ParameterExpression paramExpr, TSearch criteria);
+        ITableColumnCriteria<TRow, TSearch> ExtractCriteria(TSearch search);
     }
-
 }

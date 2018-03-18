@@ -14,7 +14,9 @@ namespace ZumtenSoft.Mindex.Criterias
             _predicate = predicate;
         }
 
-        public override BinarySearchResult<TRow> Search<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
+        public override string Name => _predicate.ToString();
+
+        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
         {
             return null;
         }
@@ -25,9 +27,14 @@ namespace ZumtenSoft.Mindex.Criterias
                 Expression.Invoke(getColumnValue, paramRow));
         }
 
-        public override TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer)
+        public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
         {
-            return new TableColumnScore(1, false);
+            return this;
+        }
+
+        public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
+        {
+            return TableColumnScore.NotOptimizable;
         }
     }
 

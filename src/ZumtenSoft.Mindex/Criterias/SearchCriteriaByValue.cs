@@ -15,7 +15,9 @@ namespace ZumtenSoft.Mindex.Criterias
             SearchValues = searchValues;
         }
 
-        public override BinarySearchResult<TRow> Search<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
+        public override string Name => String.Join(", ", SearchValues);
+
+        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
         {
             return rows.ReduceIn(getValue, SearchValues, comparer);
         }
@@ -52,11 +54,22 @@ namespace ZumtenSoft.Mindex.Criterias
             return expressions.Aggregate((x, y) => Expression.OrElse(y, x));
         }
 
-        public override TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer)
+        public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        {
+            if (SearchValues.Length == 0)
+                return null;
+            if (SearchValues.Length == 1)
+                return this;
+
+            // Try to remove duplicate search values
+            return ByValues(SearchValues.Distinct(equalityComparer).ToArray());
+        }
+
+        public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
         {
             if (SearchValues.Length == 0)
                 return new TableColumnScore(1, false);
-            return new TableColumnScore((float)(numberRows * SearchValues.Length) / possibleValues.Length, true);
+            return new TableColumnScore(SearchValues.Length / (float)possibleValues.Length, true);
         }
     }
 

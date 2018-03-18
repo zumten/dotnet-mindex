@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Indexes
@@ -9,20 +10,18 @@ namespace ZumtenSoft.Mindex.Indexes
     public class TableRowCollection<TRow, TSearch>
     {
         public TRow[] Rows { get; }
-        protected IReadOnlyCollection<ITableColumn<TRow, TSearch>> Columns { get; }
 
-        public TableRowCollection(TRow[] rows, IReadOnlyCollection<ITableColumn<TRow, TSearch>> columns)
+        public TableRowCollection(TRow[] rows)
         {
             Rows = rows;
-            Columns = columns;
         }
 
-        public virtual IEnumerable<TRow> Search(TSearch search)
+        public virtual IEnumerable<TRow> Search(IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> criterias)
         {
-            return FilterRowsWithCustomExpression(Rows, search, Columns);
+            return FilterRowsWithCustomExpression(Rows, criterias);
         }
 
-        protected static IEnumerable<TRow> FilterRowsWithCustomExpression(IEnumerable<TRow> items, TSearch search, IReadOnlyCollection<ITableColumn<TRow, TSearch>> columns)
+        protected static IEnumerable<TRow> FilterRowsWithCustomExpression(IEnumerable<TRow> items, IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> columns)
         {
             if (columns.Count == 0)
                 return items;
@@ -31,7 +30,7 @@ namespace ZumtenSoft.Mindex.Indexes
             IList<Expression> conditions = new List<Expression>();
             foreach (var column in columns)
             {
-                var condition = column.BuildCondition(paramExpr, search);
+                var condition = column.BuildCondition(paramExpr);
                 if (condition != null)
                     conditions.Add(condition);
             }

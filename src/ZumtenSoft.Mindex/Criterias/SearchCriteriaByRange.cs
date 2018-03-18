@@ -16,7 +16,9 @@ namespace ZumtenSoft.Mindex.Criterias
             End = end;
         }
 
-        public override BinarySearchResult<TRow> Search<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
+        public override string Name => Start + "-" + End;
+
+        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
         {
             return rows.ReduceRange(getValue, Start, End, comparer);
         }
@@ -38,11 +40,18 @@ namespace ZumtenSoft.Mindex.Criterias
                         Expression.Constant(0))));
         }
 
-        public override TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer)
+        public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        {
+            if (comparer.Compare(Start, End) == 0)
+                return ByValues(Start);
+            return this;
+        }
+
+        public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
         {
             var resultRange = new BinarySearchResult<TColumn>(possibleValues).ReduceRange(x => x, Start, End, comparer);
             if (resultRange.Count == 0)
-                return new TableColumnScore(0, false);
+                return TableColumnScore.Impossible;
             return new TableColumnScore((float)resultRange.Count / possibleValues.Length, false);
         }
     }

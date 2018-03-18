@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
+    [DebuggerDisplay(@"\{TableMultiValuesColumn " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
     public class TableMultiValuesColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
+        public string Name => SearchProperty.Name;
         private readonly Func<TSearch, SearchCriteriaByValue<TColumn>> _getCriteriaValue;
-        private readonly Expression<Func<TRow, TColumn, bool>> _predicate;
+        public Expression<Func<TRow, TColumn, bool>> Predicate { get; }
+        public bool IsUnion { get; }
 
         public MemberInfo SearchProperty { get; }
 
-        public TableMultiValuesColumn(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate)
+        public TableMultiValuesColumn(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate, bool isUnion)
         {
             _getCriteriaValue = getCriteriaValue.Compile();
-            _predicate = predicate;
+            Predicate = predicate;
+            IsUnion = isUnion;
             SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
         }
 
@@ -31,37 +37,20 @@ namespace ZumtenSoft.Mindex.Columns
             throw new NotSupportedException($"Column with multiple values '{SearchProperty.Name}' does not support indexing");
         }
 
+        public ITableColumnCriteria<TRow, TSearch> ExtractCriteria(TSearch search)
+        {
+            var criteria = _getCriteriaValue(search);
+            if (criteria == null)
+                return null;
+
+            return new TableMultiValuesColumnCriteria<TRow,TSearch,TColumn>(this, criteria);
+        }
+
         public bool Reduce(TSearch search, ref BinarySearchResult<TRow> items)
         {
+            // Multi-values column cannot be searched through indexes, therefore cannot
+            // reduce the set of results.
             return false;
-        }
-
-        public Expression BuildCondition(ParameterExpression paramExpr, TSearch criteria)
-        {
-            var value = _getCriteriaValue(criteria);
-            if (value != null)
-                return BuildConditionExpression(value, paramExpr, true);
-            return null;
-        }
-
-        private Expression BuildConditionExpression(SearchCriteriaByValue<TColumn> criteria, ParameterExpression paramRow, bool isOr)
-        {
-            if (criteria.SearchValues.Length == 0)
-                return Expression.Constant(false);
-
-            List<Expression> expressions = new List<Expression>();
-            foreach (var value in criteria.SearchValues)
-            {
-                expressions.Add(
-                    Expression.Invoke(
-                        _predicate,
-                        paramRow,
-                        Expression.Constant(value)));
-            }
-
-            return isOr
-                ? expressions.Aggregate(Expression.OrElse)
-                : expressions.Aggregate(Expression.AndAlso);
         }
     }
 
