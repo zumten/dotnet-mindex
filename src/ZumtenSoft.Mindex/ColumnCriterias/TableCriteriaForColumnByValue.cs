@@ -5,15 +5,15 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.ColumnCriterias
 {
-    [DebuggerDisplay(@"\{TableColumnCriteria Column={Column.Name}, Score={Score.Value}, Criteria={_criteria.Name}\}")]
-    public class TableColumnCriteria<TRow, TSearch, TColumn> : ITableColumnCriteria<TRow, TSearch>
+    [DebuggerDisplay(@"\{TableCriteriaForColumnByValue Column={Column.Name}, Score={Score.Value}, Criteria={_criteria.Name}\}")]
+    public class TableCriteriaForColumnByValue<TRow, TSearch, TColumn> : ITableCriteriaForColumn<TRow, TSearch>
     {
-        private readonly TableColumn<TRow, TSearch, TColumn> _column;
+        private readonly TableColumnByValue<TRow, TSearch, TColumn> _column;
         private readonly SearchCriteria<TColumn> _criteria;
         public ITableColumn<TRow, TSearch> Column => _column;
         public TableColumnScore Score { get; }
 
-        public TableColumnCriteria(TableColumn<TRow, TSearch, TColumn> column, SearchCriteria<TColumn> criteria)
+        public TableCriteriaForColumnByValue(TableColumnByValue<TRow, TSearch, TColumn> column, SearchCriteria<TColumn> criteria)
         {
             _column = column;
             _criteria = criteria;

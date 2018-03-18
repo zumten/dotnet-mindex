@@ -9,8 +9,8 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
-    [DebuggerDisplay(@"\{TableMultiValuesColumn " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
-    public class TableMultiValuesColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
+    [DebuggerDisplay(@"\{TableColumnByPredicate " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
+    public class TableColumnByPredicate<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
         public string Name => SearchProperty.Name;
         private readonly Func<TSearch, SearchCriteriaByValue<TColumn>> _getCriteriaValue;
@@ -19,7 +19,7 @@ namespace ZumtenSoft.Mindex.Columns
 
         public MemberInfo SearchProperty { get; }
 
-        public TableMultiValuesColumn(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate, bool isUnion)
+        public TableColumnByPredicate(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate, bool isUnion)
         {
             _getCriteriaValue = getCriteriaValue.Compile();
             Predicate = predicate;
@@ -37,13 +37,13 @@ namespace ZumtenSoft.Mindex.Columns
             throw new NotSupportedException($"Column with multiple values '{SearchProperty.Name}' does not support indexing");
         }
 
-        public ITableColumnCriteria<TRow, TSearch> ExtractCriteria(TSearch search)
+        public ITableCriteriaForColumn<TRow, TSearch> ExtractCriteria(TSearch search)
         {
             var criteria = _getCriteriaValue(search);
             if (criteria == null)
                 return null;
 
-            return new TableMultiValuesColumnCriteria<TRow,TSearch,TColumn>(this, criteria);
+            return new TableCriteriaForColumnByPredicate<TRow,TSearch,TColumn>(this, criteria);
         }
 
         public bool Reduce(TSearch search, ref BinarySearchResult<TRow> items)

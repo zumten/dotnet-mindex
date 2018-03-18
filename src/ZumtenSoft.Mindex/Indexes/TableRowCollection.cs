@@ -16,12 +16,12 @@ namespace ZumtenSoft.Mindex.Indexes
             Rows = rows;
         }
 
-        public virtual IEnumerable<TRow> Search(IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> criterias)
+        public virtual IEnumerable<TRow> Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
             return FilterRowsWithCustomExpression(Rows, criterias);
         }
 
-        protected static IEnumerable<TRow> FilterRowsWithCustomExpression(IEnumerable<TRow> items, IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> columns)
+        protected static IEnumerable<TRow> FilterRowsWithCustomExpression(IEnumerable<TRow> items, IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> columns)
         {
             if (columns.Count == 0)
                 return items;

@@ -21,14 +21,14 @@ namespace ZumtenSoft.Mindex
             _indexes = new TableIndexCollection<TRow, TSearch>(rows);
         }
 
-        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
+        protected TableColumnByValue<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
             Expression<Func<TRow, TColumn>> getColumnValue)
         {
             return MapSearchCriteria(getSearchValue, getColumnValue, Comparer<TColumn>.Default, EqualityComparer<TColumn>.Default);
         }
 
-        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn, TComparer>(
+        protected TableColumnByValue<TRow, TSearch, TColumn> MapSearchCriteria<TColumn, TComparer>(
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
             Expression<Func<TRow, TColumn>> getColumnValue,
             TComparer hybridComparer) where TComparer : IComparer<TColumn>, IEqualityComparer<TColumn>
@@ -36,19 +36,19 @@ namespace ZumtenSoft.Mindex
             return MapSearchCriteria(getSearchValue, getColumnValue, hybridComparer, hybridComparer);
         }
 
-        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
+        protected TableColumnByValue<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
             Expression<Func<TRow, TColumn>> getColumnValue,
             IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
         {
-            var column = new TableColumn<TRow, TSearch, TColumn>(_indexes.DefaultIndex.Rows, getColumnValue, getSearchValue, comparer, equalityComparer);
+            var column = new TableColumnByValue<TRow, TSearch, TColumn>(_indexes.DefaultIndex.Rows, getColumnValue, getSearchValue, comparer, equalityComparer);
             _columns.Add(column);
             return column;
         }
 
-        protected TableMultiValuesColumn<TRow, TSearch, TColumn> MapMultiValuesSearchCriteria<TColumn>(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getColumnCriteria, Expression<Func<TRow, TColumn, bool>> predicate, bool isUnion = false)
+        protected TableColumnByPredicate<TRow, TSearch, TColumn> MapMultiValuesSearchCriteria<TColumn>(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getColumnCriteria, Expression<Func<TRow, TColumn, bool>> predicate, bool isUnion = false)
         {
-            var column = new TableMultiValuesColumn<TRow, TSearch, TColumn>(getColumnCriteria, predicate, isUnion);
+            var column = new TableColumnByPredicate<TRow, TSearch, TColumn>(getColumnCriteria, predicate, isUnion);
             _columns.Add(column);
             return column;
         }
@@ -57,7 +57,6 @@ namespace ZumtenSoft.Mindex
         {
             return new TableIndexConfigurator<TRow, TSearch>(_indexes, _columns);
         }
-
 
         public IEnumerable<TRow> Search(TSearch search, TableIndex<TRow, TSearch> index = null)
         {
@@ -77,6 +76,12 @@ namespace ZumtenSoft.Mindex
             foreach (var criteria in criterias)
                 foreach (var result in Search(criteria))
                     yield return result;
+        }
+
+        public TableIndexScore<TRow, TSearch>[] EvaluateIndexes(TSearch search)
+        {
+            var criterias = _columns.ExtractCriterias(search);
+            return _indexes.EvaluateIndexes(criterias);
         }
     }
 }

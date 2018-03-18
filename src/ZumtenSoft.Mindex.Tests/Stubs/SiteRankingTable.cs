@@ -12,6 +12,7 @@ namespace ZumtenSoft.Mindex.Tests.Stubs
             MapSearchCriteria(s => s.TopLevelDomainRank, r => r.TopLevelDomainRank);
             MapSearchCriteria(s => s.DomainName, r => r.DomainName, StringComparer.OrdinalIgnoreCase);
             MapSearchCriteria(s => s.TopLevelDomain, r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
+            MapMultiValuesSearchCriteria(s => s.TLDContainsChar, (r, c) => r.TopLevelDomain.IndexOf(c) > 0);
 
             IndexTopLevelDomainRank = ConfigureIndex().IncludeColumns(s => s.TopLevelDomainRank).Build();
             IndexTopLevelDomain = ConfigureIndex().IncludeColumns(s => s.TopLevelDomain, s => s.TopLevelDomainRank).Build();

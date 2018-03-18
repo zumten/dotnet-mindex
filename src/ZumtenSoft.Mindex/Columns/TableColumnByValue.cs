@@ -9,8 +9,8 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
-    [DebuggerDisplay(@"\{TableColumn " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
-    public class TableColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
+    [DebuggerDisplay(@"\{TableColumnByValue " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
+    public class TableColumnByValue<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
         public string Name => SearchProperty.Name;
         public Func<TRow, TColumn> GetColumnValue { get; }
@@ -22,7 +22,7 @@ namespace ZumtenSoft.Mindex.Columns
 
         private readonly Func<TSearch, SearchCriteria<TColumn>> _getCriteriaValue;
 
-        public TableColumn(IReadOnlyCollection<TRow> rows, Expression<Func<TRow, TColumn>> getColumnValue,
+        public TableColumnByValue(IReadOnlyCollection<TRow> rows, Expression<Func<TRow, TColumn>> getColumnValue,
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer,
             IEqualityComparer<TColumn> equalityComparer)
         {
@@ -44,13 +44,13 @@ namespace ZumtenSoft.Mindex.Columns
                 : items.OrderBy(GetColumnValue, Comparer);
         }
 
-        public ITableColumnCriteria<TRow, TSearch> ExtractCriteria(TSearch search)
+        public ITableCriteriaForColumn<TRow, TSearch> ExtractCriteria(TSearch search)
         {
             var criteria = _getCriteriaValue(search);
             if (criteria == null || (criteria = criteria.Optimize(Comparer, EqualityComparer)) == null)
                 return null;
 
-            return new TableColumnCriteria<TRow, TSearch, TColumn>(this, criteria);
+            return new TableCriteriaForColumnByValue<TRow, TSearch, TColumn>(this, criteria);
         }
     }
 }

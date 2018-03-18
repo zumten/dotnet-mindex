@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using ZumtenSoft.Mindex.Columns;
@@ -7,13 +8,14 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.ColumnCriterias
 {
-    public class TableMultiValuesColumnCriteria<TRow, TSearch, TColumn> : ITableColumnCriteria<TRow, TSearch>
+    [DebuggerDisplay(@"\{TableCriteriaForColumnByPredicate Column={Column.Name}, Score={Score.Value}, Criteria={_criteria.Name}\}")]
+    public class TableCriteriaForColumnByPredicate<TRow, TSearch, TColumn> : ITableCriteriaForColumn<TRow, TSearch>
     {
-        private readonly TableMultiValuesColumn<TRow, TSearch, TColumn> _column;
+        private readonly TableColumnByPredicate<TRow, TSearch, TColumn> _column;
         private readonly SearchCriteriaByValue<TColumn> _criteria;
         public ITableColumn<TRow, TSearch> Column => _column;
 
-        public TableMultiValuesColumnCriteria(TableMultiValuesColumn<TRow, TSearch, TColumn> column, SearchCriteriaByValue<TColumn> criteria)
+        public TableCriteriaForColumnByPredicate(TableColumnByPredicate<TRow, TSearch, TColumn> column, SearchCriteriaByValue<TColumn> criteria)
         {
             _column = column;
             _criteria = criteria;

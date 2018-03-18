@@ -7,9 +7,9 @@ namespace ZumtenSoft.Mindex.Columns
 {
     public class TableColumnCollection<TRow, TSearch> : List<ITableColumn<TRow, TSearch>>
     {
-        public List<ITableColumnCriteria<TRow, TSearch>> ExtractCriterias(TSearch search)
+        public List<ITableCriteriaForColumn<TRow, TSearch>> ExtractCriterias(TSearch search)
         {
-            List<ITableColumnCriteria<TRow, TSearch>> criterias = new List<ITableColumnCriteria<TRow, TSearch>>();
+            List<ITableCriteriaForColumn<TRow, TSearch>> criterias = new List<ITableCriteriaForColumn<TRow, TSearch>>();
             foreach (var column in this)
             {
                 var criteria = column.ExtractCriteria(search);

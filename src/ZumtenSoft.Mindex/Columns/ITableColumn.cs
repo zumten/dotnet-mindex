@@ -13,6 +13,6 @@ namespace ZumtenSoft.Mindex.Columns
         string Name { get; }
         MemberInfo SearchProperty { get; }
         IEnumerable<TRow> Sort(IEnumerable<TRow> items);
-        ITableColumnCriteria<TRow, TSearch> ExtractCriteria(TSearch search);
+        ITableCriteriaForColumn<TRow, TSearch> ExtractCriteria(TSearch search);
     }
 }

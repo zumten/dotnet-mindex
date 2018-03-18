@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ColumnCriterias\" />
+    <Folder Include="Columns\" />
   </ItemGroup>
 
   <ItemGroup>

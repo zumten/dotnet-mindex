@@ -31,7 +31,7 @@ namespace ZumtenSoft.Mindex.Indexes
             return sortedRows.ToArray();
         }
 
-        public override IEnumerable<TRow> Search(IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> criterias)
+        public override IEnumerable<TRow> Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
             if (_sortColumns.Length == 0)
                 return base.Search(criterias);
@@ -67,7 +67,7 @@ namespace ZumtenSoft.Mindex.Indexes
             return FilterRowsWithCustomExpression(binaryResult, remainingCriterias);
         }
 
-        public float GetScore(IReadOnlyCollection<ITableColumnCriteria<TRow, TSearch>> criterias)
+        public TableIndexScore<TRow, TSearch> GetScore(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
             TableColumnScore score = TableColumnScore.Initial;
             var remainingCriterias = criterias.ToList();
@@ -87,7 +87,7 @@ namespace ZumtenSoft.Mindex.Indexes
                 }
             }
 
-            return score.Value;
+            return new TableIndexScore<TRow, TSearch>(this, score.Value);
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace ZumtenSoft.Mindex.Tests.Stubs
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace ZumtenSoft.Mindex.Tests.Stubs
 {
     public static class SiteRankingCollections
     {
@@ -15,5 +18,9 @@
             new SiteRanking { GlobalRank = 9, DomainName = "apple.com", TopLevelDomain = "com" },
             new SiteRanking { GlobalRank = 10, DomainName = "instagram.com", TopLevelDomain = "com" },
         };
+
+        private static SiteRanking[] _instance;
+
+        public static SiteRanking[] First10000Rows => _instance ?? (_instance = MajesticMillionHelper.LoadSiteRankings(@"App_Data\majestic_million_reduced.csv").ToArray());
     }
 }

@@ -30,5 +30,7 @@ namespace ZumtenSoft.Mindex.Tests.Stubs
         public SearchCriteria<int> ReferringIps { get; set; }
         public SearchCriteria<string> InternationalizedDomainName { get; set; }
         public SearchCriteria<string> InternationalizedTopLevelDomain { get; set; }
+
+        public SearchCriteriaByValue<char> TLDContainsChar { get; set; }
     }
 }

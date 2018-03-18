@@ -10,12 +10,12 @@ namespace ZumtenSoft.Mindex.Tests
     public class TableTests
     {
         private static SiteRankingTable _table;
-        private static List<SiteRanking> _rows;
+        private static SiteRanking[] _rows;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            _rows = MajesticMillionHelper.LoadSiteRankings(@"App_Data\majestic_million_reduced.csv").ToList();
+            _rows = SiteRankingCollections.First10000Rows;
             _table = new SiteRankingTable(_rows);
         }
 
@@ -26,18 +26,15 @@ namespace ZumtenSoft.Mindex.Tests
             const int globalRank = 1000;
 
             var expected = _rows.Where(x => x.TopLevelDomain == topLevelDomain && x.GlobalRank <= globalRank).ToList();
-            var actual = _table.Search(new SiteRankingSearch
+            var search = new SiteRankingSearch
             {
                 TopLevelDomain = topLevelDomain,
                 GlobalRank = SearchCriteria.ByRange(1, globalRank)
-            }).ToList();
-            var actualWithGlobalIndex = _table.Search(new SiteRankingSearch
-            {
-                TopLevelDomain = topLevelDomain,
-                GlobalRank = SearchCriteria.ByRange(1, globalRank)
-            }, _table.IndexGlobalRank).ToList();
-
+            };
+            var actual = _table.Search(search).ToList();
             CollectionAssert.AreEquivalent(expected, actual);
+
+            var actualWithGlobalIndex = _table.Search(search, _table.IndexGlobalRank).ToList();
             CollectionAssert.AreEquivalent(expected, actualWithGlobalIndex);
         }
 
@@ -48,18 +45,25 @@ namespace ZumtenSoft.Mindex.Tests
             const int topLevelDomainRank = 1000;
 
             var expected = _rows.Where(x => topLevelDomains.Contains(x.TopLevelDomain) && x.TopLevelDomainRank <= topLevelDomainRank).ToList();
-            var actual = _table.Search(new SiteRankingSearch {
+            var search = new SiteRankingSearch
+            {
                 TopLevelDomain = topLevelDomains,
                 TopLevelDomainRank = SearchCriteria.ByRange(1, topLevelDomainRank)
-            }).ToList();
-            var actualWithPredicate = _table.Search(new SiteRankingSearch
+            };
+            var actual = _table.Search(search).ToList();
+            var indexScores = _table.EvaluateIndexes(search);
+            CollectionAssert.AreEquivalent(expected, actual);
+
+            var searchWithPredicate = new SiteRankingSearch
             {
                 TopLevelDomain = topLevelDomains,
                 TopLevelDomainRank = SearchCriteria.ByPredicate((int x) => x <= topLevelDomainRank)
-            }).ToList();
-
-            CollectionAssert.AreEquivalent(expected, actual);
+            };
+            var actualWithPredicate = _table.Search(searchWithPredicate).ToList();
+            var indexScoreWithPredicate = _table.EvaluateIndexes(searchWithPredicate);
             CollectionAssert.AreEquivalent(expected, actualWithPredicate);
+
+            Assert.IsTrue(indexScores[0].Score < indexScoreWithPredicate[0].Score, "Search without predicate should have a better score");
         }
 
         [TestMethod]
