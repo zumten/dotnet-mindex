@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -22,6 +23,11 @@ namespace ZumtenSoft.Mindex.Criterias
         {
             return Expression.Invoke(_predicate,
                 Expression.Invoke(getColumnValue, paramRow));
+        }
+
+        public override TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer)
+        {
+            return new TableColumnScore(1, false);
         }
     }
 

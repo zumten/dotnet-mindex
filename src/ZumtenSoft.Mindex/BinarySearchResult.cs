@@ -7,9 +7,9 @@ namespace ZumtenSoft.Mindex
 {
     public class BinarySearchResult<TRow> : IReadOnlyCollection<TRow>
     {
-        private static readonly TRow[] EmptyArray = new TRow[0];
+        public static readonly TRow[] EmptyArray = new TRow[0];
         private static readonly ArraySegment<TRow> EmptySegment = new ArraySegment<TRow>(EmptyArray);
-        private readonly IReadOnlyList<ArraySegment<TRow>> _segments;
+        private readonly ArraySegment<TRow>[] _segments;
         public bool CanSearch { get; }
         public int Count => _segments.Sum(s => s.Count);
 
@@ -22,15 +22,22 @@ namespace ZumtenSoft.Mindex
         public BinarySearchResult(IEnumerable<ArraySegment<TRow>> segments, bool canSearch)
         {
             CanSearch = canSearch;
-            _segments = segments as IReadOnlyList<ArraySegment<TRow>> ?? segments.ToList();
+            _segments = segments as ArraySegment<TRow>[] ?? segments.ToArray();
         }
 
         public BinarySearchResult<TRow> ReduceIn<TColumn>(Func<TRow, TColumn> getColumn, TColumn[] values, IComparer<TColumn> comparer)
         {
             List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
-            foreach (var key in values)
-                foreach (var segment in _segments)
-                    result.Add(SearchRange(segment, getColumn, key, key, comparer));
+            for (int iValue = values.Length - 1; iValue >= 0; iValue--)
+            {
+                TColumn value = values[iValue];
+                for (int iSegment = _segments.Length - 1; iSegment >= 0; iSegment--)
+                {
+                    var range = SearchRange(_segments[iSegment], getColumn, value, value, comparer);
+                    if (range != EmptySegment)
+                        result.Add(range);
+                }
+            }
 
             return new BinarySearchResult<TRow>(result, true);
         }

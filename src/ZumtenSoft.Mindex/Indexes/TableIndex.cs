@@ -16,11 +16,14 @@ namespace ZumtenSoft.Mindex.Indexes
             _rootResult = new BinarySearchResult<TRow>(Rows);
         }
 
-        private static TRow[] SortRows(IEnumerable<TRow> items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
+        private static TRow[] SortRows(TRow[] items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
         {
+            if (sortColumns.Count == 0)
+                return items;
+            var sortedRows = items.AsEnumerable();
             foreach (var criteria in sortColumns)
-                items = criteria.Sort(items);
-            return items.ToArray();
+                sortedRows = criteria.Sort(sortedRows);
+            return sortedRows.ToArray();
         }
 
         public override IEnumerable<TRow> Search(TSearch search)
@@ -47,7 +50,7 @@ namespace ZumtenSoft.Mindex.Indexes
             foreach (var column in _sortColumns)
             {
                 var columnScore = column.GetScore(search);
-                score += columnScore.Value;
+                score *= columnScore.Value;
                 if (!columnScore.CanContinue)
                     break;
             }

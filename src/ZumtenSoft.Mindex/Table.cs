@@ -27,10 +27,25 @@ namespace ZumtenSoft.Mindex
 
         protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
-            Expression<Func<TRow, TColumn>> getColumnValue,
-            IComparer<TColumn> comparer = null)
+            Expression<Func<TRow, TColumn>> getColumnValue)
         {
-            var column = new TableColumn<TRow, TSearch, TColumn>(getColumnValue, getSearchValue, comparer ?? Comparer<TColumn>.Default);
+            return MapSearchCriteria(getSearchValue, getColumnValue, Comparer<TColumn>.Default, EqualityComparer<TColumn>.Default);
+        }
+
+        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn, TComparer>(
+            Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
+            Expression<Func<TRow, TColumn>> getColumnValue,
+            TComparer hybridComparer) where TComparer : IComparer<TColumn>, IEqualityComparer<TColumn>
+        {
+            return MapSearchCriteria(getSearchValue, getColumnValue, hybridComparer, hybridComparer);
+        }
+
+        protected TableColumn<TRow, TSearch, TColumn> MapSearchCriteria<TColumn>(
+            Expression<Func<TSearch, SearchCriteria<TColumn>>> getSearchValue,
+            Expression<Func<TRow, TColumn>> getColumnValue,
+            IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        {
+            var column = new TableColumn<TRow, TSearch, TColumn>(DefaultIndex.Rows, getColumnValue, getSearchValue, comparer, equalityComparer);
             _columns.Add(column);
             return column;
         }
@@ -55,14 +70,21 @@ namespace ZumtenSoft.Mindex
                 DefaultIndex = index;
         }
 
-        public IEnumerable<TRow> Search(TSearch criteria, TableRowCollection<TRow, TSearch> index = null)
+        public IEnumerable<TRow> Search(TSearch criteria)
         {
-            // If no index was provided, we try to find the best one
-            if (index == null)
-                index = Indexes.OrderByDescending(x => x.GetScore(criteria)).First();
+            if (_indexes.Count == 0)
+                return DefaultIndex.Search(criteria);
+
+            var bestMatch = _indexes
+                .Select(i => new {score = i.GetScore(criteria), index = i})
+                .Aggregate((x, y) => x.score < y.score ? x : y);
+
+            // If we receive a score of 0, it means one of the criteria is impossible
+            if (bestMatch.score <= 0f)
+                return BinarySearchResult<TRow>.EmptyArray;
 
             // If no index was built, we will use the default rows collection
-            return (index ?? DefaultIndex).Search(criteria);
+            return bestMatch.index.Search(criteria);
         }
 
         public IEnumerable<TRow> Search(IEnumerable<TSearch> criterias)

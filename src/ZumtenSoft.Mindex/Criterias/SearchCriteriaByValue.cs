@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -49,6 +50,13 @@ namespace ZumtenSoft.Mindex.Criterias
             }
 
             return expressions.Aggregate((x, y) => Expression.OrElse(y, x));
+        }
+
+        public override TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer)
+        {
+            if (SearchValues.Length == 0)
+                return new TableColumnScore(1, false);
+            return new TableColumnScore((float)(numberRows * SearchValues.Length) / possibleValues.Length, true);
         }
     }
 

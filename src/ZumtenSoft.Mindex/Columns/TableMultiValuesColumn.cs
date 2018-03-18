@@ -11,6 +11,7 @@ namespace ZumtenSoft.Mindex.Columns
     {
         private readonly Func<TSearch, SearchCriteriaByValue<TColumn>> _getCriteriaValue;
         private readonly Expression<Func<TRow, TColumn, bool>> _predicate;
+
         public MemberInfo SearchProperty { get; }
 
         public TableMultiValuesColumn(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate)
@@ -22,12 +23,12 @@ namespace ZumtenSoft.Mindex.Columns
 
         public TableColumnScore GetScore(TSearch search)
         {
-            return new TableColumnScore(0f, false);
+            return new TableColumnScore(1, false);
         }
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)
         {
-            throw new NotSupportedException();
+            throw new NotSupportedException($"Column with multiple values '{SearchProperty.Name}' does not support indexing");
         }
 
         public bool Reduce(TSearch search, ref BinarySearchResult<TRow> items)

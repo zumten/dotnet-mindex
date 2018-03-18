@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -35,7 +36,7 @@ namespace ZumtenSoft.Mindex.Criterias
         }
 
         public abstract BinarySearchResult<TRow> Search<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer);
-
         public abstract Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer);
+        public abstract TableColumnScore GetScore(TColumn[] possibleValues, int numberRows, IComparer<TColumn> comparer);
     }
 }
