@@ -23,7 +23,8 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer)
         {
-            return Expression.Invoke(_predicate, getColumnValue);
+            return Expression.Invoke(_predicate,
+                Expression.Invoke(getColumnValue, paramRow));
         }
 
         public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)

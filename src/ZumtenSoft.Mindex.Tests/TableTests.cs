@@ -4,10 +4,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZumtenSoft.Mindex.Criterias;
 using ZumtenSoft.Mindex.Tests.Stubs;
 
-namespace ZumtenSoft.Mindex.Tests.Indexes
+namespace ZumtenSoft.Mindex.Tests
 {
     [TestClass]
-    public class TableIndexTests
+    public class TableTests
     {
         private static SiteRankingTable _table;
         private static List<SiteRanking> _rows;
@@ -31,8 +31,14 @@ namespace ZumtenSoft.Mindex.Tests.Indexes
                 TopLevelDomain = topLevelDomain,
                 GlobalRank = SearchCriteria.ByRange(1, globalRank)
             }).ToList();
+            var actualWithGlobalIndex = _table.Search(new SiteRankingSearch
+            {
+                TopLevelDomain = topLevelDomain,
+                GlobalRank = SearchCriteria.ByRange(1, globalRank)
+            }, _table.IndexGlobalRank).ToList();
 
             CollectionAssert.AreEquivalent(expected, actual);
+            CollectionAssert.AreEquivalent(expected, actualWithGlobalIndex);
         }
 
         [TestMethod]
@@ -46,8 +52,14 @@ namespace ZumtenSoft.Mindex.Tests.Indexes
                 TopLevelDomain = topLevelDomains,
                 TopLevelDomainRank = SearchCriteria.ByRange(1, topLevelDomainRank)
             }).ToList();
+            var actualWithPredicate = _table.Search(new SiteRankingSearch
+            {
+                TopLevelDomain = topLevelDomains,
+                TopLevelDomainRank = SearchCriteria.ByPredicate((int x) => x <= topLevelDomainRank)
+            }).ToList();
 
             CollectionAssert.AreEquivalent(expected, actual);
+            CollectionAssert.AreEquivalent(expected, actualWithPredicate);
         }
 
         [TestMethod]
