@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,8 +9,10 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
+    [DebuggerDisplay(@"\{TableColumn " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
     public class TableColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
+        public string Name => SearchProperty.Name;
         public Func<TRow, TColumn> GetColumnValue { get; }
         public Expression<Func<TRow, TColumn>> GetColumnExpression { get; }
         public IComparer<TColumn> Comparer { get; }
@@ -19,9 +22,11 @@ namespace ZumtenSoft.Mindex.Columns
 
         private readonly Func<TSearch, SearchCriteria<TColumn>> _getCriteriaValue;
 
-        public TableColumn(IReadOnlyCollection<TRow> rows, Expression<Func<TRow, TColumn>> getColumnValue, Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        public TableColumn(IReadOnlyCollection<TRow> rows, Expression<Func<TRow, TColumn>> getColumnValue,
+            Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer,
+            IEqualityComparer<TColumn> equalityComparer)
         {
-            SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
+            SearchProperty = ((MemberExpression) getCriteriaValue.Body).Member;
             GetColumnValue = getColumnValue.Compile();
             GetColumnExpression = getColumnValue;
             _getCriteriaValue = getCriteriaValue.Compile();
@@ -34,7 +39,9 @@ namespace ZumtenSoft.Mindex.Columns
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)
         {
-            return items is IOrderedEnumerable<TRow> orderedItems ? orderedItems.ThenBy(GetColumnValue, Comparer) : items.OrderBy(GetColumnValue, Comparer);
+            return items is IOrderedEnumerable<TRow> orderedItems
+                ? orderedItems.ThenBy(GetColumnValue, Comparer)
+                : items.OrderBy(GetColumnValue, Comparer);
         }
 
         public ITableColumnCriteria<TRow, TSearch> ExtractCriteria(TSearch search)
@@ -43,8 +50,7 @@ namespace ZumtenSoft.Mindex.Columns
             if (criteria == null || (criteria = criteria.Optimize(Comparer, EqualityComparer)) == null)
                 return null;
 
-            return new TableColumnCriteria<TRow,TSearch,TColumn>(this, criteria);
+            return new TableColumnCriteria<TRow, TSearch, TColumn>(this, criteria);
         }
     }
-
 }

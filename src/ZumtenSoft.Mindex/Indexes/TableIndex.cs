@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Indexes
 {
+    [DebuggerDisplay(@"\{TableIndex " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
     public class TableIndex<TRow, TSearch> : TableRowCollection<TRow, TSearch>
     {
+        public string Name => String.Join("_", _sortColumns.Select(x => x.Name));
         private readonly ITableColumn<TRow, TSearch>[] _sortColumns;
         private readonly BinarySearchResult<TRow> _rootResult;
 
@@ -34,7 +38,9 @@ namespace ZumtenSoft.Mindex.Indexes
 
             var binaryResult = _rootResult;
             var remainingCriterias = criterias.ToList();
-            for (var indexSortColumn = 0; binaryResult.CanSearch && indexSortColumn < _sortColumns.Length; indexSortColumn++)
+            for (var indexSortColumn = 0;
+                binaryResult.CanSearch && indexSortColumn < _sortColumns.Length;
+                indexSortColumn++)
             {
                 var sortColumn = _sortColumns[indexSortColumn];
                 var indexRemainingColumn = remainingCriterias.FindIndex(x => x.Column == sortColumn);
@@ -51,6 +57,10 @@ namespace ZumtenSoft.Mindex.Indexes
                         binaryResult = reducedResult;
                         remainingCriterias.RemoveAt(indexRemainingColumn);
                     }
+                }
+                else
+                {
+                    binaryResult = new BinarySearchResult<TRow>(binaryResult.Segments, false);
                 }
             }
 
@@ -71,10 +81,13 @@ namespace ZumtenSoft.Mindex.Indexes
                     score *= criteria.Score;
                     remainingCriterias.RemoveAt(indexRemainingColumn);
                 }
+                else
+                {
+                    score.CanContinue = false;
+                }
             }
 
             return score.Value;
         }
     }
-
 }

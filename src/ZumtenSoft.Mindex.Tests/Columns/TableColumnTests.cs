@@ -12,16 +12,6 @@ namespace ZumtenSoft.Mindex.Tests.Columns
     public class TableColumnTests
     {
         [TestMethod]
-        public void GetScore_SearchEmptyRows_ShouldReturnScoreOf_0()
-        {
-            var rows = new SiteRanking[0];
-            var search = new SiteRankingSearch();
-            var expectedScore = new TableColumnScore(0, false);
-
-            TestGetScores(rows, search, expectedScore);
-        }
-
-        [TestMethod]
         public void GetScore_SearchEmptyCriteria_ShouldReturnScoreOf_1()
         {
             var rows = SiteRankingCollections.FirstTenRows;

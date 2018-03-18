@@ -7,12 +7,14 @@ namespace ZumtenSoft.Mindex.Criterias
 {
     public class SearchCriteriaByPredicate<TColumn> : SearchCriteria<TColumn>
     {
-        private readonly Func<TColumn, bool> _predicate;
+        private readonly Expression<Func<TColumn, bool>> _predicate;
 
-        public SearchCriteriaByPredicate(Func<TColumn, bool> predicate)
+        public SearchCriteriaByPredicate(Expression<Func<TColumn, bool>> predicate)
         {
             _predicate = predicate;
         }
+
+        public override string Name => _predicate.ToString();
 
         public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
         {
@@ -21,7 +23,7 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer)
         {
-            return Expression.Call(_predicate.Method, getColumnValue);
+            return Expression.Invoke(_predicate, getColumnValue);
         }
 
         public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
@@ -31,7 +33,7 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
         {
-            return new TableColumnScore(1, false);
+            return TableColumnScore.NotOptimizable;
         }
     }
 

@@ -15,6 +15,8 @@ namespace ZumtenSoft.Mindex.Criterias
             SearchValues = searchValues;
         }
 
+        public override string Name => String.Join(", ", SearchValues);
+
         public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
         {
             return rows.ReduceIn(getValue, SearchValues, comparer);
@@ -59,7 +61,8 @@ namespace ZumtenSoft.Mindex.Criterias
             if (SearchValues.Length == 1)
                 return this;
 
-            return ByValues(new HashSet<TColumn>(SearchValues, equalityComparer).ToArray());
+            // Try to remove duplicate search values
+            return ByValues(SearchValues.Distinct(equalityComparer).ToArray());
         }
 
         public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)

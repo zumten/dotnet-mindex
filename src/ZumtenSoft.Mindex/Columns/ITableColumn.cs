@@ -10,6 +10,7 @@ namespace ZumtenSoft.Mindex.Columns
 {
     public interface ITableColumn<TRow, in TSearch>
     {
+        string Name { get; }
         MemberInfo SearchProperty { get; }
         IEnumerable<TRow> Sort(IEnumerable<TRow> items);
         ITableColumnCriteria<TRow, TSearch> ExtractCriteria(TSearch search);

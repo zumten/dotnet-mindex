@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,8 +9,10 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Columns
 {
+    [DebuggerDisplay(@"\{TableMultiValuesColumn " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
     public class TableMultiValuesColumn<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
+        public string Name => SearchProperty.Name;
         private readonly Func<TSearch, SearchCriteriaByValue<TColumn>> _getCriteriaValue;
         public Expression<Func<TRow, TColumn, bool>> Predicate { get; }
         public bool IsUnion { get; }

@@ -1,9 +1,11 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics;
+using System.Linq.Expressions;
 using ZumtenSoft.Mindex.Columns;
 using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.ColumnCriterias
 {
+    [DebuggerDisplay(@"\{TableColumnCriteria Column={Column.Name}, Score={Score.Value}, Criteria={_criteria.Name}\}")]
     public class TableColumnCriteria<TRow, TSearch, TColumn> : ITableColumnCriteria<TRow, TSearch>
     {
         private readonly TableColumn<TRow, TSearch, TColumn> _column;

@@ -10,14 +10,14 @@ namespace ZumtenSoft.Mindex
 {
     public abstract class Table<TRow, TSearch>
     {
-        private readonly List<ITableColumn<TRow, TSearch>> _columns;
+        private readonly TableColumnCollection<TRow, TSearch> _columns;
         public IReadOnlyCollection<ITableColumn<TRow, TSearch>> Columns => _columns;
 
         private readonly TableIndexCollection<TRow, TSearch> _indexes;
 
         protected Table(IReadOnlyCollection<TRow> rows)
         {
-            _columns = new List<ITableColumn<TRow, TSearch>>();
+            _columns = new TableColumnCollection<TRow, TSearch>();
             _indexes = new TableIndexCollection<TRow, TSearch>(rows);
         }
 
@@ -61,7 +61,7 @@ namespace ZumtenSoft.Mindex
 
         public IEnumerable<TRow> Search(TSearch search, TableIndex<TRow, TSearch> index = null)
         {
-            var criterias = ExtractCriterias(search);
+            var criterias = _columns.ExtractCriterias(search);
 
             if (index != null)
                 return index.Search(criterias);
@@ -70,19 +70,6 @@ namespace ZumtenSoft.Mindex
             if (bestIndex == null)
                 return BinarySearchResult<TRow>.EmptyArray;
             return bestIndex.Search(criterias);
-        }
-
-        private List<ITableColumnCriteria<TRow, TSearch>> ExtractCriterias(TSearch search)
-        {
-            List<ITableColumnCriteria<TRow, TSearch>> criterias = new List<ITableColumnCriteria<TRow, TSearch>>();
-            foreach (var column in _columns)
-            {
-                var criteria = column.ExtractCriteria(search);
-                if (criteria != null)
-                    criterias.Add(criteria);
-            }
-
-            return criterias;
         }
 
         public IEnumerable<TRow> Search(IEnumerable<TSearch> criterias)

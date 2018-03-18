@@ -16,6 +16,8 @@ namespace ZumtenSoft.Mindex.Criterias
             End = end;
         }
 
+        public override string Name => Start + "-" + End;
+
         public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
         {
             return rows.ReduceRange(getValue, Start, End, comparer);
@@ -49,7 +51,7 @@ namespace ZumtenSoft.Mindex.Criterias
         {
             var resultRange = new BinarySearchResult<TColumn>(possibleValues).ReduceRange(x => x, Start, End, comparer);
             if (resultRange.Count == 0)
-                return new TableColumnScore(0, false);
+                return TableColumnScore.Impossible;
             return new TableColumnScore((float)resultRange.Count / possibleValues.Length, false);
         }
     }
