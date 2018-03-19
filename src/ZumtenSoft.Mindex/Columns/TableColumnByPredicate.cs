@@ -27,9 +27,9 @@ namespace ZumtenSoft.Mindex.Columns
             SearchProperty = ((MemberExpression)getCriteriaValue.Body).Member;
         }
 
-        public TableColumnScore GetScore(TSearch search)
+        public TableCriteriaScore GetScore(TSearch search)
         {
-            return new TableColumnScore(1, false);
+            return TableCriteriaScore.NotOptimizable;
         }
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)

@@ -47,12 +47,12 @@ namespace ZumtenSoft.Mindex.Criterias
             return this;
         }
 
-        public override TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
             var resultRange = new BinarySearchResult<TColumn>(metaData.PossibleValues).ReduceRange(x => x, Start, End, metaData.Comparer);
             if (resultRange.Count == 0)
-                return TableColumnScore.Impossible;
-            return new TableColumnScore((float)resultRange.Count / metaData.PossibleValues.Length, false);
+                return TableCriteriaScore.Impossible;
+            return new TableCriteriaScore((float)resultRange.Count / metaData.PossibleValues.Length, false);
         }
     }
 

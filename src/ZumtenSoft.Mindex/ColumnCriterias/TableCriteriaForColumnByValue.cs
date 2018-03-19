@@ -12,7 +12,7 @@ namespace ZumtenSoft.Mindex.ColumnCriterias
         private readonly SearchCriteria<TColumn> _criteria;
         private readonly TableColumnMetaData<TRow, TColumn> _metaData;
         public ITableColumn<TRow, TSearch> Column => _column;
-        public TableColumnScore Score { get; }
+        public TableCriteriaScore Score { get; }
 
         public TableCriteriaForColumnByValue(TableColumnByValue<TRow, TSearch, TColumn> column, SearchCriteria<TColumn> criteria)
         {
@@ -32,15 +32,15 @@ namespace ZumtenSoft.Mindex.ColumnCriterias
             return _criteria.BuildPredicateExpression(paramExpr, _metaData.GetColumnExpression, _metaData.Comparer);
         }
 
-        private static TableColumnScore GetScore(TableColumnMetaData<TRow, TColumn> metaData, SearchCriteria<TColumn> criteria)
+        private static TableCriteriaScore GetScore(TableColumnMetaData<TRow, TColumn> metaData, SearchCriteria<TColumn> criteria)
         {
             // There are no values, will always return an empty set
             if (metaData.PossibleValues.Length == 0)
-                return TableColumnScore.Impossible;
+                return TableCriteriaScore.Impossible;
 
             // No criteria or criteria contains no value, we ignore the criteria
             if (criteria == null)
-                return TableColumnScore.NotOptimizable;
+                return TableCriteriaScore.NotOptimizable;
 
             return criteria.GetScore(metaData);
         }

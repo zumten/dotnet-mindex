@@ -66,11 +66,11 @@ namespace ZumtenSoft.Mindex.Criterias
             return ByValues(SearchValues.Distinct(metaData.EqualityComparer).ToArray());
         }
 
-        public override TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
             if (SearchValues.Length == 0)
-                return new TableColumnScore(1, false);
-            return new TableColumnScore(SearchValues.Length / (float)metaData.PossibleValues.Length, true);
+                return new TableCriteriaScore(1, false);
+            return new TableCriteriaScore(SearchValues.Length / (float)metaData.PossibleValues.Length, true);
         }
     }
 

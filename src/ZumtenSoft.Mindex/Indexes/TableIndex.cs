@@ -69,7 +69,7 @@ namespace ZumtenSoft.Mindex.Indexes
 
         public TableIndexScore<TRow, TSearch> GetScore(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
-            TableColumnScore score = TableColumnScore.Initial;
+            TableCriteriaScore score = TableCriteriaScore.Initial;
             var remainingCriterias = criterias.ToList();
             for (var indexSortColumn = 0; score.CanContinue && indexSortColumn < _sortColumns.Length; indexSortColumn++)
             {

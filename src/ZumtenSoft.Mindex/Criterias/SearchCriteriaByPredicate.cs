@@ -32,9 +32,9 @@ namespace ZumtenSoft.Mindex.Criterias
             return this;
         }
 
-        public override TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
-            return TableColumnScore.NotOptimizable;
+            return TableCriteriaScore.NotOptimizable;
         }
     }
 

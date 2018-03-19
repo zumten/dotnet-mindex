@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Indexes
 {
+    [DebuggerDisplay(@"\{TableIndexCollection Count={" + nameof(Count) + @"}\}")]
     public class TableIndexCollection<TRow, TSearch> : List<TableIndex<TRow, TSearch>>
     {
         public TableRowCollection<TRow, TSearch> DefaultIndex { get; private set; }
@@ -14,7 +16,8 @@ namespace ZumtenSoft.Mindex.Indexes
             DefaultIndex = new TableRowCollection<TRow, TSearch>(rows.ToArray());
         }
 
-        public TableIndexScore<TRow, TSearch>[] EvaluateIndexes(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
+        public TableIndexScore<TRow, TSearch>[] EvaluateIndexes(
+            IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
             return this
                 .Select(i => i.GetScore(criterias))
@@ -22,7 +25,8 @@ namespace ZumtenSoft.Mindex.Indexes
                 .ToArray();
         }
 
-        public TableRowCollection<TRow, TSearch> GetBestIndex(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
+        public TableRowCollection<TRow, TSearch> GetBestIndex(
+            IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
             if (Count == 0)
                 return DefaultIndex;

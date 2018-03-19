@@ -16,7 +16,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
         {
             var rows = SiteRankingCollections.FirstTenRows;
             var search = new SiteRankingSearch();
-            var expectedScore = new TableColumnScore(1, false);
+            var expectedScore = new TableCriteriaScore(1, false);
 
             TestGetScores(rows, search, expectedScore);
         }
@@ -40,11 +40,11 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
 
             TestGetScores(rows,
                 new SiteRankingSearch { TopLevelDomain = new[] { "net" } },
-                new TableColumnScore(0.2f, true));
+                new TableCriteriaScore(0.2f, true));
 
             TestGetScores(rows,
                 new SiteRankingSearch { TopLevelDomain = new[] { "com", "org" } },
-                new TableColumnScore(0.4f, true));
+                new TableCriteriaScore(0.4f, true));
         }
 
 
@@ -53,7 +53,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
         {
             var rows = SiteRankingCollections.First10000Rows;
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByPredicate((string x) => x.StartsWith("c")) };
-            var expectedScore = new TableColumnScore(1, false);
+            var expectedScore = new TableCriteriaScore(1, false);
 
             TestGetScores(rows, search, expectedScore);
         }
@@ -63,7 +63,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
         {
             var rows = SiteRankingCollections.FirstTenRows;
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByRange("ca", "com") };
-            var expectedScore = new TableColumnScore(0.5f, false);
+            var expectedScore = new TableCriteriaScore(0.5f, false);
 
             TestGetScores(rows, search, expectedScore);
         }
@@ -106,9 +106,9 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             return column.ExtractCriteria(search);
         }
 
-        private static void TestGetScores(SiteRanking[] rows, SiteRankingSearch search, TableColumnScore expectedScore)
+        private static void TestGetScores(SiteRanking[] rows, SiteRankingSearch search, TableCriteriaScore expectedScore)
         {
-            var actualScore = BuildCriteria(rows, search)?.Score ?? TableColumnScore.NotOptimizable;
+            var actualScore = BuildCriteria(rows, search)?.Score ?? TableCriteriaScore.NotOptimizable;
             Assert.AreEqual(expectedScore, actualScore);
         }
     }

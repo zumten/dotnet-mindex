@@ -40,6 +40,6 @@ namespace ZumtenSoft.Mindex.Criterias
         public abstract BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData);
         public abstract Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer);
         public abstract SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData);
-        public abstract TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData);
+        public abstract TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData);
     }
 }

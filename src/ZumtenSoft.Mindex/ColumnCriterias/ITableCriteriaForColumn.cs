@@ -6,7 +6,7 @@ namespace ZumtenSoft.Mindex.ColumnCriterias
     public interface ITableCriteriaForColumn<TRow, in TSearch>
     {
         ITableColumn<TRow, TSearch> Column { get; }
-        TableColumnScore Score { get; }
+        TableCriteriaScore Score { get; }
         BinarySearchResult<TRow> Reduce(BinarySearchResult<TRow> items);
         Expression BuildCondition(ParameterExpression paramExprd);
     }
