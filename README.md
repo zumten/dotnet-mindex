@@ -3,10 +3,14 @@ Mindex: DotNet High-performance in-memory multi-criteria collection search
 
 [![Build Status](https://zumten.visualstudio.com/_apis/public/build/definitions/d6fe51c2-2715-43c8-8bff-5cb5575470b4/1/badge)](https://zumten.visualstudio.com/ZumtenSoft/_build/index?definitionId=1)
 
-
 ## Objective
 
 This library tries to mimmick the way you can search inside a table in SQL through multiple criterias, while providing the full performance of in-memory objects.
+
+## How to install?
+
+The library is currently only released through NuGet https://www.nuget.org/packages/ZumtenSoft.Mindex/
+
 
 ## How it works?
 
