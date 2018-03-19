@@ -18,9 +18,9 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => Start + "-" + End;
 
-        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
+        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
         {
-            return rows.ReduceRange(getValue, Start, End, comparer);
+            return rows.ReduceRange(metaData.GetColumnValue, Start, End, metaData.Comparer);
         }
 
         public override Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer)
@@ -40,19 +40,19 @@ namespace ZumtenSoft.Mindex.Criterias
                         Expression.Constant(0))));
         }
 
-        public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        public override SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
-            if (comparer.Compare(Start, End) == 0)
+            if (metaData.Comparer.Compare(Start, End) == 0)
                 return ByValues(Start);
             return this;
         }
 
-        public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
+        public override TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
-            var resultRange = new BinarySearchResult<TColumn>(possibleValues).ReduceRange(x => x, Start, End, comparer);
+            var resultRange = new BinarySearchResult<TColumn>(metaData.PossibleValues).ReduceRange(x => x, Start, End, metaData.Comparer);
             if (resultRange.Count == 0)
                 return TableColumnScore.Impossible;
-            return new TableColumnScore((float)resultRange.Count / possibleValues.Length, false);
+            return new TableColumnScore((float)resultRange.Count / metaData.PossibleValues.Length, false);
         }
     }
 

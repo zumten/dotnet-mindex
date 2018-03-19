@@ -17,9 +17,9 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => String.Join(", ", SearchValues);
 
-        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
+        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
         {
-            return rows.ReduceIn(getValue, SearchValues, comparer);
+            return rows.ReduceIn(metaData.GetColumnValue, SearchValues, metaData.Comparer);
         }
 
         public static implicit operator SearchCriteriaByValue<TColumn>(TColumn value)
@@ -54,22 +54,23 @@ namespace ZumtenSoft.Mindex.Criterias
             return expressions.Aggregate((x, y) => Expression.OrElse(y, x));
         }
 
-        public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        public override SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
-            if (SearchValues.Length == 0)
-                return null;
-            if (SearchValues.Length == 1)
-                return this;
+            switch (SearchValues.Length)
+            {
+                case 0: return null;
+                case 1: return this;
+            }
 
             // Try to remove duplicate search values
-            return ByValues(SearchValues.Distinct(equalityComparer).ToArray());
+            return ByValues(SearchValues.Distinct(metaData.EqualityComparer).ToArray());
         }
 
-        public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
+        public override TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
             if (SearchValues.Length == 0)
                 return new TableColumnScore(1, false);
-            return new TableColumnScore(SearchValues.Length / (float)possibleValues.Length, true);
+            return new TableColumnScore(SearchValues.Length / (float)metaData.PossibleValues.Length, true);
         }
     }
 

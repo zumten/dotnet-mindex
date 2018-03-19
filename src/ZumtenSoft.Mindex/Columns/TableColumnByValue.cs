@@ -13,41 +13,32 @@ namespace ZumtenSoft.Mindex.Columns
     public class TableColumnByValue<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
     {
         public string Name => SearchProperty.Name;
-        public Func<TRow, TColumn> GetColumnValue { get; }
-        public Expression<Func<TRow, TColumn>> GetColumnExpression { get; }
-        public IComparer<TColumn> Comparer { get; }
-        public IEqualityComparer<TColumn> EqualityComparer { get; }
-        public TColumn[] PossibleValues { get; }
+
         public MemberInfo SearchProperty { get; }
+        public TableColumnMetaData<TRow, TColumn> MetaData { get; }
 
         private readonly Func<TSearch, SearchCriteria<TColumn>> _getCriteriaValue;
 
-        public TableColumnByValue(IReadOnlyCollection<TRow> rows, Expression<Func<TRow, TColumn>> getColumnValue,
+        public TableColumnByValue(IReadOnlyCollection<TRow> rows, Expression<Func<TRow, TColumn>> getColumnExpression,
             Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue, IComparer<TColumn> comparer,
             IEqualityComparer<TColumn> equalityComparer)
         {
             SearchProperty = ((MemberExpression) getCriteriaValue.Body).Member;
-            GetColumnValue = getColumnValue.Compile();
-            GetColumnExpression = getColumnValue;
             _getCriteriaValue = getCriteriaValue.Compile();
-            Comparer = comparer;
-            EqualityComparer = equalityComparer;
-
-            var columnValues = new HashSet<TColumn>(rows.Select(GetColumnValue), equalityComparer);
-            PossibleValues = columnValues.OrderBy(x => x, comparer).ToArray();
+            MetaData = new TableColumnMetaData<TRow, TColumn>(rows, comparer, equalityComparer, getColumnExpression);
         }
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)
         {
             return items is IOrderedEnumerable<TRow> orderedItems
-                ? orderedItems.ThenBy(GetColumnValue, Comparer)
-                : items.OrderBy(GetColumnValue, Comparer);
+                ? orderedItems.ThenBy(MetaData.GetColumnValue, MetaData.Comparer)
+                : items.OrderBy(MetaData.GetColumnValue, MetaData.Comparer);
         }
 
         public ITableCriteriaForColumn<TRow, TSearch> ExtractCriteria(TSearch search)
         {
             var criteria = _getCriteriaValue(search);
-            if (criteria == null || (criteria = criteria.Optimize(Comparer, EqualityComparer)) == null)
+            if (criteria == null || (criteria = criteria.Optimize(MetaData)) == null)
                 return null;
 
             return new TableCriteriaForColumnByValue<TRow, TSearch, TColumn>(this, criteria);

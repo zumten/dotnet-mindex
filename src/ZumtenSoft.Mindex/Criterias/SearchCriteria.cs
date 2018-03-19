@@ -37,9 +37,9 @@ namespace ZumtenSoft.Mindex.Criterias
         }
 
         public abstract string Name { get; }
-        public abstract BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer);
+        public abstract BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData);
         public abstract Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer);
-        public abstract SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer);
-        public abstract TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer);
+        public abstract SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData);
+        public abstract TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData);
     }
 }

@@ -10,37 +10,39 @@ namespace ZumtenSoft.Mindex.ColumnCriterias
     {
         private readonly TableColumnByValue<TRow, TSearch, TColumn> _column;
         private readonly SearchCriteria<TColumn> _criteria;
+        private readonly TableColumnMetaData<TRow, TColumn> _metaData;
         public ITableColumn<TRow, TSearch> Column => _column;
         public TableColumnScore Score { get; }
 
         public TableCriteriaForColumnByValue(TableColumnByValue<TRow, TSearch, TColumn> column, SearchCriteria<TColumn> criteria)
         {
             _column = column;
+            _metaData = _column.MetaData;
             _criteria = criteria;
-            Score = GetScore();
-        }
-
-        private TableColumnScore GetScore()
-        {
-            // There are no values, will always return an empty set
-            if (_column.PossibleValues.Length == 0)
-                return TableColumnScore.Impossible;
-
-            // No criteria or criteria contains no value, we ignore the criteria
-            if (_criteria == null)
-                return TableColumnScore.NotOptimizable;
-
-            return _criteria.GetScore(_column.PossibleValues, _column.Comparer);
+            Score = GetScore(_metaData, criteria);
         }
 
         public BinarySearchResult<TRow> Reduce(BinarySearchResult<TRow> items)
         {
-            return _criteria.Reduce(items, _column.GetColumnValue, _column.Comparer);
+            return _criteria.Reduce(items, _metaData);
         }
 
         public Expression BuildCondition(ParameterExpression paramExpr)
         {
-            return _criteria.BuildPredicateExpression(paramExpr, _column.GetColumnExpression, _column.Comparer);
+            return _criteria.BuildPredicateExpression(paramExpr, _metaData.GetColumnExpression, _metaData.Comparer);
+        }
+
+        private static TableColumnScore GetScore(TableColumnMetaData<TRow, TColumn> metaData, SearchCriteria<TColumn> criteria)
+        {
+            // There are no values, will always return an empty set
+            if (metaData.PossibleValues.Length == 0)
+                return TableColumnScore.Impossible;
+
+            // No criteria or criteria contains no value, we ignore the criteria
+            if (criteria == null)
+                return TableColumnScore.NotOptimizable;
+
+            return criteria.GetScore(metaData);
         }
     }
 }

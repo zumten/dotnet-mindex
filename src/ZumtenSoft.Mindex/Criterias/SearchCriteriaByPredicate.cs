@@ -16,7 +16,7 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => _predicate.ToString();
 
-        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, Func<TRow, TColumn> getValue, IComparer<TColumn> comparer)
+        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
         {
             return null;
         }
@@ -27,12 +27,12 @@ namespace ZumtenSoft.Mindex.Criterias
                 Expression.Invoke(getColumnValue, paramRow));
         }
 
-        public override SearchCriteria<TColumn> Optimize(IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
+        public override SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
             return this;
         }
 
-        public override TableColumnScore GetScore(TColumn[] possibleValues, IComparer<TColumn> comparer)
+        public override TableColumnScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
             return TableColumnScore.NotOptimizable;
         }
