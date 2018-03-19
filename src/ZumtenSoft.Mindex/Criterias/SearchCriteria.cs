@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Criterias
