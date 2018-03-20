@@ -8,11 +8,11 @@ namespace ZumtenSoft.Mindex.Tests.Stubs
     {
         public SiteRankingTable(IReadOnlyCollection<SiteRanking> rankings) : base(rankings)
         {
-            MapSearchCriteria(s => s.GlobalRank, r => r.GlobalRank);
-            MapSearchCriteria(s => s.TopLevelDomainRank, r => r.TopLevelDomainRank);
-            MapSearchCriteria(s => s.DomainName, r => r.DomainName, StringComparer.OrdinalIgnoreCase);
-            MapSearchCriteria(s => s.TopLevelDomain, r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
-            MapMultiValuesSearchCriteria(s => s.TLDContainsChar, (r, c) => r.TopLevelDomain.IndexOf(c) > 0);
+            MapCriteria(s => s.GlobalRank, r => r.GlobalRank);
+            MapCriteria(s => s.TopLevelDomainRank, r => r.TopLevelDomainRank);
+            MapCriteria(s => s.DomainName, r => r.DomainName, StringComparer.OrdinalIgnoreCase);
+            MapCriteria(s => s.TopLevelDomain, r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
+            MapCriteriaToPredicate(s => s.TLDContainsChar, (r, c) => r.TopLevelDomain.IndexOf(c) >= 0);
 
             IndexTopLevelDomainRank = ConfigureIndex().IncludeColumns(s => s.TopLevelDomainRank).Build();
             IndexTopLevelDomain = ConfigureIndex().IncludeColumns(s => s.TopLevelDomain, s => s.TopLevelDomainRank).Build();
