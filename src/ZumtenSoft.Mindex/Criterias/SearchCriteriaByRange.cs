@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Columns;
@@ -10,17 +11,21 @@ namespace ZumtenSoft.Mindex.Criterias
     {
         public TColumn Start { get; }
         public TColumn End { get; }
+        public bool Split { get; }
 
-        public SearchCriteriaByRange(TColumn start, TColumn end)
+        public SearchCriteriaByRange(TColumn start, TColumn end, bool split)
         {
             Start = start;
             End = end;
+            Split = split;
         }
 
         public override string Name => Start + "-" + End;
 
         public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
         {
+            if (Split)
+                return rows.ReduceRangeByValue(metaData.GetColumnValue, Start, End, metaData.Comparer);
             return rows.ReduceRange(metaData.GetColumnValue, Start, End, metaData.Comparer);
         }
 
@@ -45,6 +50,11 @@ namespace ZumtenSoft.Mindex.Criterias
         {
             if (metaData.Comparer.Compare(Start, End) == 0)
                 return ByValues(Start);
+            var resultRange = new BinarySearchResult<TColumn>(metaData.PossibleValues).ReduceRange(x => x, Start, End, metaData.Comparer);
+            if (resultRange.Count == 1)
+                return ByValues(resultRange.First());
+            if (resultRange.Count < 10)
+                return new SearchCriteriaByRange<TColumn>(Start, End, true);
             return this;
         }
 
@@ -53,7 +63,7 @@ namespace ZumtenSoft.Mindex.Criterias
             var resultRange = new BinarySearchResult<TColumn>(metaData.PossibleValues).ReduceRange(x => x, Start, End, metaData.Comparer);
             if (resultRange.Count == 0)
                 return TableCriteriaScore.Impossible;
-            return new TableCriteriaScore((float)resultRange.Count / metaData.PossibleValues.Length, false);
+            return new TableCriteriaScore((float)resultRange.Count / metaData.PossibleValues.Length, Split);
         }
     }
 

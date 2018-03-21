@@ -16,7 +16,7 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public static SearchCriteriaByRange<TColumn> ByRange<TColumn>(TColumn start, TColumn end)
         {
-            return new SearchCriteriaByRange<TColumn>(start, end);
+            return new SearchCriteriaByRange<TColumn>(start, end, false);
         }
 
         public static SearchCriteriaByPredicate<TColumn> ByPredicate<TColumn>(Expression<Func<TColumn, bool>> predicate)
@@ -29,6 +29,8 @@ namespace ZumtenSoft.Mindex.Criterias
     {
         public static implicit operator SearchCriteria<TColumn>(TColumn value)
         {
+            if (value == null)
+                return null;
             return ByValues(value);
         }
 

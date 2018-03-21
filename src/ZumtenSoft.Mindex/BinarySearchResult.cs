@@ -46,8 +46,25 @@ namespace ZumtenSoft.Mindex
         {
             List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
             foreach (var segment in Segments)
-                result.Add(SearchRange(segment, getColumn, start, end, comparer));
+            {
+                var range = SearchRange(segment, getColumn, start, end, comparer);
+                if (range != EmptySegment)
+                    result.Add(range);
+            }
                 
+            return new BinarySearchResult<TRow>(result.ToArray(), false);
+        }
+
+        public BinarySearchResult<TRow> ReduceRangeByValue<TColumn>(Func<TRow, TColumn> getColumn, TColumn start, TColumn end, IComparer<TColumn> comparer)
+        {
+            List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
+            foreach (var segment in Segments)
+            {
+                var range = SearchRange(segment, getColumn, start, end, comparer);
+                if (range != EmptySegment)
+                    SplitByValue(result, range, getColumn, comparer);
+            }
+
             return new BinarySearchResult<TRow>(result.ToArray(), true);
         }
 
@@ -77,17 +94,32 @@ namespace ZumtenSoft.Mindex
             return GetEnumerator();
         }
 
-        private static ArraySegment<TRow> SearchRange<TCompared>(ArraySegment<TRow> array, Func<TRow, TCompared> getCompared, TCompared start, TCompared end, IComparer<TCompared> comparer)
+        private static void SplitByValue<TCompared>(List<ArraySegment<TRow>> result, ArraySegment<TRow> initialSegment, Func<TRow, TCompared> getCompared, IComparer<TCompared> comparer)
         {
-            if (array.Array == null)
+            TRow[] array = initialSegment.Array;
+            int searchStart = initialSegment.Offset;
+            int searchEnd = searchStart + initialSegment.Count;
+
+            while (searchStart < searchEnd)
+            {
+                var searchSplit = InternalBinarySearch(array, getCompared, searchStart, searchEnd - searchStart, getCompared(array[searchStart]), comparer, -1);
+                result.Add(new ArraySegment<TRow>(array, searchStart, searchSplit - searchStart));
+                searchStart = searchSplit;
+            }
+        }
+
+        private static ArraySegment<TRow> SearchRange<TCompared>(ArraySegment<TRow> initialSegment, Func<TRow, TCompared> getCompared, TCompared valueStart, TCompared valueEnd, IComparer<TCompared> comparer)
+        {
+            TRow[] array = initialSegment.Array;
+            if (array == null)
                 throw new ArgumentNullException();
 
-            var searchStart = InternalBinarySearch(array.Array, getCompared, array.Offset, array.Count, start, comparer, 1);
-            var searchEnd = InternalBinarySearch(array.Array, getCompared, searchStart, array.Offset + array.Count - searchStart, end, comparer, -1);
+            int searchStart = InternalBinarySearch(array, getCompared, initialSegment.Offset, initialSegment.Count, valueStart, comparer, 1);
+            int searchEnd = InternalBinarySearch(array, getCompared, searchStart, initialSegment.Offset + initialSegment.Count - searchStart, valueEnd, comparer, -1);
             if (searchStart >= searchEnd)
                 return EmptySegment;
 
-            return new ArraySegment<TRow>(array.Array, searchStart, searchEnd - searchStart);
+            return new ArraySegment<TRow>(array, searchStart, searchEnd - searchStart);
         }
 
         private static int InternalBinarySearch<T, TCompared>(T[] array, Func<T, TCompared> getCompared, int index, int length, TCompared value, IComparer<TCompared> comparer, int fallback)

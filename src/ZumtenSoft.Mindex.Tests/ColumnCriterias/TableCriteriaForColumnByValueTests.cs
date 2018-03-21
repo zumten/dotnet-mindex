@@ -63,7 +63,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
         {
             var rows = SiteRankingCollections.FirstTenRows;
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByRange("ca", "com") };
-            var expectedScore = new TableCriteriaScore(0.5f, false);
+            var expectedScore = new TableCriteriaScore(0.5f, true);
 
             TestGetScores(rows, search, expectedScore);
         }

@@ -11,8 +11,6 @@ namespace ZumtenSoft.Mindex.Tests
     [TestClass]
     public class BinarySearchResultTests
     {
-
-
         [TestMethod]
         public void TestConstructor_WhenInitializing_ShouldHaveSameCount()
         {
@@ -35,6 +33,25 @@ namespace ZumtenSoft.Mindex.Tests
             BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(SiteRankingCollections.FirstTenRows);
             var found = initial.ReduceRange(r => r.GlobalRank, 3, 7, Comparer<int>.Default);
             Assert.AreEqual(5, found.Count);
+        }
+
+        [TestMethod]
+        public void TestReduceRangeByValue_WhenFiltering_ShouldReturnOneSegmentForEachValue()
+        {
+            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(SiteRankingCollections.FirstTenRows);
+            var found = initial.ReduceRangeByValue(r => r.GlobalRank, 3, 7, Comparer<int>.Default);
+            Assert.AreEqual(5, found.Count);
+            Assert.AreEqual(5, found.Segments.Length);
+        }
+
+        [TestMethod]
+        public void TestReduceRangeByValue_WhenFilteringLongList_ShouldReturnSameResultsAsRange()
+        {
+            BinarySearchResult<SiteRanking> initial = new BinarySearchResult<SiteRanking>(SiteRankingCollections.First10000Rows.OrderBy(x => x.TopLevelDomain).ToArray());
+            var foundRange = initial.ReduceRange(r => r.TopLevelDomain, "ca", "net", StringComparer.OrdinalIgnoreCase);
+            var foundRangeByValue = initial.ReduceRangeByValue(r => r.TopLevelDomain, "ca", "net", StringComparer.OrdinalIgnoreCase);
+            CollectionAssert.AreEquivalent(foundRange.ToList(), foundRangeByValue.ToList());
+            Assert.AreEqual(foundRange.ToLookup(x => x.TopLevelDomain).Count, foundRangeByValue.Segments.Length);
         }
     }
 }
