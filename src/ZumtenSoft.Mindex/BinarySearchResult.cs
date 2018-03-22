@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ZumtenSoft.Mindex.Utilities;
 
 namespace ZumtenSoft.Mindex
 {
@@ -87,6 +88,16 @@ namespace ZumtenSoft.Mindex
                     for (int i = segment.Offset; i < end; i++)
                         yield return array[i];
             }
+        }
+
+        public TRow[] ToArray()
+        {
+            return ArrayUtilities.Flatten(Segments);
+        }
+
+        public TRow[] Filter(Func<TRow, bool> predicate)
+        {
+            return ArrayUtilities.Flatten(Segments, predicate);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

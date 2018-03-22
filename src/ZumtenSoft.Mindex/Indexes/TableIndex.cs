@@ -31,7 +31,7 @@ namespace ZumtenSoft.Mindex.Indexes
             return sortedRows.ToArray();
         }
 
-        public override IEnumerable<TRow> Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
+        public override TRow[] Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
             if (_sortColumns.Length == 0)
                 return base.Search(criterias);

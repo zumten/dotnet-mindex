@@ -121,11 +121,11 @@ Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
   [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
   DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
 ```
-| Method |    N |        Mean |      Error |     StdDev |
-|------- |----- |------------:|-----------:|-----------:|
-|   Linq | 1000 | 27,658.2 us | 477.536 us | 446.687 us |
-| Lookup | 1000 |    370.9 us |   7.208 us |   9.867 us |
-| Search | 1000 |    185.3 us |   3.533 us |   3.927 us |
+| Method |    N |          Mean |       Error |      StdDev |
+|------- |----- |--------------:|------------:|------------:|
+|   Linq | 1000 | 26,106.427 us | 352.8374 us | 312.7812 us |
+| Lookup | 1000 |    287.210 us |   3.9015 us |   3.2579 us |
+| Search | 1000 |      9.560 us |   0.1380 us |   0.1152 us |
 
 
 
@@ -139,11 +139,11 @@ Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
   [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
   DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
 ```
-| Method |    N |         Mean |      Error |      StdDev |
-|------- |----- |-------------:|-----------:|------------:|
-|   Linq | 1000 | 84,992.30 us | 853.119 us | 712.3928 us |
-| Lookup | 1000 |     68.78 us |   1.274 us |   0.9946 us |
-| Search | 1000 |     60.63 us |   1.199 us |   2.0996 us |
+| Method |    N |         Mean |       Error |      StdDev |
+|------- |----- |-------------:|------------:|------------:|
+|   Linq | 1000 | 71,456.54 us | 595.8435 us | 528.1997 us |
+| Lookup | 1000 |     61.39 us |   0.3844 us |   0.3001 us |
+| Search | 1000 |     10.57 us |   0.2043 us |   0.2431 us |
 
 
 
@@ -157,11 +157,11 @@ Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
   [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
   DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
 ```
-|                        Method |    N |            Mean |         Error |        StdDev |
-|------------------------------ |----- |----------------:|--------------:|--------------:|
-|                          Linq | 1000 | 29,218,023.0 ns | 213,604.01 ns | 199,805.30 ns |
-|                        Lookup | 1000 |        705.2 ns |      14.96 ns |      27.36 ns |
-|                        Search | 1000 |      4,038.0 ns |      80.33 ns |     160.43 ns |
-|               IndexGlobalRank | 1000 |    367,965.2 ns |   6,460.89 ns |   6,043.52 ns |
-|           IndexTopLevelDomain | 1000 |    763,976.0 ns |  18,818.39 ns |  15,714.21 ns |
-| IndexTopLevelDomainGlobalRank | 1000 |      2,522.2 ns |      50.26 ns |      82.57 ns |
+|                        Method |    N |            Mean |          Error |         StdDev |
+|------------------------------ |----- |----------------:|---------------:|---------------:|
+|                          Linq | 1000 | 27,313,848.3 ns | 477,948.881 ns | 447,073.636 ns |
+|                        Lookup | 1000 |        619.0 ns |       8.211 ns |       7.681 ns |
+|                        Search | 1000 |      3,778.5 ns |      31.560 ns |      29.521 ns |
+|               IndexGlobalRank | 1000 |    327,225.8 ns |   2,990.684 ns |   2,497.356 ns |
+|           IndexTopLevelDomain | 1000 |    584,372.9 ns |  12,564.413 ns |  12,339.932 ns |
+| IndexTopLevelDomainGlobalRank | 1000 |      2,400.1 ns |      39.967 ns |      37.385 ns |

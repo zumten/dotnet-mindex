@@ -20,15 +20,15 @@ namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
         public List<SiteRanking> Lookup() => LookupRankingsByTLD[CriteriaTopLevelDomain].TakeWhile(r => r.GlobalRank <= CriteriaGlobalRank).ToList();
 
         [Benchmark]
-        public List<SiteRanking> Search() => Table.Search(SearchCriterias).ToList();
+        public SiteRanking[] Search() => Table.Search(SearchCriterias);
 
         [Benchmark]
-        public List<SiteRanking> IndexGlobalRank() => Table.Search(SearchCriterias, Table.IndexGlobalRank).ToList();
+        public SiteRanking[] IndexGlobalRank() => Table.Search(SearchCriterias, Table.IndexGlobalRank);
 
         [Benchmark]
-        public List<SiteRanking> IndexTopLevelDomain() => Table.Search(SearchCriterias, Table.IndexTopLevelDomain).ToList();
+        public SiteRanking[] IndexTopLevelDomain() => Table.Search(SearchCriterias, Table.IndexTopLevelDomain);
 
         [Benchmark]
-        public List<SiteRanking> IndexTopLevelDomainGlobalRank() => Table.Search(SearchCriterias, Table.IndexTopLevelDomainGlobalRank).ToList();
+        public SiteRanking[] IndexTopLevelDomainGlobalRank() => Table.Search(SearchCriterias, Table.IndexTopLevelDomainGlobalRank);
     }
 }

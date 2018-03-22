@@ -16,15 +16,15 @@ namespace ZumtenSoft.Mindex.Indexes
             Rows = rows;
         }
 
-        public virtual IEnumerable<TRow> Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
+        public virtual TRow[] Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
-            return FilterRowsWithCustomExpression(Rows, criterias);
+            return FilterRowsWithCustomExpression(new BinarySearchResult<TRow>(Rows), criterias);
         }
 
-        protected static IEnumerable<TRow> FilterRowsWithCustomExpression(IEnumerable<TRow> items, IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> columns)
+        protected static TRow[] FilterRowsWithCustomExpression(BinarySearchResult<TRow> items, IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> columns)
         {
             if (columns.Count == 0)
-                return items;
+                return items.ToArray();
 
             ParameterExpression paramExpr = Expression.Parameter(typeof(TRow), "row");
             IList<Expression> conditions = new List<Expression>();
@@ -36,11 +36,11 @@ namespace ZumtenSoft.Mindex.Indexes
             }
 
             if (conditions.Count == 0)
-                return items;
+                return items.ToArray();
 
             var joinedConditions = conditions.Reverse().Aggregate((x, y) => Expression.AndAlso(y, x));
             var lambda = Expression.Lambda<Func<TRow, bool>>(joinedConditions, paramExpr);
-            return items.Where(lambda.Compile());
+            return items.Filter(lambda.Compile());
         }
     }
 }

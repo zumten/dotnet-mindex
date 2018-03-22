@@ -31,10 +31,10 @@ namespace ZumtenSoft.Mindex.Tests
                 TopLevelDomain = topLevelDomain,
                 GlobalRank = SearchCriteria.ByRange(1, globalRank)
             };
-            var actual = _table.Search(search).ToList();
+            var actual = _table.Search(search);
             CollectionAssert.AreEquivalent(expected, actual);
 
-            var actualWithGlobalIndex = _table.Search(search, _table.IndexGlobalRank).ToList();
+            var actualWithGlobalIndex = _table.Search(search, _table.IndexGlobalRank);
             CollectionAssert.AreEquivalent(expected, actualWithGlobalIndex);
         }
 
@@ -50,7 +50,7 @@ namespace ZumtenSoft.Mindex.Tests
                 TopLevelDomain = topLevelDomains,
                 TopLevelDomainRank = SearchCriteria.ByRange(1, topLevelDomainRank)
             };
-            var actual = _table.Search(search).ToList();
+            var actual = _table.Search(search);
             var indexScores = _table.EvaluateIndexes(search);
             CollectionAssert.AreEquivalent(expected, actual);
 
@@ -59,7 +59,7 @@ namespace ZumtenSoft.Mindex.Tests
                 TopLevelDomain = topLevelDomains,
                 TopLevelDomainRank = SearchCriteria.ByPredicate((int x) => x <= topLevelDomainRank)
             };
-            var actualWithPredicate = _table.Search(searchWithPredicate).ToList();
+            var actualWithPredicate = _table.Search(searchWithPredicate);
             var indexScoreWithPredicate = _table.EvaluateIndexes(searchWithPredicate);
             CollectionAssert.AreEquivalent(expected, actualWithPredicate);
 
@@ -75,7 +75,23 @@ namespace ZumtenSoft.Mindex.Tests
             var actual = _table.Search(new SiteRankingSearch
             {
                 TopLevelDomainRank = SearchCriteria.ByRange(1, topLevelDomainRank)
-            }).ToList();
+            });
+
+            CollectionAssert.AreEquivalent(expected, actual);
+        }
+
+
+        [TestMethod]
+        public void Search_FilteringByMultipleCriterias_ShouldBeEquivalentToLinq()
+        {
+            const int topLevelDomainRank = 10;
+
+            var expected = _rows.Where(x => x.TopLevelDomainRank <= topLevelDomainRank || x.TopLevelDomain == "net").ToList();
+            var actual = _table.Search(new[]
+            {
+                new SiteRankingSearch { TopLevelDomainRank = SearchCriteria.ByRange(1, topLevelDomainRank) },
+                new SiteRankingSearch { TopLevelDomain = "net" }
+            }, true);
 
             CollectionAssert.AreEquivalent(expected, actual);
         }
