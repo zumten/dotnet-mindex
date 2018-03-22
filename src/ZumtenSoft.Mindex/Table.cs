@@ -94,7 +94,7 @@ namespace ZumtenSoft.Mindex
             // Null is returned when any of the index find that this search will return
             // an empty result set.
             if (bestIndex == null)
-                return BinarySearchResult<TRow>.EmptyArray;
+                return ArrayUtilities<TRow>.EmptyArray;
             return bestIndex.Search(criterias);
         }
 
@@ -102,7 +102,7 @@ namespace ZumtenSoft.Mindex
         {
             switch (criterias.Length)
             {
-                case 0: return BinarySearchResult<TRow>.EmptyArray;
+                case 0: return ArrayUtilities<TRow>.EmptyArray;
                 case 1: return Search(criterias[0]);
                 default:
                 {
@@ -125,7 +125,7 @@ namespace ZumtenSoft.Mindex
                         for (int i = 0; i < criterias.Length; i++)
                             results[i] = Search(criterias[i]);
 
-                        return ArrayUtilities.Flatten(results);
+                        return ArrayUtilities<TRow>.Flatten(results);
                     }
                 }
             }

@@ -24,7 +24,7 @@ namespace ZumtenSoft.Mindex.Indexes
         protected static TRow[] FilterRowsWithCustomExpression(BinarySearchResult<TRow> items, IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> columns)
         {
             if (columns.Count == 0)
-                return items.ToArray();
+                return items.Materialize();
 
             ParameterExpression paramExpr = Expression.Parameter(typeof(TRow), "row");
             IList<Expression> conditions = new List<Expression>();
@@ -36,11 +36,11 @@ namespace ZumtenSoft.Mindex.Indexes
             }
 
             if (conditions.Count == 0)
-                return items.ToArray();
+                return items.Materialize();
 
             var joinedConditions = conditions.Reverse().Aggregate((x, y) => Expression.AndAlso(y, x));
             var lambda = Expression.Lambda<Func<TRow, bool>>(joinedConditions, paramExpr);
-            return items.Filter(lambda.Compile());
+            return items.Materialize(lambda.Compile());
         }
     }
 }

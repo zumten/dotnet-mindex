@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ZumtenSoft.Mindex.Utilities;
 
 namespace ZumtenSoft.Mindex
 {
+    [DebuggerDisplay(@"\{BinarySearchResult Count={" + nameof(Count) + @"}\}")]
     public class BinarySearchResult<TRow> : IReadOnlyCollection<TRow>
     {
-        public static readonly TRow[] EmptyArray = new TRow[0];
-        private static readonly ArraySegment<TRow> EmptySegment = new ArraySegment<TRow>(EmptyArray);
         public ArraySegment<TRow>[] Segments { get; }
         public bool CanSearch { get; }
-        public int Count => Segments.Sum(s => s.Count);
+        public int Count => ArrayUtilities<TRow>.TotalCount(Segments);
 
         public BinarySearchResult(TRow[] items)
         {
@@ -35,7 +35,7 @@ namespace ZumtenSoft.Mindex
                 for (int iSegment = Segments.Length - 1; iSegment >= 0; iSegment--)
                 {
                     var range = SearchRange(Segments[iSegment], getColumn, value, value, comparer);
-                    if (range != EmptySegment)
+                    if (range.Count >= 0)
                         result.Add(range);
                 }
             }
@@ -49,10 +49,10 @@ namespace ZumtenSoft.Mindex
             foreach (var segment in Segments)
             {
                 var range = SearchRange(segment, getColumn, start, end, comparer);
-                if (range != EmptySegment)
+                if (range.Count >= 0)
                     result.Add(range);
             }
-                
+
             return new BinarySearchResult<TRow>(result.ToArray(), false);
         }
 
@@ -62,20 +62,11 @@ namespace ZumtenSoft.Mindex
             foreach (var segment in Segments)
             {
                 var range = SearchRange(segment, getColumn, start, end, comparer);
-                if (range != EmptySegment)
+                if (range.Count >= 0)
                     SplitByValue(result, range, getColumn, comparer);
             }
 
             return new BinarySearchResult<TRow>(result.ToArray(), true);
-        }
-
-        public static BinarySearchResult<TRow> Merge(IReadOnlyList<BinarySearchResult<TRow>> results)
-        {
-            if (results.Count == 0)
-                return new BinarySearchResult<TRow>(EmptySegment.Array);
-            if (results.Count == 1)
-                return results[0];
-            return new BinarySearchResult<TRow>(results.SelectMany(r => r.Segments).ToArray(), false);
         }
 
         public IEnumerator<TRow> GetEnumerator()
@@ -90,14 +81,14 @@ namespace ZumtenSoft.Mindex
             }
         }
 
-        public TRow[] ToArray()
+        public TRow[] Materialize()
         {
-            return ArrayUtilities.Flatten(Segments);
+            return ArrayUtilities<TRow>.Flatten(Segments);
         }
 
-        public TRow[] Filter(Func<TRow, bool> predicate)
+        public TRow[] Materialize(Func<TRow, bool> predicate)
         {
-            return ArrayUtilities.Flatten(Segments, predicate);
+            return ArrayUtilities<TRow>.Flatten(Segments, predicate);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -128,7 +119,7 @@ namespace ZumtenSoft.Mindex
             int searchStart = InternalBinarySearch(array, getCompared, initialSegment.Offset, initialSegment.Count, valueStart, comparer, 1);
             int searchEnd = InternalBinarySearch(array, getCompared, searchStart, initialSegment.Offset + initialSegment.Count - searchStart, valueEnd, comparer, -1);
             if (searchStart >= searchEnd)
-                return EmptySegment;
+                return ArrayUtilities<TRow>.EmptySegment;
 
             return new ArraySegment<TRow>(array, searchStart, searchEnd - searchStart);
         }
