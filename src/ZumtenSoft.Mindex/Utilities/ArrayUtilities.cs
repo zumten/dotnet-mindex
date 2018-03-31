@@ -49,7 +49,7 @@ namespace ZumtenSoft.Mindex.Utilities
             for (int iSegment = 0; iSegment < length; iSegment++)
             {
                 var segment = input[iSegment];
-                Array.Copy(segment.Array, segment.Offset, result, position, segment.Count);
+                Array.Copy(segment.Array ?? throw new InvalidOperationException(), segment.Offset, result, position, segment.Count);
                 position += segment.Count;
             }
 
@@ -67,9 +67,12 @@ namespace ZumtenSoft.Mindex.Utilities
                 var end = segment.Offset + segment.Count;
                 for (int i = segment.Offset; i < end; i++)
                 {
-                    T row = array[i];
-                    if (predicate(row))
-                        result[position++] = row;
+                    if (array != null)
+                    {
+                        T row = array[i];
+                        if (predicate(row))
+                            result[position++] = row;
+                    }
                 }
             }
 

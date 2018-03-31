@@ -38,7 +38,9 @@ namespace ZumtenSoft.Mindex.Criterias
             if (SearchValues.Length == 0)
                 return Expression.Constant(false);
 
-            var compareMethod = typeof(IComparer<TColumn>).GetMethod("Compare");
+            var compareMethod = typeof(IComparer<TColumn>).GetMethod("Compare")
+                ?? throw new InvalidOperationException("Type IComparer should implement the method Compare");
+
             List<Expression> expressions = new List<Expression>();
             foreach (var value in SearchValues)
             {

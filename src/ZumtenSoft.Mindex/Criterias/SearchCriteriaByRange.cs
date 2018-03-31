@@ -31,7 +31,9 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer)
         {
-            var compareMethod = typeof(IComparer<TColumn>).GetMethod("Compare");
+            var compareMethod = typeof(IComparer<TColumn>).GetMethod("Compare")
+                ?? throw new InvalidOperationException("Type IComparer should implement the method Compare");
+
             var exprVariable = Expression.Variable(typeof(TColumn), "columnValue");
             return Expression.Block(
                 new[] { exprVariable },

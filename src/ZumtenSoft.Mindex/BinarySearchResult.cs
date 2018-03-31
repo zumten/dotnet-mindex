@@ -97,7 +97,7 @@ namespace ZumtenSoft.Mindex
 
         private static void SplitByValue<TCompared>(List<ArraySegment<TRow>> result, ArraySegment<TRow> initialSegment, Func<TRow, TCompared> getCompared, IComparer<TCompared> comparer)
         {
-            TRow[] array = initialSegment.Array;
+            TRow[] array = initialSegment.Array ?? throw new InvalidOperationException();
             int searchStart = initialSegment.Offset;
             int searchEnd = searchStart + initialSegment.Count;
 
