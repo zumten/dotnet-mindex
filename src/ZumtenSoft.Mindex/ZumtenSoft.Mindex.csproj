@@ -6,6 +6,7 @@
     <FileVersion>1.0.0</FileVersion>
     <Authors>Marc-André Bertrand</Authors>
     <Description>High-performance in-memory multi-criteria collection search</Description>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>

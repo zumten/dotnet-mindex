@@ -73,10 +73,10 @@ namespace ZumtenSoft.Mindex
             foreach (var segment in Segments)
             {
                 int end = segment.Offset + segment.Count;
-                TRow[] array = segment.Array;
-                if (array != null)
-                    for (int i = segment.Offset; i < end; i++)
-                        yield return array[i];
+                TRow[] array = segment.Array
+                    ?? throw new InvalidOperationException("ArraySegment is missing Array");
+                for (int i = segment.Offset; i < end; i++)
+                    yield return array[i];
             }
         }
 
@@ -97,7 +97,8 @@ namespace ZumtenSoft.Mindex
 
         private static void SplitByValue<TCompared>(List<ArraySegment<TRow>> result, ArraySegment<TRow> initialSegment, Func<TRow, TCompared> getCompared, IComparer<TCompared> comparer)
         {
-            TRow[] array = initialSegment.Array ?? throw new InvalidOperationException();
+            TRow[] array = initialSegment.Array
+                           ?? throw new InvalidOperationException("ArraySegment is missing Array");
             int searchStart = initialSegment.Offset;
             int searchEnd = searchStart + initialSegment.Count;
 

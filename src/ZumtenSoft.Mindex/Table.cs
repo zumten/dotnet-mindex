@@ -12,7 +12,6 @@ namespace ZumtenSoft.Mindex
     public abstract class Table<TRow, TSearch>
     {
         private readonly TableColumnCollection<TRow, TSearch> _columns;
-        public IReadOnlyCollection<ITableColumn<TRow, TSearch>> Columns => _columns;
 
         private readonly TableIndexCollection<TRow, TSearch> _indexes;
 
@@ -118,14 +117,12 @@ namespace ZumtenSoft.Mindex
 
                         return rows.ToArray();
                     }
-                    else
-                    {
-                        TRow[][] results = new TRow[criterias.Length][];
-                        for (int i = 0; i < criterias.Length; i++)
-                            results[i] = Search(criterias[i]);
 
-                        return ArrayUtilities<TRow>.Flatten(results);
-                    }
+                    TRow[][] results = new TRow[criterias.Length][];
+                    for (int i = 0; i < criterias.Length; i++)
+                        results[i] = Search(criterias[i]);
+
+                    return ArrayUtilities<TRow>.Flatten(results);
                 }
             }
         }

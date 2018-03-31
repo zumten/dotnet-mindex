@@ -81,7 +81,7 @@ namespace ZumtenSoft.Mindex.Tests
 
 
         [TestMethod]
-        public void Search_FilteringByMultipleCriterias_ShouldBeEquivalentToLinq()
+        public void Search_FilteringByMultipleCriteriasWithDistinct_ShouldBeEquivalentToLinq()
         {
             const int topLevelDomainRank = 10;
 
@@ -93,6 +93,22 @@ namespace ZumtenSoft.Mindex.Tests
             }, true);
 
             CollectionAssert.AreEquivalent(expected, actual);
+        }
+
+        [TestMethod]
+        public void Search_FilteringByMultipleCriteriasWithoutDistinct_CouldHaveDuplicateValues()
+        {
+            const int topLevelDomainRank = 10;
+
+            var expected = _rows.Where(x => x.TopLevelDomainRank <= topLevelDomainRank || x.TopLevelDomain == "net").ToList();
+            var actual = _table.Search(new[]
+            {
+                new SiteRankingSearch { TopLevelDomainRank = SearchCriteria.ByRange(1, topLevelDomainRank) },
+                new SiteRankingSearch { TopLevelDomain = "net" }
+            });
+
+            CollectionAssert.AreNotEquivalent(expected, actual);
+            CollectionAssert.AreEquivalent(expected, actual.Distinct().ToArray());
         }
     }
 }
