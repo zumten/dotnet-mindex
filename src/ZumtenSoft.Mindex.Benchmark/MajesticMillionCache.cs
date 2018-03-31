@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using ZumtenSoft.Mindex.Tests;
 using ZumtenSoft.Mindex.Tests.Stubs;
 
 namespace ZumtenSoft.Mindex.Benchmark

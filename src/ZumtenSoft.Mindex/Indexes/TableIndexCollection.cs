@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using ZumtenSoft.Mindex.ColumnCriterias;
-using ZumtenSoft.Mindex.Columns;
 
 namespace ZumtenSoft.Mindex.Indexes
 {

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ZumtenSoft.Mindex.Utilities
 {
@@ -60,7 +58,7 @@ namespace ZumtenSoft.Mindex.Utilities
 
         public static T[] Flatten(ArraySegment<T>[] input, Func<T, bool> predicate)
         {
-            T[] accumulator = new T[TotalCount(input)];
+            T[] result = new T[TotalCount(input)];
             int position = 0;
             for (int iSegment = 0; iSegment < input.Length; iSegment++)
             {
@@ -71,12 +69,12 @@ namespace ZumtenSoft.Mindex.Utilities
                 {
                     T row = array[i];
                     if (predicate(row))
-                        accumulator[position++] = row;
+                        result[position++] = row;
                 }
             }
 
-            T[] result = new T[position];
-            Array.Copy(accumulator, result, position);
+            if (result.Length != position)
+                Array.Resize(ref result, position);
             return result;
         }
     }

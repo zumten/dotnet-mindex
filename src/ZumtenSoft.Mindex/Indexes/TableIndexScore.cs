@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using ZumtenSoft.Mindex.ColumnCriterias;
-using ZumtenSoft.Mindex.Columns;
+﻿using System.Diagnostics;
 
 namespace ZumtenSoft.Mindex.Indexes
 {
