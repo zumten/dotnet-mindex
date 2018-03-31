@@ -19,9 +19,16 @@ The inner workings of Mindex is similar to SQL. Each index is simply a list of i
 
 ## Build your first table
 
-There are 4 simple steps to build your own table with indexes
+There are 5 simple steps to build your own table with indexes
 
-1. Create your POCO object and a search criteria with a duplicate of every property you need to use as a search criteria
+1. Include the namespaces
+
+```csharp
+using ZumtenSoft.Mindex;
+using ZumtenSoft.Mindex.Criterias;
+```
+
+2. Create your POCO object and a search criteria with a duplicate of every property you need to use as a search criteria
 
 ```csharp
 public class SiteRanking
@@ -49,7 +56,7 @@ public class SiteRankingSearch
 }
 ```
 
-2. Build the table by extending the class `Table<TRow, TSearch>`
+3. Build the table by extending the class `Table<TRow, TSearch>`
     1. Configure the schema of your table by mapping every field
     2. Configure the indexes by enumerating every criteria
 
@@ -60,24 +67,24 @@ public class SiteRankingTable : Table<SiteRanking, SiteRankingSearch>
 {
     public SiteRankingTable(IReadOnlyCollection<SiteRanking> rankings) : base(rankings)
     {
-        MapSearchCriteria(s => s.GlobalRank,         r => r.GlobalRank);
-        MapSearchCriteria(s => s.TopLevelDomainRank, r => r.TopLevelDomainRank);
-        MapSearchCriteria(s => s.DomainName,         r => r.DomainName,     StringComparer.OrdinalIgnoreCase);
-        MapSearchCriteria(s => s.TopLevelDomain,     r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
+        MapCriteria(s => s.GlobalRank,         r => r.GlobalRank);
+        MapCriteria(s => s.TopLevelDomainRank, r => r.TopLevelDomainRank);
+        MapCriteria(s => s.DomainName,         r => r.DomainName,         StringComparer.OrdinalIgnoreCase);
+        MapCriteria(s => s.TopLevelDomain,     r => r.TopLevelDomain,     StringComparer.OrdinalIgnoreCase);
 
-        BuildIndex(s => s.TopLevelDomainRank);
-        BuildIndex(s => s.TopLevelDomain, s => s.TopLevelDomainRank);
+        ConfigureIndex().IncludeColumns(s => s.TopLevelDomainRank).Build();
+        ConfigureIndex().IncludeColumns(s => s.TopLevelDomain, s => s.TopLevelDomainRank).Build();
     }
 }
 ```
 
-3. Instanciate the table.
+4. Instanciate the table.
 ```csharp
 List<SiteRanking> rankings = LoadRankings();
 SiteRankingTable table = new SiteRankingTable(rankings);
 ```
 
-4. Search the table.
+5. Search the table.
 ```csharp
 // Will use the index "TopLevelDomainRank"
 // - TopLevelDomainRank: Extract 1 ArraySegment using BinarySearch
