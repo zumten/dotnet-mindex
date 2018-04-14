@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ZumtenSoft.Mindex.Stubs.MajesticMillion;
 
-namespace ZumtenSoft.Mindex.Benchmark
+namespace ZumtenSoft.Mindex.Stubs.MajesticMillion
 {
     public static class MajesticMillionCache
     {

@@ -18,7 +18,7 @@ namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
             MapCriteria(s => s.TariffHeading, i => i.TariffHeading);
             MapCriteria(s => s.GoodsValue, i => i.GoodsValue);
 
-            ConfigureIndex().IncludeColumns(s => s.ImportState, s => s.Origin, s => s.QuantityType, s => s.Date).Build();
+            ConfigureIndex().IncludeColumns(s => s.Origin, s => s.ImportState, s => s.QuantityType, s => s.Date).Build();
         }
     }
 }

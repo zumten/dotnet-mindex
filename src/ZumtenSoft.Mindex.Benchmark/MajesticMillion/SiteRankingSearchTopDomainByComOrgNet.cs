@@ -1,11 +1,11 @@
-﻿using BenchmarkDotNet.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BenchmarkDotNet.Attributes;
 using ZumtenSoft.Mindex.Criterias;
 using ZumtenSoft.Mindex.Stubs.MajesticMillion;
 
-namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
+namespace ZumtenSoft.Mindex.Benchmark.MajesticMillion
 {
     public class SiteRankingSearchTopDomainByComOrgNet : SiteRankingBenchmark
     {

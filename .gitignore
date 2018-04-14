@@ -318,8 +318,7 @@ ASALocalRun/
 
 # MSBuild Binary and Structured Log
 *.binlog
-/sources/ZumtenSoft.Mindex.Tests/App_Data/majestic_million.csv
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/majestic_million.csv
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/Users.xml
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/IndianCustoms-Imports.csv
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/IndianCustoms-Imports.7z
+/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.xml
+/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.csv
+/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.7z
+/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.bin

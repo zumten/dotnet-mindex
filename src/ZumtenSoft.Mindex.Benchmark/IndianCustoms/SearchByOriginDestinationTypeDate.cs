@@ -1,14 +1,13 @@
 ﻿using System;
-using BenchmarkDotNet.Attributes;
 using System.Collections.Generic;
 using System.Linq;
-using BenchmarkDotNet.Attributes.Jobs;
+using BenchmarkDotNet.Attributes;
 using ZumtenSoft.Mindex.Criterias;
 using ZumtenSoft.Mindex.Stubs.IndianCustoms;
 
-namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
+namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
 {
-    public class IndianCustomsImportSearchByOriginDestinationTypeDate : IndianCustomsImportBenchmark
+    public class SearchByOriginDestinationTypeDate : IndianCustomsImportBenchmark
     {
         private static readonly string[] Origins = {"CANADA", "UNITED STATES", "MEXICO"};
         private static readonly string[] Destinations = {"Delhi"};
@@ -21,6 +20,17 @@ namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
                 from destination in Destinations
                 from size in Sizes
                 select Tuple.Create(origin, destination, size)).ToArray();
+
+        public ILookup<Tuple<string, string, string>, CustomsImport> LookupTable { get; set; }
+        public IDictionary<Tuple<string, string, string>, CustomsImport[]> LookupWithBinarySearchTable { get; set; }
+
+        public override void Setup()
+        {
+            base.Setup();
+            LookupTable = Imports.OrderBy(i => i.Date).ToLookup(i => Tuple.Create(i.Origin, i.ImportState, i.QuantityType));
+            LookupWithBinarySearchTable = LookupTable
+                .ToDictionary(g => g.Key, g => g.ToArray());
+        }
 
         [Benchmark]
         public List<CustomsImport> Linq() => Imports
