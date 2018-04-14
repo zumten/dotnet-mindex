@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs
+namespace ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion
 {
     public static class MajesticMillionHelper
     {

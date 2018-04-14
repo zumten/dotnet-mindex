@@ -1,6 +1,9 @@
 ﻿using BenchmarkDotNet.Running;
 using System;
+using System.Linq;
 using ZumtenSoft.Mindex.Benchmark.Benchmarks;
+using ZumtenSoft.Mindex.Tests.Stubs;
+using ZumtenSoft.Mindex.Tests.Stubs.IndianCustoms;
 
 namespace ZumtenSoft.Mindex.Benchmark
 {
@@ -8,10 +11,12 @@ namespace ZumtenSoft.Mindex.Benchmark
     {
         static void Main()
         {
-            var unused = MajesticMillionCache.Instance;
-            BenchmarkRunner.Run<SiteRankingSearchTopDomainByTLD>();
-            BenchmarkRunner.Run<SiteRankingSearchTopDomainByComOrgNet>();
-            BenchmarkRunner.Run<SiteRankingSearchCanadianDomainInGlobalTop1000>();
+            BenchmarkRunner.Run<IndianCustomsImportSearchByOriginDestinationTypeDate>();
+
+            //var unused = MajesticMillionCache.Instance;
+            //BenchmarkRunner.Run<SiteRankingSearchTopDomainByTLD>();
+            //BenchmarkRunner.Run<SiteRankingSearchTopDomainByComOrgNet>();
+            //BenchmarkRunner.Run<SiteRankingSearchCanadianDomainInGlobalTop1000>();
             Console.ReadLine();
         }
     }

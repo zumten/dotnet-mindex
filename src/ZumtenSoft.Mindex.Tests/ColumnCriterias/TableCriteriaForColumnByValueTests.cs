@@ -5,6 +5,7 @@ using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Columns;
 using ZumtenSoft.Mindex.Criterias;
 using ZumtenSoft.Mindex.Tests.Stubs;
+using ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion;
 
 namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
 {

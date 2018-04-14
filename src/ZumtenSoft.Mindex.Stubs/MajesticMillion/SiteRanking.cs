@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs
+namespace ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion
 {
     [DebuggerDisplay(@"\{SiteRanking DomainName={DomainName}, GlobalRank={GlobalRank}, TopLevelDomainRank={TopLevelDomainRank} \}")]
     public class SiteRanking

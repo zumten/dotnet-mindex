@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZumtenSoft.Mindex.Columns;
 using ZumtenSoft.Mindex.Tests.Stubs;
+using ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion;
 
 namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
 {
