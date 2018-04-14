@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs.StackOverflow
+namespace ZumtenSoft.Mindex.Stubs.StackOverflow
 {
     public class StackOverflowUserTable : Table<StackOverflowUser, StackOverflowUserSearch>
     {

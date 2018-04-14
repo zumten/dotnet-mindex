@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion
+namespace ZumtenSoft.Mindex.Stubs.MajesticMillion
 {
     public static class SiteRankingCollections
     {

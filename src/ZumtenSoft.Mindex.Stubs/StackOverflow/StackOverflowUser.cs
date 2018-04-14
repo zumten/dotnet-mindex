@@ -1,7 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs.StackOverflow
+namespace ZumtenSoft.Mindex.Stubs.StackOverflow
 {
     public class StackOverflowUser
     {

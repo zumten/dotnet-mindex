@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ZumtenSoft.Mindex.Tests.Stubs;
-using ZumtenSoft.Mindex.Tests.Stubs.IndianCustoms;
-using ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion;
+using ZumtenSoft.Mindex.Stubs.IndianCustoms;
 
 namespace ZumtenSoft.Mindex.Benchmark
 {

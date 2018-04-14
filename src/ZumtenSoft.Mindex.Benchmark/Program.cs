@@ -2,8 +2,6 @@
 using System;
 using System.Linq;
 using ZumtenSoft.Mindex.Benchmark.Benchmarks;
-using ZumtenSoft.Mindex.Tests.Stubs;
-using ZumtenSoft.Mindex.Tests.Stubs.IndianCustoms;
 
 namespace ZumtenSoft.Mindex.Benchmark
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using ZumtenSoft.Mindex.Criterias;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs.IndianCustoms
+namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
     public class CustomsImportSearch
     {

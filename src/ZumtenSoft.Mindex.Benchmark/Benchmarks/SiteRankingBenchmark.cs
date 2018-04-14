@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ZumtenSoft.Mindex.Tests.Stubs;
-using ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion;
+using ZumtenSoft.Mindex.Stubs.MajesticMillion;
 
 namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
 {

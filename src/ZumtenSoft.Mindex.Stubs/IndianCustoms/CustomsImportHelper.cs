@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Linq;
-using ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion;
-using ZumtenSoft.Mindex.Tests.Stubs.StackOverflow;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs.IndianCustoms
+namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
     public static class CustomsImportHelper
     {

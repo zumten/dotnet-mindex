@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs.IndianCustoms
+namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
     public class CustomsImportTable : Table<CustomsImport, CustomsImportSearch>
     {

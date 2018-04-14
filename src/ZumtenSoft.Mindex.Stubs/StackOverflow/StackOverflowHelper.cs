@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using ZumtenSoft.Mindex.Tests.Stubs.StackOverflow;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs
+namespace ZumtenSoft.Mindex.Stubs.StackOverflow
 {
     public static class StackOverflowHelper
     {

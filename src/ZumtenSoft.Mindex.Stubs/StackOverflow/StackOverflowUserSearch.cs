@@ -1,7 +1,7 @@
 ﻿using System;
 using ZumtenSoft.Mindex.Criterias;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs.StackOverflow
+namespace ZumtenSoft.Mindex.Stubs.StackOverflow
 {
     public class StackOverflowUserSearch
     {

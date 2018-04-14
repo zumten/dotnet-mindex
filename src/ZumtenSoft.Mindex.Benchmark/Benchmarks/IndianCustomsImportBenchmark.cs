@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes.Jobs;
 using ZumtenSoft.Mindex.Criterias;
-using ZumtenSoft.Mindex.Tests.Stubs.IndianCustoms;
-using ZumtenSoft.Mindex.Tests.Stubs.MajesticMillion;
-using ZumtenSoft.Mindex.Tests.Stubs.StackOverflow;
+using ZumtenSoft.Mindex.Stubs.IndianCustoms;
 
 namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
 {
