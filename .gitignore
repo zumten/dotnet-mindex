@@ -318,7 +318,3 @@ ASALocalRun/
 
 # MSBuild Binary and Structured Log
 *.binlog
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.xml
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.csv
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.7z
-/src/ZumtenSoft.Mindex.Benchmark/App_Data/*.bin

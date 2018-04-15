@@ -10,34 +10,12 @@ namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
     public static class CustomsImportHelper
     {
-        public static CustomsImport[] LoadCustomImports(string fileName)
+        public static CustomsImport[] LoadCustomImports()
         {
-            var protoFileName = Path.ChangeExtension(fileName, "bin");
-            if (File.Exists(protoFileName))
-                return LoadCustomsImportFromProtobuf(protoFileName);
-
-            if (!File.Exists(fileName))
-                throw new Exception("Failed to find the file " + fileName +". Full dataset can be found at https://public.enigma.com/datasets/indian-customs-imports/a1696eb8-532b-48e0-b9b9-9d06031f8d0d");
-
-            var result = LoadCustomsImportsFromCsv(fileName).ToArray();
-            SaveCustomsImportToProtobuf(protoFileName, result);
-
-            return result;
+            return FileHelper.LoadFileWithCache("IndianCustoms-Imports.csv", f => LoadCustomsImportsFromCsv(f).ToArray());
         }
 
-        public static CustomsImport[] LoadCustomsImportFromProtobuf(string fileName)
-        {
-            using (var file = File.OpenRead(fileName))
-                return Serializer.Deserialize<CustomsImport[]>(file);
-        }
-
-        public static void SaveCustomsImportToProtobuf(string fileName, CustomsImport[] items)
-        {
-            using (var file = File.OpenWrite(fileName))
-                Serializer.Serialize(file, items);
-        }
-
-        public static IEnumerable<CustomsImport> LoadCustomsImportsFromCsv(string fileName)
+        private static IEnumerable<CustomsImport> LoadCustomsImportsFromCsv(string fileName)
         {
             var regex = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", RegexOptions.Compiled);
             using (FileStream file = File.OpenRead(fileName))
@@ -55,7 +33,7 @@ namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
                             TariffHeading = Int32.Parse(parts[2]),
                             GoodsValue = Decimal.Parse(parts[3], CultureInfo.InvariantCulture),
                             QuantityDescription = Intern(parts[4]),
-                            GoodDescription = Intern(parts[5]),
+                            //GoodDescription = Intern(parts[5]),
                             ImportLocationCode = Intern(parts[6]),
                             QuantityType = Intern(parts[7]),
                             Date = DateTime.Parse(parts[8], CultureInfo.InvariantCulture),

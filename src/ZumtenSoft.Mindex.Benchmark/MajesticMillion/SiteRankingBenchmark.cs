@@ -12,7 +12,7 @@ namespace ZumtenSoft.Mindex.Benchmark.MajesticMillion
 
     public class SiteRankingBenchmark
     {
-        public List<SiteRanking> Rankings { get; set; }
+        public SiteRanking[] Rankings { get; set; }
         public SiteRankingTable Table { get; set; }
         public ILookup<string, SiteRanking> LookupRankingsByTLD { get; set; }
 
@@ -22,7 +22,7 @@ namespace ZumtenSoft.Mindex.Benchmark.MajesticMillion
         [GlobalSetup]
         public void Setup()
         {
-            Rankings = MajesticMillionCache.Instance;
+            Rankings = MajesticMillionHelper.LoadSiteRankings();
             Table = new SiteRankingTable(Rankings);
             LookupRankingsByTLD = Rankings.ToLookup(r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
         }

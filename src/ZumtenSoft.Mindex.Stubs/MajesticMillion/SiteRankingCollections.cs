@@ -20,6 +20,6 @@ namespace ZumtenSoft.Mindex.Stubs.MajesticMillion
 
         private static SiteRanking[] _instance;
 
-        public static SiteRanking[] First10000Rows => _instance ?? (_instance = MajesticMillionHelper.LoadSiteRankings(@"App_Data\majestic_million_reduced.csv").ToArray());
+        public static SiteRanking[] First10000Rows => _instance ?? (_instance = MajesticMillionHelper.LoadSiteRankingsFromCsv(@"App_Data\majestic_million_reduced.csv").ToArray());
     }
 }

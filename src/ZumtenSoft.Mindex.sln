@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZumtenSoft.Mindex.Tests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZumtenSoft.Mindex.Benchmark", "ZumtenSoft.Mindex.Benchmark\ZumtenSoft.Mindex.Benchmark.csproj", "{6727F5D2-09B7-46FC-B3A6-CFC4008AE446}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZumtenSoft.Mindex.Stubs", "ZumtenSoft.Mindex.Stubs\ZumtenSoft.Mindex.Stubs.csproj", "{26CDEAF5-94ED-4BD6-9CFF-A916FE6576BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZumtenSoft.Mindex.Stubs", "ZumtenSoft.Mindex.Stubs\ZumtenSoft.Mindex.Stubs.csproj", "{26CDEAF5-94ED-4BD6-9CFF-A916FE6576BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{64CBDC2A-C539-48A7-8090-9F1EF9F3385B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

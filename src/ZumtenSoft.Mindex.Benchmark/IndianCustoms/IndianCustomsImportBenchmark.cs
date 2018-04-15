@@ -9,7 +9,7 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
     //[DryJob]
     public abstract class IndianCustomsImportBenchmark
     {
-        public List<CustomsImport> Imports { get; set; }
+        public CustomsImport[] Imports { get; set; }
         public CustomsImportTable Table { get; set; }
 
         [Params(1000)] public int N;
@@ -17,7 +17,7 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
         [GlobalSetup]
         public virtual void Setup()
         {
-            Imports = CustomsImportsCache.Instance;
+            Imports = CustomsImportHelper.LoadCustomImports();
             Table = new CustomsImportTable(Imports);
         }
     }

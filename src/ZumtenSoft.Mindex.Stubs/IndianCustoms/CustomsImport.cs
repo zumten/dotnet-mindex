@@ -33,7 +33,7 @@ namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
         public int TariffHeading { get; set; }
         [ProtoMember(13)]
         public decimal GoodsValue { get; set; }
-        [ProtoMember(14)]
-        public string GoodDescription { get; set; }
+        //[ProtoMember(14)]
+        //public string GoodDescription { get; set; }
     }
 }
