@@ -23,7 +23,7 @@ namespace ZumtenSoft.Mindex.Stubs
 
         }
 
-        public static T LoadFileWithCache<T>(string fileName, Func<string, T> initialLoad)
+        public static T LoadOrConvertToProtobuf<T>(string fileName, Func<string, T> initialLoad)
         {
             var dataFolder = FindDirectory("data");
 

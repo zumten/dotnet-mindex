@@ -9,7 +9,7 @@ namespace ZumtenSoft.Mindex.Stubs.MajesticMillion
     {
         public static SiteRanking[] LoadSiteRankings()
         {
-            return FileHelper.LoadFileWithCache("majestic_million.csv", f => LoadSiteRankingsFromCsv(f).ToArray());
+            return FileHelper.LoadOrConvertToProtobuf("majestic_million.csv", f => LoadSiteRankingsFromCsv(f).ToArray());
         }
 
         public static IEnumerable<SiteRanking> LoadSiteRankingsFromCsv(string fileName)

@@ -10,9 +10,14 @@ namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
     public static class CustomsImportHelper
     {
+        private static CustomsImport[] _cache;
+
         public static CustomsImport[] LoadCustomImports()
         {
-            return FileHelper.LoadFileWithCache("IndianCustoms-Imports.csv", f => LoadCustomsImportsFromCsv(f).ToArray());
+            if (_cache == null)
+                _cache = FileHelper.LoadOrConvertToProtobuf("IndianCustoms-Imports.csv", f => LoadCustomsImportsFromCsv(f).ToArray());
+
+            return _cache;
         }
 
         private static IEnumerable<CustomsImport> LoadCustomsImportsFromCsv(string fileName)

@@ -19,18 +19,18 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
         }
 
         [Benchmark]
-        public List<CustomsImport> Linq() => Imports
+        public List<CustomsImport> SearchLinq() => Imports
             .Where(i => Origins.Contains(i.Origin))
             .ToList();
 
         [Benchmark]
-        public List<CustomsImport> Lookup() =>
+        public List<CustomsImport> SearchLookup() =>
             Origins
                 .SelectMany(x => LookupTable[x])
                 .ToList();
 
         [Benchmark]
-        public CustomsImport[] Search() => Table.Search(new CustomsImportSearch
+        public CustomsImport[] SearchMindex() => Table.Search(new CustomsImportSearch
         {
             Origin = Origins
         });
