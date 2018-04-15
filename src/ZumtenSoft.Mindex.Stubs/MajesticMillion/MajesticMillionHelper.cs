@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs
+namespace ZumtenSoft.Mindex.Stubs.MajesticMillion
 {
     public static class MajesticMillionHelper
     {
-        public static IEnumerable<SiteRanking> LoadSiteRankings(string fileName)
+        public static SiteRanking[] LoadSiteRankings()
+        {
+            return FileHelper.LoadFileWithCache("majestic_million.csv", f => LoadSiteRankingsFromCsv(f).ToArray());
+        }
+
+        public static IEnumerable<SiteRanking> LoadSiteRankingsFromCsv(string fileName)
         {
             using (FileStream file = File.OpenRead(fileName))
             using (StreamReader reader = new StreamReader(file))

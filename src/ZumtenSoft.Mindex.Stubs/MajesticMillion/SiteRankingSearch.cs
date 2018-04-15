@@ -1,6 +1,6 @@
 ﻿using ZumtenSoft.Mindex.Criterias;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs
+namespace ZumtenSoft.Mindex.Stubs.MajesticMillion
 {
     public class SiteRankingSearch
     {

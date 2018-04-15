@@ -1,10 +1,10 @@
-﻿using BenchmarkDotNet.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ZumtenSoft.Mindex.Tests.Stubs;
+using BenchmarkDotNet.Attributes;
+using ZumtenSoft.Mindex.Stubs.MajesticMillion;
 
-namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
+namespace ZumtenSoft.Mindex.Benchmark.MajesticMillion
 {
     //[ClrJob(isBaseline: true), CoreJob, MonoJob]
     //[RPlotExporter, RankColumn]
@@ -12,7 +12,7 @@ namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
 
     public class SiteRankingBenchmark
     {
-        public List<SiteRanking> Rankings { get; set; }
+        public SiteRanking[] Rankings { get; set; }
         public SiteRankingTable Table { get; set; }
         public ILookup<string, SiteRanking> LookupRankingsByTLD { get; set; }
 
@@ -22,7 +22,7 @@ namespace ZumtenSoft.Mindex.Benchmark.Benchmarks
         [GlobalSetup]
         public void Setup()
         {
-            Rankings = MajesticMillionCache.Instance;
+            Rankings = MajesticMillionHelper.LoadSiteRankings();
             Table = new SiteRankingTable(Rankings);
             LookupRankingsByTLD = Rankings.ToLookup(r => r.TopLevelDomain, StringComparer.OrdinalIgnoreCase);
         }

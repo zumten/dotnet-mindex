@@ -1,0 +1,2 @@
+The file "majestic_million.csv" can be downloaded from http://downloads.majestic.com/majestic_million.csv
+The file "stackoverflow.com-Users" can be downloaded from https://archive.org/details/stackexchange

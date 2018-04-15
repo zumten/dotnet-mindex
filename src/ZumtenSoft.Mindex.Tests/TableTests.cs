@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZumtenSoft.Mindex.Criterias;
-using ZumtenSoft.Mindex.Tests.Stubs;
+using ZumtenSoft.Mindex.Stubs.MajesticMillion;
 
 namespace ZumtenSoft.Mindex.Tests
 {

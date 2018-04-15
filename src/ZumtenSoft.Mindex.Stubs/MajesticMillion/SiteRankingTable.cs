@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ZumtenSoft.Mindex.Indexes;
 
-namespace ZumtenSoft.Mindex.Tests.Stubs
+namespace ZumtenSoft.Mindex.Stubs.MajesticMillion
 {
     public class SiteRankingTable : Table<SiteRanking, SiteRankingSearch>
     {
