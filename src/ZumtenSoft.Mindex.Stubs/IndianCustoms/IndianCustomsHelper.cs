@@ -8,19 +8,22 @@ using ProtoBuf;
 
 namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
-    public static class CustomsImportHelper
+    public static class IndianCustomsHelper
     {
-        private static CustomsImport[] _cache;
+        private static Import[] _cache;
+        private static readonly object Lock = new object();
 
-        public static CustomsImport[] LoadCustomImports()
+        public static Import[] LoadImports()
         {
             if (_cache == null)
-                _cache = FileHelper.LoadOrConvertToProtobuf("IndianCustoms-Imports.csv", f => LoadCustomsImportsFromCsv(f).ToArray());
+                lock (Lock)
+                    if (_cache == null)
+                        _cache = FileHelper.LoadOrConvertToProtobuf("IndianCustoms-Imports.csv", f => LoadCustomsImportsFromCsv(f).ToArray());
 
             return _cache;
         }
 
-        private static IEnumerable<CustomsImport> LoadCustomsImportsFromCsv(string fileName)
+        private static IEnumerable<Import> LoadCustomsImportsFromCsv(string fileName)
         {
             var regex = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", RegexOptions.Compiled);
             using (FileStream file = File.OpenRead(fileName))
@@ -31,7 +34,7 @@ namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
                     for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
                     {
                         string[] parts = regex.Split(line);
-                        yield return new CustomsImport
+                        yield return new Import
                         {
                             QuantityUnitCode = Intern(parts[0]),
                             ImportState = Intern(parts[1]),

@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
     [ProtoContract]
-    public class CustomsImport
+    public class Import
     {
         [ProtoMember(1)]
         public int SerialId { get; set; }

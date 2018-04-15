@@ -3,7 +3,7 @@ using ZumtenSoft.Mindex.Criterias;
 
 namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
-    public class CustomsImportSearch
+    public class ImportSearch
     {
         public SearchCriteria<DateTime> Date { get; set; }
         public SearchCriteria<string> Type { get; set; }

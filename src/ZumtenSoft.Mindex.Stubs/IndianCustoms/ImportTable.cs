@@ -2,9 +2,9 @@
 
 namespace ZumtenSoft.Mindex.Stubs.IndianCustoms
 {
-    public class CustomsImportTable : Table<CustomsImport, CustomsImportSearch>
+    public class ImportTable : Table<Import, ImportSearch>
     {
-        public CustomsImportTable(IReadOnlyCollection<CustomsImport> rows) : base(rows)
+        public ImportTable(IReadOnlyCollection<Import> rows) : base(rows)
         {
             MapCriteria(s => s.Date, i => i.Date);
             MapCriteria(s => s.Type, i => i.Type);

@@ -21,9 +21,9 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
                 from quantityType in QuantityTypes
                 select Tuple.Create(origin, destination, quantityType)).ToArray();
 
-        public ILookup<Tuple<string, string, string>, CustomsImport> LookupTable { get; set; }
-        public IDictionary<Tuple<string, string, string>, CustomsImport[]> LookupWithBinarySearchTable { get; set; }
-        public CustomsImport[] OrderedListByOriginDestinationQuantityTypeDate { get; set; }
+        public ILookup<Tuple<string, string, string>, Import> LookupTable { get; set; }
+        public IDictionary<Tuple<string, string, string>, Import[]> LookupWithBinarySearchTable { get; set; }
+        public Import[] OrderedListByOriginDestinationQuantityTypeDate { get; set; }
 
         public override void Setup()
         {
@@ -40,12 +40,12 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
         }
 
         [Benchmark]
-        public List<CustomsImport> SearchLinq() => Imports
+        public List<Import> SearchLinq() => Imports
             .Where(i => Origins.Contains(i.Origin) && Destinations.Contains(i.ImportState) && QuantityTypes.Contains(i.QuantityType) && i.Date >= MinimumDate && i.Date <= MaximumDate)
             .ToList();
 
         [Benchmark]
-        public List<CustomsImport> SearchLookup() =>
+        public List<Import> SearchLookup() =>
             _lookupSearchCriterias
                 .SelectMany(x => LookupTable[x])
                 .Where(x => x.Date >= MinimumDate && x.Date <= MaximumDate)
@@ -53,14 +53,14 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
 
 
         [Benchmark]
-        public List<CustomsImport> SearchLookupWithBinarySearch() =>
-            new BinarySearchResult<CustomsImport>(_lookupSearchCriterias.Select(x => LookupWithBinarySearchTable.TryGetValue(x, out var grp) ? new ArraySegment<CustomsImport>(grp) : ArraySegment<CustomsImport>.Empty).ToArray(), true)
+        public List<Import> SearchLookupWithBinarySearch() =>
+            new BinarySearchResult<Import>(_lookupSearchCriterias.Select(x => LookupWithBinarySearchTable.TryGetValue(x, out var grp) ? new ArraySegment<Import>(grp) : ArraySegment<Import>.Empty).ToArray(), true)
                 .ReduceRange(i => i.Date, MinimumDate, MaximumDate, Comparer<DateTime>.Default)
                 .ToList();
 
         [Benchmark]
-        public CustomsImport[] SearchOrderedListWithBinarySearch() =>
-            new BinarySearchResult<CustomsImport>(OrderedListByOriginDestinationQuantityTypeDate)
+        public Import[] SearchOrderedListWithBinarySearch() =>
+            new BinarySearchResult<Import>(OrderedListByOriginDestinationQuantityTypeDate)
                 .ReduceIn(i => i.Origin, Origins, Comparer<string>.Default)
                 .ReduceIn(i => i.ImportState, Destinations, Comparer<string>.Default)
                 .ReduceIn(i => i.QuantityType, QuantityTypes, Comparer<string>.Default)
@@ -68,7 +68,7 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
                 .Materialize();
 
         [Benchmark]
-        public CustomsImport[] SearchMindex() => Table.Search(new CustomsImportSearch
+        public Import[] SearchMindex() => Table.Search(new ImportSearch
         {
             Origin = Origins,
             ImportState = Destinations,

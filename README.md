@@ -14,7 +14,9 @@ The library is currently only released through NuGet https://www.nuget.org/packa
 
 ## How it works?
 
-The inner workings of Mindex is similar to SQL. Each index is simply a list of items sorted with multiple criterias. The search is then done using BinarySearch for each criteria. When you don't specify which index to use, Mindex will analyze the search, give a score to each index and choose the best one.
+Mindex tries to mimmick the model of SQL indexes. An index is created by sorting the list of rows in a way that multiple criterias can be applied one by one to reduce the range of results (as long and the search matches the index). The search is then done using BinarySearch for each criteria. It is possible to force an index, but by default, Mindex analyzes the search, give a score to each index and chooses the best one.
+
+For more information, refer to the class [BinarySearchResult](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex/BinarySearchResult.cs).
 
 
 ## Build your first table
@@ -28,31 +30,51 @@ using ZumtenSoft.Mindex;
 using ZumtenSoft.Mindex.Criterias;
 ```
 
-2. Create your POCO object and a search criteria with a duplicate of every property you need to use as a search criteria
+2. Create your models:
+    - Create your POCO object
+    - Create a search object
+        - Duplicate your class by appending the suffix "Search"
+        - Remove the properties you won't need to search
+        - Wrap the type of the properties within a SearchCriteria<T>
 
 ```csharp
-public class SiteRanking
+// Example from the Indian Customs - List of all imports between 2015-05-01 to 2015-09-11
+public class Import
 {
-    public int GlobalRank { get; set; }
-    public int TopLevelDomainRank { get; set; }
-    public string DomainName { get; set; }
-    public string TopLevelDomain { get; set; }
-    public int ReferringSubNets { get; set; }
-    public int ReferringIps { get; set; }
-    public string InternationalizedDomainName { get; set; }
-    public string InternationalizedTopLevelDomain { get; set; }
-    public int PreviousGlobalRank { get; set; }
-    public int PreviousTopLevelDomainRank { get; set; }
-    public int PreviousReferringSubNets { get; set; }
-    public int PreviousReferringIps { get; set; }
+    public int SerialId { get; set; }
+    public DateTime Date { get; set; }
+    public string Type { get; set; }
+    public string Origin { get; set; }
+
+    public decimal Quantity { get; set; }
+    public string QuantityUnitCode { get; set; }
+    public string QuantityDescription { get; set; }
+    public string QuantityType { get; set; }
+
+    public string ImportState { get; set; }
+    public string ImportLocationCode { get; set; }
+    public string ImportLocationName { get; set; }
+
+    public int TariffHeading { get; set; }
+    public decimal GoodsValue { get; set; }
+    public string GoodDescription { get; set; }
 }
 
-public class SiteRankingSearch
+public class ImportSearch
 {
-    public SearchCriteria<int> GlobalRank { get; set; }
-    public SearchCriteria<int> TopLevelDomainRank { get; set; }
-    public SearchCriteria<string> DomainName { get; set; }
-    public SearchCriteria<string> TopLevelDomain { get; set; }
+    public SearchCriteria<DateTime> Date { get; set; }
+    public SearchCriteria<string> Type { get; set; }
+    public SearchCriteria<string> Origin { get; set; }
+
+    public SearchCriteria<decimal> Quantity { get; set; }
+    public SearchCriteria<string> QuantityUnitCode { get; set; }
+    public SearchCriteria<string> QuantityType { get; set; }
+
+    public SearchCriteria<string> ImportState { get; set; }
+    public SearchCriteria<string> ImportLocationCode { get; set; }
+    public SearchCriteria<string> ImportLocationName { get; set; }
+    public SearchCriteria<int> TariffHeading { get; set; }
+    public SearchCriteria<decimal> GoodsValue { get; set; }
 }
 ```
 
@@ -63,52 +85,49 @@ public class SiteRankingSearch
 ```csharp
 using ZumtenSoft.Mindex;
 
-public class SiteRankingTable : Table<SiteRanking, SiteRankingSearch>
+public class ImportTable : Table<Import, ImportSearch>
 {
-    public SiteRankingTable(IReadOnlyCollection<SiteRanking> rankings) : base(rankings)
+    public ImportTable(IReadOnlyCollection<Import> rows) : base(rows)
     {
-        MapCriteria(s => s.GlobalRank,         r => r.GlobalRank);
-        MapCriteria(s => s.TopLevelDomainRank, r => r.TopLevelDomainRank);
-        MapCriteria(s => s.DomainName,         r => r.DomainName,         StringComparer.OrdinalIgnoreCase);
-        MapCriteria(s => s.TopLevelDomain,     r => r.TopLevelDomain,     StringComparer.OrdinalIgnoreCase);
+        MapCriteria(s => s.Date, i => i.Date);
+        MapCriteria(s => s.Type, i => i.Type);
+        MapCriteria(s => s.Origin, i => i.Origin);
+        MapCriteria(s => s.Quantity, i => i.Quantity);
+        MapCriteria(s => s.QuantityUnitCode, i => i.QuantityUnitCode);
+        MapCriteria(s => s.QuantityType, i => i.QuantityType);
+        MapCriteria(s => s.ImportState, i => i.ImportState);
+        MapCriteria(s => s.ImportLocationCode, i => i.ImportLocationCode);
+        MapCriteria(s => s.ImportLocationName, i => i.ImportLocationName);
+        MapCriteria(s => s.TariffHeading, i => i.TariffHeading);
+        MapCriteria(s => s.GoodsValue, i => i.GoodsValue);
 
-        ConfigureIndex().IncludeColumns(s => s.TopLevelDomainRank).Build();
-        ConfigureIndex().IncludeColumns(s => s.TopLevelDomain, s => s.TopLevelDomainRank).Build();
+        ConfigureIndex().IncludeColumns(s => s.Origin, s => s.ImportState, s => s.QuantityType, s => s.Date).Build();
     }
 }
 ```
 
 4. Instanciate the table.
 ```csharp
-List<SiteRanking> rankings = LoadRankings();
-SiteRankingTable table = new SiteRankingTable(rankings);
+List<Import> rows = ... //LoadImports();
+ImportTable table = new ImportTable(rows);
 ```
-
-5. Search the table.
+5. Search the table with as many criterias as you wish.
 ```csharp
-// Will use the index "TopLevelDomainRank"
-// - TopLevelDomainRank: Extract 1 ArraySegment using BinarySearch
-var top10OfEachTLD = table.Search(new SiteRankingSearch
+Import[] result = table.Search(new ImportSearch
 {
-    TopLevelDomainRank = SearchCriteria.ByRange(1, 10)
-});
+    // You can specify multiple values by assigning an array
+    Origin = new string[] {"CANADA", "UNITED STATES", "MEXICO"},
+    QuantityType = new string[] {"W", "M"},
 
-// Will use the index "TopLevelDomain_TopLevelDomainRank"
-// - TopLevelDomain: Will extract 3 ArraySegments using BinarySearch
-// - TopLevelDomainRank: For each ArraySegment, a new BinarySearch is applied
-var top1000OfMainDomains = table.Search(new SiteRankingSearch
-{
-    TopLevelDomain = new [] { "com", "org", "net" },
-    TopLevelDomainRank = SearchCriteria.ByRange(1, 1000)
-});
+    // You can specify a single value by assigning the value matching the criteria type
+    ImportState = "Delhi",
 
-// Will use the index "TopLevelDomain_TopLevelDomainRank":
-// - TopLevelDomain: Will extract 1 ArraySegment using BinarySearch
-// - GlobalRank: Filter the ArraySegment using a full scan
-var canadianDomainsInTop1000 = table.Search(new SiteRankingSearch
-{
-    TopLevelDomain = "ca",
-    GlobalRank = SearchCriteria.ByRange(1, 1000)
+    // You can specify a range of values by calling SearchCriteria.ByRange
+    Date = SearchCriteria.ByRange(new DateTime(2015, 5, 1), new DateTime(2015, 5, 14)),
+
+    // You can also specify a custom predicate which will be filtered after everything else.
+    // In this case, the compiler can't determine the type. You will have to specify it yourself.
+    GoodsValue = SearchCriteria.ByPredicate((decimal v) => v > 0)
 });
 ```
 
@@ -118,57 +137,56 @@ The main point of this library is to provide easy search criterias without impac
 
 ## Benchmarks
 
-1. Top 10 domains for each top level domain ([SiteRankingSearchTopDomainByTLD.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopDomainByTLD.cs))
+1. Simple search (1 criteria, single value) ([SearchBySingleOrigin.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/IndianCustoms/SearchBySingleOrigin.cs))
 
 ``` ini
-BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
-Intel Core i7-8550U CPU 1.80GHz (Kaby Lake R), 1 CPU, 8 logical cores and 4 physical cores
-Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
-.NET Core SDK=2.1.2
-  [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
-  DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
+BenchmarkDotNet=v0.10.14, OS=Windows 10.0.14393.2189 (1607/AnniversaryUpdate/Redstone1)
+Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
+.NET Core SDK=2.1.104
+  [Host]     : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  DefaultJob : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
 ```
-| Method |    N |          Mean |       Error |      StdDev |
-|------- |----- |--------------:|------------:|------------:|
-|   Linq | 1000 | 26,106.427 us | 352.8374 us | 312.7812 us |
-| Lookup | 1000 |    287.210 us |   3.9015 us |   3.2579 us |
-| Search | 1000 |      9.560 us |   0.1380 us |   0.1152 us |
+|       Method |    N |       Mean |     Error |    StdDev |
+|------------- |----- |-----------:|----------:|----------:|
+|   SearchLinq | 1000 | 102.633 ms | 2.0321 ms | 3.5053 ms |
+| SearchLookup | 1000 |   3.479 ms | 0.0692 ms | 0.0850 ms |
+| SearchMindex | 1000 |   3.444 ms | 0.0685 ms | 0.0762 ms |
 
 
 
-2. Top 1000 domains for each top level domain .com, .org and .net ([SiteRankingSearchTopDomainByComOrgNet.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopDomainByComOrgNet.cs))
+
+2. Simple search (1 criteria, multiple values) ([SearchByMultipleOrigins.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/IndianCustoms/SearchByMultipleOrigins.cs))
 
 ``` ini
-BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
-Intel Core i7-8550U CPU 1.80GHz (Kaby Lake R), 1 CPU, 8 logical cores and 4 physical cores
-Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
-.NET Core SDK=2.1.2
-  [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
-  DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
+BenchmarkDotNet=v0.10.14, OS=Windows 10.0.14393.2189 (1607/AnniversaryUpdate/Redstone1)
+Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
+.NET Core SDK=2.1.104
+  [Host]     : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  DefaultJob : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
 ```
-| Method |    N |         Mean |       Error |      StdDev |
-|------- |----- |-------------:|------------:|------------:|
-|   Linq | 1000 | 71,456.54 us | 595.8435 us | 528.1997 us |
-| Lookup | 1000 |     61.39 us |   0.3844 us |   0.3001 us |
-| Search | 1000 |     10.57 us |   0.2043 us |   0.2431 us |
+|       Method |    N |       Mean |     Error |    StdDev |     Median |
+|------------- |----- |-----------:|----------:|----------:|-----------:|
+|   SearchLinq | 1000 | 400.799 ms | 7.9923 ms | 6.6739 ms | 401.103 ms |
+| SearchLookup | 1000 |   7.684 ms | 0.2332 ms | 0.6876 ms |   8.045 ms |
+| SearchMindex | 1000 |   3.915 ms | 0.0741 ms | 0.0693 ms |   3.908 ms |
 
 
 
-3. Canadian sites part of the top 1000 global websites ([SiteRankingSearchTopCanadianDomain.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/Benchmarks/SiteRankingSearchTopCanadianDomain.cs))
+
+3. Search with 4 criterias (3 by values, 1 by range) ([SearchByOriginDestinationQuantityTypeDate.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/IndianCustoms/SearchByOriginDestinationQuantityTypeDate.cs))
 
 ``` ini
-BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
-Intel Core i7-8550U CPU 1.80GHz (Kaby Lake R), 1 CPU, 8 logical cores and 4 physical cores
-Frequency=1945312 Hz, Resolution=514.0564 ns, Timer=TSC
-.NET Core SDK=2.1.2
-  [Host]     : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT  [AttachedDebugger]
-  DefaultJob : .NET Core 2.0.3 (CoreCLR 4.6.25815.02, CoreFX 4.6.25814.01), 64bit RyuJIT
+BenchmarkDotNet=v0.10.14, OS=Windows 10.0.14393.2189 (1607/AnniversaryUpdate/Redstone1)
+Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
+.NET Core SDK=2.1.104
+  [Host]     : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  DefaultJob : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
 ```
-|                        Method |    N |            Mean |          Error |         StdDev |
-|------------------------------ |----- |----------------:|---------------:|---------------:|
-|                          Linq | 1000 | 27,313,848.3 ns | 477,948.881 ns | 447,073.636 ns |
-|                        Lookup | 1000 |        619.0 ns |       8.211 ns |       7.681 ns |
-|                        Search | 1000 |      3,778.5 ns |      31.560 ns |      29.521 ns |
-|               IndexGlobalRank | 1000 |    327,225.8 ns |   2,990.684 ns |   2,497.356 ns |
-|           IndexTopLevelDomain | 1000 |    584,372.9 ns |  12,564.413 ns |  12,339.932 ns |
-| IndexTopLevelDomainGlobalRank | 1000 |      2,400.1 ns |      39.967 ns |      37.385 ns |
+|                            Method |    N |         Mean |        Error |       StdDev |
+|---------------------------------- |----- |-------------:|-------------:|-------------:|
+|                        SearchLinq | 1000 | 309,498.1 us | 2,104.052 us | 1,756.979 us |
+|                      SearchLookup | 1000 |   2,777.5 us |    55.091 us |    75.409 us |
+|      SearchLookupWithBinarySearch | 1000 |     589.0 us |     7.527 us |     6.673 us |
+| SearchOrderedListWithBinarySearch | 1000 |     123.0 us |     2.389 us |     2.844 us |
+|                      SearchMindex | 1000 |     176.2 us |     3.499 us |     5.128 us |
+

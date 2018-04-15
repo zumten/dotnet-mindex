@@ -11,7 +11,7 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
     {
         private static readonly string Origin = "UNITED STATES";
 
-        public ILookup<string, CustomsImport> LookupTable { get; set; }
+        public ILookup<string, Import> LookupTable { get; set; }
         public override void Setup()
         {
             base.Setup();
@@ -19,16 +19,16 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
         }
 
         [Benchmark]
-        public List<CustomsImport> SearchLinq() => Imports
+        public List<Import> SearchLinq() => Imports
             .Where(i => Origin == i.Origin)
             .ToList();
 
         [Benchmark]
-        public List<CustomsImport> SearchLookup() =>
+        public List<Import> SearchLookup() =>
             LookupTable[Origin].ToList();
 
         [Benchmark]
-        public CustomsImport[] SearchMindex() => Table.Search(new CustomsImportSearch
+        public Import[] SearchMindex() => Table.Search(new ImportSearch
         {
             Origin = Origin
         });
