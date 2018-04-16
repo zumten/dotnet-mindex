@@ -17,7 +17,7 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => _predicate.ToString();
 
-        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
+        public override ArraySegmentCollection<TRow> Reduce<TRow>(ArraySegmentCollection<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
         {
             return null;
         }

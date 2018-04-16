@@ -18,9 +18,9 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => String.Join(", ", SearchValues);
 
-        public override BinarySearchResult<TRow> Reduce<TRow>(BinarySearchResult<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
+        public override ArraySegmentCollection<TRow> Reduce<TRow>(ArraySegmentCollection<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
         {
-            return rows.ReduceIn(metaData.GetColumnValue, SearchValues, metaData.Comparer);
+            return rows.ReduceByValues(metaData.GetColumnValue, SearchValues, metaData.Comparer);
         }
 
         public static implicit operator SearchCriteriaByValue<TColumn>(TColumn value)

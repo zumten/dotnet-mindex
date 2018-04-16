@@ -21,7 +21,7 @@ namespace ZumtenSoft.Mindex.ColumnCriterias
         }
 
         public TableCriteriaScore Score => TableCriteriaScore.NotOptimizable;
-        public BinarySearchResult<TRow> Reduce(BinarySearchResult<TRow> items)
+        public ArraySegmentCollection<TRow> Reduce(ArraySegmentCollection<TRow> items)
         {
             return null;
         }

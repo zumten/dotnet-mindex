@@ -6,31 +6,40 @@ using ZumtenSoft.Mindex.Utilities;
 
 namespace ZumtenSoft.Mindex
 {
-    [DebuggerDisplay(@"\{BinarySearchResult Count={" + nameof(Count) + @"}\}")]
-    public class BinarySearchResult<TRow> : IReadOnlyCollection<TRow>
+    [DebuggerDisplay(@"\{ArraySegmentCollection Segments={Segments.Length}, TotalCount={Count}\}")]
+    public class ArraySegmentCollection<TRow> : IReadOnlyCollection<TRow>
     {
         public ArraySegment<TRow>[] Segments { get; }
-        public bool CanSearch { get; }
+        public bool IsSearchable { get; }
         public int Count => ArrayUtilities<TRow>.TotalCount(Segments);
 
-        public BinarySearchResult(TRow[] items)
+        public ArraySegmentCollection(TRow[] items)
         {
             Segments = new[] { new ArraySegment<TRow>(items) };
-            CanSearch = true;
+            IsSearchable = true;
         }
 
-        public BinarySearchResult(ArraySegment<TRow>[] segments, bool canSearch)
+        public ArraySegmentCollection(ArraySegment<TRow>[] segments, bool isSearchable)
         {
-            CanSearch = canSearch;
+            IsSearchable = isSearchable;
             Segments = segments;
         }
 
-        public BinarySearchResult<TRow> ReduceIn<TColumn>(Func<TRow, TColumn> getColumn, TColumn[] values, IComparer<TColumn> comparer)
+        /// <summary>
+        /// Apply a binary search on each segment to push the reduction of the result set one step further.
+        /// </summary>
+        /// <typeparam name="TColumn">Type of the searchable field</typeparam>
+        /// <param name="getColumn">Function to extract the searchable value from the row</param>
+        /// <param name="valuesToSearch">List of values that must be matched in order to preserve a row</param>
+        /// <param name="comparer">Comparer for this type of column</param>
+        /// <returns></returns>
+        public ArraySegmentCollection<TRow> ReduceByValues<TColumn>(Func<TRow, TColumn> getColumn, TColumn[] valuesToSearch, IComparer<TColumn> comparer)
         {
+            ValidateSearchable();
             List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
-            for (int iValue = values.Length - 1; iValue >= 0; iValue--)
+            for (int iValue = valuesToSearch.Length - 1; iValue >= 0; iValue--)
             {
-                TColumn value = values[iValue];
+                TColumn value = valuesToSearch[iValue];
                 for (int iSegment = Segments.Length - 1; iSegment >= 0; iSegment--)
                 {
                     var range = SearchRange(Segments[iSegment], getColumn, value, value, comparer);
@@ -39,35 +48,40 @@ namespace ZumtenSoft.Mindex
                 }
             }
 
-            return new BinarySearchResult<TRow>(result.ToArray(), true);
+            return new ArraySegmentCollection<TRow>(result.ToArray(), true);
         }
 
-        public BinarySearchResult<TRow> ReduceRange<TColumn>(Func<TRow, TColumn> getColumn, TColumn start, TColumn end, IComparer<TColumn> comparer)
+        /// <summary>
+        /// Apply a binary search on each segment to extract values from "start" to "end".
+        /// Since the range can include multiple values, this kind of search will break the index from searching further.
+        /// To preserve this functionnality, each value can be split into a different ArraySegment.
+        /// </summary>
+        /// <typeparam name="TColumn">Type of the searchable field</typeparam>
+        /// <param name="getColumn">Function to extract the searchable value from the row</param>
+        /// <param name="start">Minimum value to search</param>
+        /// <param name="end">Maximum value to search</param>
+        /// <param name="comparer">Comparer for this type of column</param>
+        /// <param name="preserveSearchability">Preserve the searchability by splitting every value into a different ArraySegment</param>
+        /// <returns></returns>
+        public ArraySegmentCollection<TRow> ReduceByRange<TColumn>(Func<TRow, TColumn> getColumn, TColumn start, TColumn end, IComparer<TColumn> comparer, bool preserveSearchability = false)
         {
+            ValidateSearchable();
             List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
             foreach (var segment in Segments)
             {
                 var range = SearchRange(segment, getColumn, start, end, comparer);
                 if (range.Count >= 0)
-                    result.Add(range);
+                {
+                    if (preserveSearchability)
+                        SplitByValue(result, range, getColumn, comparer);
+                    else
+                        result.Add(range);
+                }
             }
 
-            return new BinarySearchResult<TRow>(result.ToArray(), false);
+            return new ArraySegmentCollection<TRow>(result.ToArray(), preserveSearchability);
         }
-
-        public BinarySearchResult<TRow> ReduceRangeByValue<TColumn>(Func<TRow, TColumn> getColumn, TColumn start, TColumn end, IComparer<TColumn> comparer)
-        {
-            List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
-            foreach (var segment in Segments)
-            {
-                var range = SearchRange(segment, getColumn, start, end, comparer);
-                if (range.Count >= 0)
-                    SplitByValue(result, range, getColumn, comparer);
-            }
-
-            return new BinarySearchResult<TRow>(result.ToArray(), true);
-        }
-
+        
         public IEnumerator<TRow> GetEnumerator()
         {
             foreach (var segment in Segments)
@@ -80,11 +94,17 @@ namespace ZumtenSoft.Mindex
             }
         }
 
+        /// <summary>
+        /// Equivalent of .ToArray(), but optimized to work with ArraySegments.
+        /// </summary>
         public TRow[] Materialize()
         {
             return ArrayUtilities<TRow>.Flatten(Segments);
         }
 
+        /// <summary>
+        /// Equivalent of .Where(predicate).ToArray(), but optimized to work with ArraySegments.
+        /// </summary>
         public TRow[] Materialize(Func<TRow, bool> predicate)
         {
             return ArrayUtilities<TRow>.Flatten(Segments, predicate);
@@ -93,6 +113,12 @@ namespace ZumtenSoft.Mindex
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        private void ValidateSearchable()
+        {
+            if (!IsSearchable)
+                throw new Exception(nameof(ArraySegmentCollection<TRow>) + " has been marked as non-searchable");
         }
 
         private static void SplitByValue<TCompared>(List<ArraySegment<TRow>> result, ArraySegment<TRow> initialSegment, Func<TRow, TCompared> getCompared, IComparer<TCompared> comparer)

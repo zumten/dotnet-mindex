@@ -7,7 +7,7 @@ namespace ZumtenSoft.Mindex.ColumnCriterias
     {
         ITableColumn<TRow, TSearch> Column { get; }
         TableCriteriaScore Score { get; }
-        BinarySearchResult<TRow> Reduce(BinarySearchResult<TRow> items);
+        ArraySegmentCollection<TRow> Reduce(ArraySegmentCollection<TRow> items);
         Expression BuildCondition(ParameterExpression paramExprd);
     }
 }

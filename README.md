@@ -16,7 +16,7 @@ The library is currently only released through NuGet https://www.nuget.org/packa
 
 Mindex tries to mimmick the model of SQL indexes. An index is created by sorting the list of rows in a way that multiple criterias can be applied one by one to reduce the range of results (as long and the search matches the index). The search is then done using BinarySearch for each criteria. It is possible to force an index, but by default, Mindex analyzes the search, give a score to each index and chooses the best one.
 
-For more information, refer to the class [BinarySearchResult](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex/BinarySearchResult.cs).
+For more information, refer to the class [ArraySegmentCollection](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex/ArraySegmentCollection.cs).
 
 
 ## Build your first table

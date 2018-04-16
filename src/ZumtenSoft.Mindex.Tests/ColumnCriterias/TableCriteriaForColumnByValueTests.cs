@@ -75,7 +75,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByValues("ca", "com") };
             var criteria = BuildCriteria(rows, search);
             var expected = rows.Where(x => x.TopLevelDomain == "ca" || x.TopLevelDomain == "com");
-            var actual = criteria.Reduce(new BinarySearchResult<SiteRanking>(rows));
+            var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
             CollectionAssert.AreEquivalent(expected.ToList(), actual.ToList());
         }
 
@@ -86,7 +86,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByRange("com", "net") };
             var criteria = BuildCriteria(rows, search);
             var expected = rows.Where(x => StringComparer.OrdinalIgnoreCase.Compare(x.TopLevelDomain, "com") >=0 && StringComparer.OrdinalIgnoreCase.Compare(x.TopLevelDomain, "net") <= 0);
-            var actual = criteria.Reduce(new BinarySearchResult<SiteRanking>(rows));
+            var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
             CollectionAssert.AreEquivalent(expected.ToList(), actual.ToList());
         }
 
@@ -96,7 +96,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var rows = SiteRankingCollections.First10000Rows;
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByPredicate((string x) => x == "ca") };
             var criteria = BuildCriteria(rows, search);
-            var actual = criteria.Reduce(new BinarySearchResult<SiteRanking>(rows));
+            var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
             Assert.IsNull(actual);
         }
 

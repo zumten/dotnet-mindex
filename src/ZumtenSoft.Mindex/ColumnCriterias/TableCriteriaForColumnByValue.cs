@@ -22,7 +22,7 @@ namespace ZumtenSoft.Mindex.ColumnCriterias
             Score = GetScore(_metaData, criteria);
         }
 
-        public BinarySearchResult<TRow> Reduce(BinarySearchResult<TRow> items)
+        public ArraySegmentCollection<TRow> Reduce(ArraySegmentCollection<TRow> items)
         {
             return _criteria.Reduce(items, _metaData);
         }

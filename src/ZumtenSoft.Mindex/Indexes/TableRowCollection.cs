@@ -17,10 +17,10 @@ namespace ZumtenSoft.Mindex.Indexes
 
         public virtual TRow[] Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
         {
-            return FilterRowsWithCustomExpression(new BinarySearchResult<TRow>(Rows), criterias);
+            return FilterRowsWithCustomExpression(new ArraySegmentCollection<TRow>(Rows), criterias);
         }
 
-        protected static TRow[] FilterRowsWithCustomExpression(BinarySearchResult<TRow> items, IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> columns)
+        protected static TRow[] FilterRowsWithCustomExpression(ArraySegmentCollection<TRow> items, IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> columns)
         {
             if (columns.Count == 0)
                 return items.Materialize();

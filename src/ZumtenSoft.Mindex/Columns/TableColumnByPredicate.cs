@@ -45,7 +45,7 @@ namespace ZumtenSoft.Mindex.Columns
             return new TableCriteriaForColumnByPredicate<TRow,TSearch,TColumn>(this, criteria);
         }
 
-        public bool Reduce(TSearch search, ref BinarySearchResult<TRow> items)
+        public bool Reduce(TSearch search, ref ArraySegmentCollection<TRow> items)
         {
             // Multi-values column cannot be searched through indexes, therefore cannot
             // reduce the set of results.

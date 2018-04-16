@@ -12,13 +12,13 @@ namespace ZumtenSoft.Mindex.Indexes
     {
         public string Name => String.Join("_", _sortColumns.Select(x => x.Name));
         private readonly ITableColumn<TRow, TSearch>[] _sortColumns;
-        private readonly BinarySearchResult<TRow> _rootResult;
+        private readonly ArraySegmentCollection<TRow> _rootResult;
 
         public TableIndex(TRow[] items, ITableColumn<TRow, TSearch>[] sortColumns)
             : base(SortRows(items, sortColumns))
         {
             _sortColumns = sortColumns;
-            _rootResult = new BinarySearchResult<TRow>(Rows);
+            _rootResult = new ArraySegmentCollection<TRow>(Rows);
         }
 
         private static TRow[] SortRows(TRow[] items, IReadOnlyCollection<ITableColumn<TRow, TSearch>> sortColumns)
@@ -39,7 +39,7 @@ namespace ZumtenSoft.Mindex.Indexes
             var binaryResult = _rootResult;
             var remainingCriterias = criterias.ToList();
             for (var indexSortColumn = 0;
-                binaryResult.CanSearch && indexSortColumn < _sortColumns.Length;
+                binaryResult.IsSearchable && indexSortColumn < _sortColumns.Length;
                 indexSortColumn++)
             {
                 var sortColumn = _sortColumns[indexSortColumn];
@@ -50,7 +50,7 @@ namespace ZumtenSoft.Mindex.Indexes
                     var reducedResult = criteria.Reduce(binaryResult);
                     if (reducedResult == null)
                     {
-                        binaryResult = new BinarySearchResult<TRow>(binaryResult.Segments, false);
+                        binaryResult = new ArraySegmentCollection<TRow>(binaryResult.Segments, false);
                     }
                     else
                     {
@@ -60,7 +60,7 @@ namespace ZumtenSoft.Mindex.Indexes
                 }
                 else
                 {
-                    binaryResult = new BinarySearchResult<TRow>(binaryResult.Segments, false);
+                    binaryResult = new ArraySegmentCollection<TRow>(binaryResult.Segments, false);
                 }
             }
 
