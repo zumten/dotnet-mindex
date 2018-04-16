@@ -5,7 +5,13 @@ Mindex: DotNet High-performance in-memory multi-criteria collection search
 
 ## Objective
 
-This library tries to mimmick the way you can search inside a table in SQL through multiple criterias, while providing the full performance of in-memory objects.
+This library aims to optimize search over a read-only list using a large number of criterias. It is like a big lookup table that can support multiple type of search instead of just the one it was made for.
+
+If you have one or many of the following requirements, Mindex can help you:
+- Your application has to search over very big collections of data.
+- Your application has collections with a bunch of different search criterias.
+- Your application has dynamic business rules that cannot be preoptimized.
+
 
 ## How to install?
 
@@ -14,9 +20,11 @@ The library is currently only released through NuGet https://www.nuget.org/packa
 
 ## How it works?
 
-Mindex tries to mimmick the model of SQL indexes. An index is created by sorting the list of rows in a way that multiple criterias can be applied one by one to reduce the range of results (as long and the search matches the index). The search is then done using BinarySearch for each criteria. It is possible to force an index, but by default, Mindex analyzes the search, give a score to each index and chooses the best one.
+Mindex tries to mimmick the model of SQL indexes. An index is created by sorting the list of rows in a way that multiple criterias can be applied one by one to reduce the range of results (as long and the search matches the index). The search is then done using BinarySearch for each criteria.
 
-For more information, refer to the class [ArraySegmentCollection](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex/ArraySegmentCollection.cs).
+For more information about how an index is built and searched, refer to the wiki page dedicated to [ArraySegmentCollection](https://github.com/zumten/mindex/wiki/ArraySegmentCollection).
+
+Mindex adds a layer on top of ArraySegmentCollection by analyzing the search, giving a score to each index and choosing the best one. This way you can focus on your business requirements and not on how to build your data structure for performance.
 
 
 ## Build your first table
@@ -115,12 +123,13 @@ ImportTable table = new ImportTable(rows);
 ```csharp
 Import[] result = table.Search(new ImportSearch
 {
+    
+    // You can specify a single value criteria
+    ImportState = "Delhi",
+
     // You can specify multiple values by assigning an array
     Origin = new string[] {"CANADA", "UNITED STATES", "MEXICO"},
     QuantityType = new string[] {"W", "M"},
-
-    // You can specify a single value by assigning the value matching the criteria type
-    ImportState = "Delhi",
 
     // You can specify a range of values by calling SearchCriteria.ByRange
     Date = SearchCriteria.ByRange(new DateTime(2015, 5, 1), new DateTime(2015, 5, 14)),

@@ -6,12 +6,12 @@ using ZumtenSoft.Mindex.Utilities;
 
 namespace ZumtenSoft.Mindex
 {
-    [DebuggerDisplay(@"\{ArraySegmentCollection Segments={Segments.Length}, TotalCount={Count}\}")]
-    public class ArraySegmentCollection<TRow> : IReadOnlyCollection<TRow>
+    [DebuggerDisplay(@"\{ArraySegmentCollection Segments={Segments.Length}, TotalCount={TotalCount}\}")]
+    public class ArraySegmentCollection<TRow>
     {
         public ArraySegment<TRow>[] Segments { get; }
         public bool IsSearchable { get; }
-        public int Count => ArrayUtilities<TRow>.TotalCount(Segments);
+        public int TotalCount => ArrayUtilities<TRow>.TotalCount(Segments);
 
         public ArraySegmentCollection(TRow[] items)
         {
@@ -81,18 +81,6 @@ namespace ZumtenSoft.Mindex
 
             return new ArraySegmentCollection<TRow>(result.ToArray(), preserveSearchability);
         }
-        
-        public IEnumerator<TRow> GetEnumerator()
-        {
-            foreach (var segment in Segments)
-            {
-                int end = segment.Offset + segment.Count;
-                TRow[] array = segment.Array
-                    ?? throw new InvalidOperationException("ArraySegment is missing Array");
-                for (int i = segment.Offset; i < end; i++)
-                    yield return array[i];
-            }
-        }
 
         /// <summary>
         /// Equivalent of .ToArray(), but optimized to work with ArraySegments.
@@ -108,11 +96,6 @@ namespace ZumtenSoft.Mindex
         public TRow[] Materialize(Func<TRow, bool> predicate)
         {
             return ArrayUtilities<TRow>.Flatten(Segments, predicate);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
 
         private void ValidateSearchable()

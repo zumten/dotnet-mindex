@@ -51,9 +51,10 @@ namespace ZumtenSoft.Mindex.Criterias
             if (metaData.Comparer.Compare(Start, End) == 0)
                 return ByValues(Start);
             var resultRange = new ArraySegmentCollection<TColumn>(metaData.PossibleValues).ReduceByRange(x => x, Start, End, metaData.Comparer);
-            if (resultRange.Count == 1)
-                return ByValues(resultRange.First());
-            if (resultRange.Count < 10)
+            var nbResults = resultRange.TotalCount;
+            if (nbResults <= 1)
+                return ByValues(resultRange.Materialize());
+            if (nbResults < 10)
                 return new SearchCriteriaByRange<TColumn>(Start, End, true);
             return this;
         }
@@ -61,9 +62,10 @@ namespace ZumtenSoft.Mindex.Criterias
         public override TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
         {
             var resultRange = new ArraySegmentCollection<TColumn>(metaData.PossibleValues).ReduceByRange(x => x, Start, End, metaData.Comparer);
-            if (resultRange.Count == 0)
+            var nbResults = resultRange.TotalCount;
+            if (nbResults == 0)
                 return TableCriteriaScore.Impossible;
-            return new TableCriteriaScore((float)resultRange.Count / metaData.PossibleValues.Length, PreserveSearchability);
+            return new TableCriteriaScore((float)nbResults / metaData.PossibleValues.Length, PreserveSearchability);
         }
     }
 

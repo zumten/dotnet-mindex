@@ -76,7 +76,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var criteria = BuildCriteria(rows, search);
             var expected = rows.Where(x => x.TopLevelDomain == "ca" || x.TopLevelDomain == "com");
             var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
-            CollectionAssert.AreEquivalent(expected.ToList(), actual.ToList());
+            CollectionAssert.AreEquivalent(expected.ToList(), actual.Materialize());
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var criteria = BuildCriteria(rows, search);
             var expected = rows.Where(x => StringComparer.OrdinalIgnoreCase.Compare(x.TopLevelDomain, "com") >=0 && StringComparer.OrdinalIgnoreCase.Compare(x.TopLevelDomain, "net") <= 0);
             var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
-            CollectionAssert.AreEquivalent(expected.ToList(), actual.ToList());
+            CollectionAssert.AreEquivalent(expected.ToList(), actual.Materialize());
         }
 
         [TestMethod]
