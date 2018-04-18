@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ZumtenSoft.Mindex.ColumnCriterias;
+using ZumtenSoft.Mindex.MappingCriterias;
 
 namespace ZumtenSoft.Mindex.Indexes
 {
@@ -16,7 +16,7 @@ namespace ZumtenSoft.Mindex.Indexes
         }
 
         public TableIndexScore<TRow, TSearch>[] EvaluateIndexes(
-            IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
+            IReadOnlyCollection<ITableCriteriaForMapping<TRow, TSearch>> criterias)
         {
             return this
                 .Select(i => i.GetScore(criterias))
@@ -25,7 +25,7 @@ namespace ZumtenSoft.Mindex.Indexes
         }
 
         public TableRowCollection<TRow, TSearch> GetBestIndex(
-            IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
+            IReadOnlyCollection<ITableCriteriaForMapping<TRow, TSearch>> criterias)
         {
             if (Count == 0)
                 return DefaultIndex;

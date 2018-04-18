@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ZumtenSoft.Mindex.ColumnCriterias;
-using ZumtenSoft.Mindex.Columns;
+using ZumtenSoft.Mindex.MappingCriterias;
+using ZumtenSoft.Mindex.Mappings;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -17,7 +17,7 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => _predicate.ToString();
 
-        public override ArraySegmentCollection<TRow> Reduce<TRow>(ArraySegmentCollection<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
+        public override BinarySearchTable<TRow> Reduce<TRow>(BinarySearchTable<TRow> rows, TableMappingMetaData<TRow, TColumn> metaData)
         {
             return null;
         }
@@ -28,12 +28,12 @@ namespace ZumtenSoft.Mindex.Criterias
                 Expression.Invoke(getColumnValue, paramRow));
         }
 
-        public override SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override SearchCriteria<TColumn> Optimize<TRow>(TableMappingMetaData<TRow, TColumn> metaData)
         {
             return this;
         }
 
-        public override TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override TableCriteriaScore GetScore<TRow>(TableMappingMetaData<TRow, TColumn> metaData)
         {
             return TableCriteriaScore.NotOptimizable;
         }

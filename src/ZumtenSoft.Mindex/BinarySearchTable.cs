@@ -6,20 +6,20 @@ using ZumtenSoft.Mindex.Utilities;
 
 namespace ZumtenSoft.Mindex
 {
-    [DebuggerDisplay(@"\{ArraySegmentCollection Segments={Segments.Length}, TotalCount={TotalCount}\}")]
-    public class ArraySegmentCollection<TRow>
+    [DebuggerDisplay(@"\{BinarySearchTable Segments={Segments.Length}, TotalCount={TotalCount}\}")]
+    public class BinarySearchTable<TRow>
     {
         public ArraySegment<TRow>[] Segments { get; }
         public bool IsSearchable { get; }
         public int TotalCount => ArrayUtilities<TRow>.TotalCount(Segments);
 
-        public ArraySegmentCollection(TRow[] items)
+        public BinarySearchTable(TRow[] items)
         {
             Segments = new[] { new ArraySegment<TRow>(items) };
             IsSearchable = true;
         }
 
-        public ArraySegmentCollection(ArraySegment<TRow>[] segments, bool isSearchable)
+        public BinarySearchTable(ArraySegment<TRow>[] segments, bool isSearchable)
         {
             IsSearchable = isSearchable;
             Segments = segments;
@@ -31,11 +31,14 @@ namespace ZumtenSoft.Mindex
         /// <typeparam name="TColumn">Type of the searchable field</typeparam>
         /// <param name="getColumn">Function to extract the searchable value from the row</param>
         /// <param name="valuesToSearch">List of values that must be matched in order to preserve a row</param>
-        /// <param name="comparer">Comparer for this type of column</param>
+        /// <param name="comparer">Comparer for this type of mapping</param>
         /// <returns></returns>
-        public ArraySegmentCollection<TRow> ReduceByValues<TColumn>(Func<TRow, TColumn> getColumn, TColumn[] valuesToSearch, IComparer<TColumn> comparer)
+        public BinarySearchTable<TRow> ReduceByValues<TColumn>(Func<TRow, TColumn> getColumn, TColumn[] valuesToSearch, IComparer<TColumn> comparer = null)
         {
             ValidateSearchable();
+            if (comparer == null)
+                comparer = Comparer<TColumn>.Default;
+
             List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
             for (int iValue = valuesToSearch.Length - 1; iValue >= 0; iValue--)
             {
@@ -48,7 +51,7 @@ namespace ZumtenSoft.Mindex
                 }
             }
 
-            return new ArraySegmentCollection<TRow>(result.ToArray(), true);
+            return new BinarySearchTable<TRow>(result.ToArray(), true);
         }
 
         /// <summary>
@@ -60,12 +63,15 @@ namespace ZumtenSoft.Mindex
         /// <param name="getColumn">Function to extract the searchable value from the row</param>
         /// <param name="start">Minimum value to search</param>
         /// <param name="end">Maximum value to search</param>
-        /// <param name="comparer">Comparer for this type of column</param>
+        /// <param name="comparer">Comparer for this type of mapping</param>
         /// <param name="preserveSearchability">Preserve the searchability by splitting every value into a different ArraySegment</param>
         /// <returns></returns>
-        public ArraySegmentCollection<TRow> ReduceByRange<TColumn>(Func<TRow, TColumn> getColumn, TColumn start, TColumn end, IComparer<TColumn> comparer, bool preserveSearchability = false)
+        public BinarySearchTable<TRow> ReduceByRange<TColumn>(Func<TRow, TColumn> getColumn, TColumn start, TColumn end, IComparer<TColumn> comparer = null, bool preserveSearchability = false)
         {
             ValidateSearchable();
+            if (comparer == null)
+                comparer = Comparer<TColumn>.Default;
+
             List<ArraySegment<TRow>> result = new List<ArraySegment<TRow>>();
             foreach (var segment in Segments)
             {
@@ -79,7 +85,7 @@ namespace ZumtenSoft.Mindex
                 }
             }
 
-            return new ArraySegmentCollection<TRow>(result.ToArray(), preserveSearchability);
+            return new BinarySearchTable<TRow>(result.ToArray(), preserveSearchability);
         }
 
         /// <summary>
@@ -101,7 +107,7 @@ namespace ZumtenSoft.Mindex
         private void ValidateSearchable()
         {
             if (!IsSearchable)
-                throw new Exception(nameof(ArraySegmentCollection<TRow>) + " has been marked as non-searchable");
+                throw new Exception(nameof(BinarySearchTable<TRow>) + " has been marked as non-searchable");
         }
 
         private static void SplitByValue<TCompared>(List<ArraySegment<TRow>> result, ArraySegment<TRow> initialSegment, Func<TRow, TCompared> getCompared, IComparer<TCompared> comparer)

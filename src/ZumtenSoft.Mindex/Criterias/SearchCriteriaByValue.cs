@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using ZumtenSoft.Mindex.ColumnCriterias;
-using ZumtenSoft.Mindex.Columns;
+using ZumtenSoft.Mindex.MappingCriterias;
+using ZumtenSoft.Mindex.Mappings;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -18,9 +18,9 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => String.Join(", ", SearchValues);
 
-        public override ArraySegmentCollection<TRow> Reduce<TRow>(ArraySegmentCollection<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
+        public override BinarySearchTable<TRow> Reduce<TRow>(BinarySearchTable<TRow> rows, TableMappingMetaData<TRow, TColumn> metaData)
         {
-            return rows.ReduceByValues(metaData.GetColumnValue, SearchValues, metaData.Comparer);
+            return rows.ReduceByValues(metaData.GetTargetValue, SearchValues, metaData.Comparer);
         }
 
         public static implicit operator SearchCriteriaByValue<TColumn>(TColumn value)
@@ -57,7 +57,7 @@ namespace ZumtenSoft.Mindex.Criterias
             return expressions.Aggregate((x, y) => Expression.OrElse(y, x));
         }
 
-        public override SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override SearchCriteria<TColumn> Optimize<TRow>(TableMappingMetaData<TRow, TColumn> metaData)
         {
             switch (SearchValues.Length)
             {
@@ -69,7 +69,7 @@ namespace ZumtenSoft.Mindex.Criterias
             return ByValues(SearchValues.Distinct(metaData.EqualityComparer).ToArray());
         }
 
-        public override TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override TableCriteriaScore GetScore<TRow>(TableMappingMetaData<TRow, TColumn> metaData)
         {
             if (SearchValues.Length == 0)
                 return new TableCriteriaScore(1, false);

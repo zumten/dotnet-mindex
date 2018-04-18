@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ZumtenSoft.Mindex.ColumnCriterias;
-using ZumtenSoft.Mindex.Columns;
+using ZumtenSoft.Mindex.MappingCriterias;
+using ZumtenSoft.Mindex.Mappings;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -39,9 +39,9 @@ namespace ZumtenSoft.Mindex.Criterias
         }
 
         public abstract string Name { get; }
-        public abstract ArraySegmentCollection<TRow> Reduce<TRow>(ArraySegmentCollection<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData);
+        public abstract BinarySearchTable<TRow> Reduce<TRow>(BinarySearchTable<TRow> rows, TableMappingMetaData<TRow, TColumn> metaData);
         public abstract Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer);
-        public abstract SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData);
-        public abstract TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData);
+        public abstract SearchCriteria<TColumn> Optimize<TRow>(TableMappingMetaData<TRow, TColumn> metaData);
+        public abstract TableCriteriaScore GetScore<TRow>(TableMappingMetaData<TRow, TColumn> metaData);
     }
 }

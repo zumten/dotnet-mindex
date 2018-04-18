@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
-using ZumtenSoft.Mindex.ColumnCriterias;
 using ZumtenSoft.Mindex.Criterias;
+using ZumtenSoft.Mindex.MappingCriterias;
 
-namespace ZumtenSoft.Mindex.Columns
+namespace ZumtenSoft.Mindex.Mappings
 {
-    [DebuggerDisplay(@"\{TableColumnByPredicate " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
-    public class TableColumnByPredicate<TRow, TSearch, TColumn> : ITableColumn<TRow, TSearch>
+    [DebuggerDisplay(@"\{TableMappingByPredicate " + nameof(Name) + @"={" + nameof(Name) + @"}\}")]
+    public class TableMappingByPredicate<TRow, TSearch, TColumn> : ITableMapping<TRow, TSearch>
     {
         public string Name => SearchProperty.Name;
         private readonly Func<TSearch, SearchCriteriaByValue<TColumn>> _getCriteriaValue;
@@ -18,7 +18,7 @@ namespace ZumtenSoft.Mindex.Columns
 
         public MemberInfo SearchProperty { get; }
 
-        public TableColumnByPredicate(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate, bool isUnion)
+        public TableMappingByPredicate(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaValue, Expression<Func<TRow, TColumn, bool>> predicate, bool isUnion)
         {
             _getCriteriaValue = getCriteriaValue.Compile();
             Predicate = predicate;
@@ -33,21 +33,21 @@ namespace ZumtenSoft.Mindex.Columns
 
         public IEnumerable<TRow> Sort(IEnumerable<TRow> items)
         {
-            throw new NotSupportedException($"Column with multiple values '{SearchProperty.Name}' does not support indexing");
+            throw new NotSupportedException($"Mapping with multiple values '{SearchProperty.Name}' does not support indexing");
         }
 
-        public ITableCriteriaForColumn<TRow, TSearch> ExtractCriteria(TSearch search)
+        public ITableCriteriaForMapping<TRow, TSearch> ExtractCriteria(TSearch search)
         {
             var criteria = _getCriteriaValue(search);
             if (criteria == null)
                 return null;
 
-            return new TableCriteriaForColumnByPredicate<TRow,TSearch,TColumn>(this, criteria);
+            return new TableCriteriaForMappingByPredicate<TRow,TSearch,TColumn>(this, criteria);
         }
 
-        public bool Reduce(TSearch search, ref ArraySegmentCollection<TRow> items)
+        public bool Reduce(TSearch search, ref BinarySearchTable<TRow> items)
         {
-            // Multi-values column cannot be searched through indexes, therefore cannot
+            // Multi-values mapping cannot be searched through indexes, therefore cannot
             // reduce the set of results.
             return false;
         }

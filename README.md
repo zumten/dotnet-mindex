@@ -22,7 +22,7 @@ The library is currently only released through NuGet https://www.nuget.org/packa
 
 Mindex tries to mimmick the model of SQL indexes. An index is created by sorting the list of rows in a way that multiple criterias can be applied one by one to reduce the range of results (as long and the search matches the index). The search is then done using BinarySearch for each criteria.
 
-For more information about how an index is built and searched, refer to the wiki page dedicated to [ArraySegmentCollection](https://github.com/zumten/mindex/wiki/ArraySegmentCollection).
+For more information about how an index is built and searched, refer to the wiki page dedicated to [BinarySearchTable](https://github.com/zumten/mindex/wiki/BinarySearchTable).
 
 Mindex adds a layer on top of ArraySegmentCollection by analyzing the search, giving a score to each index and choosing the best one. This way you can focus on your business requirements and not on how to build your data structure for performance.
 
@@ -97,17 +97,17 @@ public class ImportTable : Table<Import, ImportSearch>
 {
     public ImportTable(IReadOnlyCollection<Import> rows) : base(rows)
     {
-        MapCriteria(s => s.Date, i => i.Date);
-        MapCriteria(s => s.Type, i => i.Type);
-        MapCriteria(s => s.Origin, i => i.Origin);
-        MapCriteria(s => s.Quantity, i => i.Quantity);
-        MapCriteria(s => s.QuantityUnitCode, i => i.QuantityUnitCode);
-        MapCriteria(s => s.QuantityType, i => i.QuantityType);
-        MapCriteria(s => s.ImportState, i => i.ImportState);
-        MapCriteria(s => s.ImportLocationCode, i => i.ImportLocationCode);
-        MapCriteria(s => s.ImportLocationName, i => i.ImportLocationName);
-        MapCriteria(s => s.TariffHeading, i => i.TariffHeading);
-        MapCriteria(s => s.GoodsValue, i => i.GoodsValue);
+        MapCriteria(s => s.Date).ToProperty(i => i.Date);
+        MapCriteria(s => s.Type).ToProperty(i => i.Type);
+        MapCriteria(s => s.Origin).ToProperty(i => i.Origin);
+        MapCriteria(s => s.Quantity).ToProperty(i => i.Quantity);
+        MapCriteria(s => s.QuantityUnitCode).ToProperty(i => i.QuantityUnitCode);
+        MapCriteria(s => s.QuantityType).ToProperty(i => i.QuantityType);
+        MapCriteria(s => s.ImportState).ToProperty(i => i.ImportState);
+        MapCriteria(s => s.ImportLocationCode).ToProperty(i => i.ImportLocationCode);
+        MapCriteria(s => s.ImportLocationName).ToProperty(i => i.ImportLocationName);
+        MapCriteria(s => s.TariffHeading).ToProperty(i => i.TariffHeading);
+        MapCriteria(s => s.GoodsValue).ToProperty(i => i.GoodsValue);
 
         ConfigureIndex().IncludeColumns(s => s.Origin, s => s.ImportState, s => s.QuantityType, s => s.Date).Build();
     }
@@ -142,7 +142,8 @@ Import[] result = table.Search(new ImportSearch
 
 # Performance
 
-The main point of this library is to provide easy search criterias without impacting the performance. You could always optimize a LookupTable for your specific needs and it will always be faster than Mindex. If you have to support multiple criterias, then this is when Mindex will shine because you can improve your performances with only one or two lines of code.
+Mindex is optimized to search over a bunch of different criterias. The more complex are your criterias, the more mindex can help you optimize your search (as long as it can match an index).
+
 
 ## Benchmarks
 

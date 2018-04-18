@@ -54,13 +54,13 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
 
         [Benchmark]
         public Import[] SearchLookupWithBinarySearch() =>
-            new ArraySegmentCollection<Import>(_lookupSearchCriterias.Select(x => LookupWithBinarySearchTable.TryGetValue(x, out var grp) ? new ArraySegment<Import>(grp) : ArraySegment<Import>.Empty).ToArray(), true)
+            new BinarySearchTable<Import>(_lookupSearchCriterias.Select(x => LookupWithBinarySearchTable.TryGetValue(x, out var grp) ? new ArraySegment<Import>(grp) : ArraySegment<Import>.Empty).ToArray(), true)
                 .ReduceByRange(i => i.Date, MinimumDate, MaximumDate, Comparer<DateTime>.Default)
                 .Materialize();
 
         [Benchmark]
         public Import[] SearchOrderedListWithBinarySearch() =>
-            new ArraySegmentCollection<Import>(OrderedListByOriginDestinationQuantityTypeDate)
+            new BinarySearchTable<Import>(OrderedListByOriginDestinationQuantityTypeDate)
                 .ReduceByValues(i => i.Origin, Origins, Comparer<string>.Default)
                 .ReduceByValues(i => i.ImportState, Destinations, Comparer<string>.Default)
                 .ReduceByValues(i => i.QuantityType, QuantityTypes, Comparer<string>.Default)

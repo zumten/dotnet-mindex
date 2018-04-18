@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using ZumtenSoft.Mindex.ColumnCriterias;
+using ZumtenSoft.Mindex.MappingCriterias;
 
 namespace ZumtenSoft.Mindex.Indexes
 {
@@ -15,12 +15,12 @@ namespace ZumtenSoft.Mindex.Indexes
             Rows = rows;
         }
 
-        public virtual TRow[] Search(IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> criterias)
+        public virtual TRow[] Search(IReadOnlyCollection<ITableCriteriaForMapping<TRow, TSearch>> criterias)
         {
-            return FilterRowsWithCustomExpression(new ArraySegmentCollection<TRow>(Rows), criterias);
+            return FilterRowsWithCustomExpression(new BinarySearchTable<TRow>(Rows), criterias);
         }
 
-        protected static TRow[] FilterRowsWithCustomExpression(ArraySegmentCollection<TRow> items, IReadOnlyCollection<ITableCriteriaForColumn<TRow, TSearch>> columns)
+        protected static TRow[] FilterRowsWithCustomExpression(BinarySearchTable<TRow> items, IReadOnlyCollection<ITableCriteriaForMapping<TRow, TSearch>> columns)
         {
             if (columns.Count == 0)
                 return items.Materialize();

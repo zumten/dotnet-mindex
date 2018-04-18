@@ -3,67 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using ZumtenSoft.Mindex.Criterias;
-using ZumtenSoft.Mindex.Columns;
 using ZumtenSoft.Mindex.Indexes;
+using ZumtenSoft.Mindex.Mappings;
 using ZumtenSoft.Mindex.Utilities;
 
 namespace ZumtenSoft.Mindex
 {
     public abstract class Table<TRow, TSearch>
     {
-        private readonly TableColumnCollection<TRow, TSearch> _columns;
+        private readonly TableMappingCollection<TRow, TSearch> _mappings;
 
         private readonly TableIndexCollection<TRow, TSearch> _indexes;
 
         protected Table(IReadOnlyCollection<TRow> rows)
         {
-            _columns = new TableColumnCollection<TRow, TSearch>();
+            _mappings = new TableMappingCollection<TRow, TSearch>();
             _indexes = new TableIndexCollection<TRow, TSearch>(rows);
         }
 
-        /// <summary>
-        /// Map criteria to a column using the default comparer
-        /// </summary>
-        protected TableColumnByValue<TRow, TSearch, TColumn> MapCriteria<TColumn>(
-            Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue,
-            Expression<Func<TRow, TColumn>> getColumnValue)
+        public TableMappingConfigurator<TRow, TSearch, TColumn, SearchCriteria<TColumn>> MapCriteria<TColumn>(Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaExpression)
         {
-            return MapCriteria(getCriteriaValue, getColumnValue, Comparer<TColumn>.Default, EqualityComparer<TColumn>.Default);
+            return new TableMappingConfigurator<TRow, TSearch, TColumn, SearchCriteria<TColumn>>(_mappings, _indexes.DefaultIndex.Rows, getCriteriaExpression);
         }
 
-        /// <summary>
-        /// Map criteria to a column using a comparer that supports both IComparer and IEqualityComparer (ex: StringComparer)
-        /// </summary>
-        protected TableColumnByValue<TRow, TSearch, TColumn> MapCriteria<TColumn, TComparer>(
-            Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue,
-            Expression<Func<TRow, TColumn>> getColumnValue,
-            TComparer hybridComparer) where TComparer : IComparer<TColumn>, IEqualityComparer<TColumn>
+        public TableMappingByValueConfigurator<TRow, TSearch, TColumn> MapCriteria<TColumn>(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getCriteriaExpression)
         {
-            return MapCriteria(getCriteriaValue, getColumnValue, hybridComparer, hybridComparer);
-        }
-
-        /// <summary>
-        /// Map criteria to a column using both a comparer and an equality comparer.
-        /// </summary>
-        protected TableColumnByValue<TRow, TSearch, TColumn> MapCriteria<TColumn>(
-            Expression<Func<TSearch, SearchCriteria<TColumn>>> getCriteriaValue,
-            Expression<Func<TRow, TColumn>> getColumnValue,
-            IComparer<TColumn> comparer, IEqualityComparer<TColumn> equalityComparer)
-        {
-            var column = new TableColumnByValue<TRow, TSearch, TColumn>(_indexes.DefaultIndex.Rows, getColumnValue, getCriteriaValue, comparer, equalityComparer);
-            _columns.Add(column);
-            return column;
-        }
-
-        /// <summary>
-        /// Map criteria to a column with multiple values and which cannot be indexed.
-        /// This type of column supports only the criterias with values.
-        /// </summary>
-        protected TableColumnByPredicate<TRow, TSearch, TColumn> MapCriteriaToPredicate<TColumn>(Expression<Func<TSearch, SearchCriteriaByValue<TColumn>>> getColumnCriteria, Expression<Func<TRow, TColumn, bool>> columnPredicate, bool isUnion = false)
-        {
-            var column = new TableColumnByPredicate<TRow, TSearch, TColumn>(getColumnCriteria, columnPredicate, isUnion);
-            _columns.Add(column);
-            return column;
+            return new TableMappingByValueConfigurator<TRow, TSearch, TColumn>(_mappings, _indexes.DefaultIndex.Rows, getCriteriaExpression);
         }
 
         /// <summary>
@@ -71,7 +36,7 @@ namespace ZumtenSoft.Mindex
         /// </summary>
         protected TableIndexConfigurator<TRow, TSearch> ConfigureIndex()
         {
-            return new TableIndexConfigurator<TRow, TSearch>(_indexes, _columns);
+            return new TableIndexConfigurator<TRow, TSearch>(_indexes, _mappings);
         }
 
         /// <summary>
@@ -83,7 +48,7 @@ namespace ZumtenSoft.Mindex
         /// <returns></returns>
         public TRow[] Search(TSearch search, TableIndex<TRow, TSearch> index = null)
         {
-            var criterias = _columns.ExtractCriterias(search);
+            var criterias = _mappings.ExtractCriterias(search);
 
             if (index != null)
                 return index.Search(criterias);
@@ -129,7 +94,7 @@ namespace ZumtenSoft.Mindex
 
         public TableIndexScore<TRow, TSearch>[] EvaluateIndexes(TSearch search)
         {
-            var criterias = _columns.ExtractCriterias(search);
+            var criterias = _mappings.ExtractCriterias(search);
             return _indexes.EvaluateIndexes(criterias);
         }
     }

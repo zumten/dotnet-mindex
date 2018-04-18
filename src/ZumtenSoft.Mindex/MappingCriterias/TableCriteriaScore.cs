@@ -1,4 +1,4 @@
-﻿namespace ZumtenSoft.Mindex.ColumnCriterias
+﻿namespace ZumtenSoft.Mindex.MappingCriterias
 {
     public struct TableCriteriaScore
     {

@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using ZumtenSoft.Mindex.Columns;
+using ZumtenSoft.Mindex.Mappings;
 
 namespace ZumtenSoft.Mindex.Indexes
 {
     public class TableIndexConfigurator<TRow, TSearch>
     {
         private readonly TableIndexCollection<TRow, TSearch> _indexes;
-        private readonly IReadOnlyCollection<ITableColumn<TRow, TSearch>> _columns;
-        private readonly List<ITableColumn<TRow, TSearch>> _sortColumns;
+        private readonly IReadOnlyCollection<ITableMapping<TRow, TSearch>> _columns;
+        private readonly List<ITableMapping<TRow, TSearch>> _sortColumns;
 
-        public TableIndexConfigurator(TableIndexCollection<TRow, TSearch> indexes, IReadOnlyCollection<ITableColumn<TRow, TSearch>> columns)
+        public TableIndexConfigurator(TableIndexCollection<TRow, TSearch> indexes, IReadOnlyCollection<ITableMapping<TRow, TSearch>> columns)
         {
             _indexes = indexes;
             _columns = columns;
-            _sortColumns = new List<ITableColumn<TRow, TSearch>>();
+            _sortColumns = new List<ITableMapping<TRow, TSearch>>();
         }
 
         public TableIndexConfigurator<TRow, TSearch> IncludeColumns(params Expression<Func<TSearch, object>>[] searchCriterias)
@@ -25,20 +25,20 @@ namespace ZumtenSoft.Mindex.Indexes
             return this;
         }
 
-        public TableIndexConfigurator<TRow, TSearch> IncludeColumns(params ITableColumn<TRow, TSearch>[] tableColumns)
+        public TableIndexConfigurator<TRow, TSearch> IncludeColumns(params ITableMapping<TRow, TSearch>[] tableMappings)
         {
-            _sortColumns.AddRange(tableColumns);
+            _sortColumns.AddRange(tableMappings);
             return this;
         }
 
-        private ITableColumn<TRow, TSearch> SearchColumn(Expression<Func<TSearch, object>> expr)
+        private ITableMapping<TRow, TSearch> SearchColumn(Expression<Func<TSearch, object>> expr)
         {
             if (!(expr.Body is MemberExpression memberExpr))
                 throw new ArgumentOutOfRangeException(nameof(expr), "Expression should point directly to a property");
 
             var column = _columns.FirstOrDefault(x => x.SearchProperty == memberExpr.Member);
             if (column == null)
-                throw new ArgumentOutOfRangeException(nameof(expr), $"Column {memberExpr.Member.Name} has not been mapped");
+                throw new ArgumentOutOfRangeException(nameof(expr), $"Mapping {memberExpr.Member.Name} has not been mapped");
             return column;
         }
 

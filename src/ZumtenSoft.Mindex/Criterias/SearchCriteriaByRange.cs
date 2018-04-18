@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using ZumtenSoft.Mindex.ColumnCriterias;
-using ZumtenSoft.Mindex.Columns;
+using ZumtenSoft.Mindex.MappingCriterias;
+using ZumtenSoft.Mindex.Mappings;
 
 namespace ZumtenSoft.Mindex.Criterias
 {
@@ -22,9 +22,9 @@ namespace ZumtenSoft.Mindex.Criterias
 
         public override string Name => Start + "-" + End;
 
-        public override ArraySegmentCollection<TRow> Reduce<TRow>(ArraySegmentCollection<TRow> rows, TableColumnMetaData<TRow, TColumn> metaData)
+        public override BinarySearchTable<TRow> Reduce<TRow>(BinarySearchTable<TRow> rows, TableMappingMetaData<TRow, TColumn> metaData)
         {
-            return rows.ReduceByRange(metaData.GetColumnValue, Start, End, metaData.Comparer, PreserveSearchability);
+            return rows.ReduceByRange(metaData.GetTargetValue, Start, End, metaData.Comparer, PreserveSearchability);
         }
 
         public override Expression BuildPredicateExpression<TRow>(ParameterExpression paramRow, Expression<Func<TRow, TColumn>> getColumnValue, IComparer<TColumn> comparer)
@@ -46,11 +46,11 @@ namespace ZumtenSoft.Mindex.Criterias
                         Expression.Constant(0))));
         }
 
-        public override SearchCriteria<TColumn> Optimize<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override SearchCriteria<TColumn> Optimize<TRow>(TableMappingMetaData<TRow, TColumn> metaData)
         {
             if (metaData.Comparer.Compare(Start, End) == 0)
                 return ByValues(Start);
-            var resultRange = new ArraySegmentCollection<TColumn>(metaData.PossibleValues).ReduceByRange(x => x, Start, End, metaData.Comparer);
+            var resultRange = new BinarySearchTable<TColumn>(metaData.PossibleValues).ReduceByRange(x => x, Start, End, metaData.Comparer);
             var nbResults = resultRange.TotalCount;
             if (nbResults <= 1)
                 return ByValues(resultRange.Materialize());
@@ -59,9 +59,9 @@ namespace ZumtenSoft.Mindex.Criterias
             return this;
         }
 
-        public override TableCriteriaScore GetScore<TRow>(TableColumnMetaData<TRow, TColumn> metaData)
+        public override TableCriteriaScore GetScore<TRow>(TableMappingMetaData<TRow, TColumn> metaData)
         {
-            var resultRange = new ArraySegmentCollection<TColumn>(metaData.PossibleValues).ReduceByRange(x => x, Start, End, metaData.Comparer);
+            var resultRange = new BinarySearchTable<TColumn>(metaData.PossibleValues).ReduceByRange(x => x, Start, End, metaData.Comparer);
             var nbResults = resultRange.TotalCount;
             if (nbResults == 0)
                 return TableCriteriaScore.Impossible;

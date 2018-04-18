@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ZumtenSoft.Mindex.ColumnCriterias;
-using ZumtenSoft.Mindex.Columns;
 using ZumtenSoft.Mindex.Criterias;
+using ZumtenSoft.Mindex.MappingCriterias;
+using ZumtenSoft.Mindex.Mappings;
 using ZumtenSoft.Mindex.Stubs.MajesticMillion;
 
 namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
@@ -75,7 +75,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByValues("ca", "com") };
             var criteria = BuildCriteria(rows, search);
             var expected = rows.Where(x => x.TopLevelDomain == "ca" || x.TopLevelDomain == "com");
-            var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
+            var actual = criteria.Reduce(new BinarySearchTable<SiteRanking>(rows));
             CollectionAssert.AreEquivalent(expected.ToList(), actual.Materialize());
         }
 
@@ -86,7 +86,7 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByRange("com", "net") };
             var criteria = BuildCriteria(rows, search);
             var expected = rows.Where(x => StringComparer.OrdinalIgnoreCase.Compare(x.TopLevelDomain, "com") >=0 && StringComparer.OrdinalIgnoreCase.Compare(x.TopLevelDomain, "net") <= 0);
-            var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
+            var actual = criteria.Reduce(new BinarySearchTable<SiteRanking>(rows));
             CollectionAssert.AreEquivalent(expected.ToList(), actual.Materialize());
         }
 
@@ -96,14 +96,14 @@ namespace ZumtenSoft.Mindex.Tests.ColumnCriterias
             var rows = SiteRankingCollections.First10000Rows;
             var search = new SiteRankingSearch { TopLevelDomain = SearchCriteria.ByPredicate((string x) => x == "ca") };
             var criteria = BuildCriteria(rows, search);
-            var actual = criteria.Reduce(new ArraySegmentCollection<SiteRanking>(rows));
+            var actual = criteria.Reduce(new BinarySearchTable<SiteRanking>(rows));
             Assert.IsNull(actual);
         }
 
-        private static ITableCriteriaForColumn<SiteRanking, SiteRankingSearch> BuildCriteria(SiteRanking[] rows, SiteRankingSearch search)
+        private static ITableCriteriaForMapping<SiteRanking, SiteRankingSearch> BuildCriteria(SiteRanking[] rows, SiteRankingSearch search)
         {
-            TableColumnByValue<SiteRanking, SiteRankingSearch, string> column = new TableColumnByValue<SiteRanking, SiteRankingSearch, string>(rows, x => x.TopLevelDomain, x => x.TopLevelDomain, StringComparer.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase);
-            return column.ExtractCriteria(search);
+            TableMappingByValue<SiteRanking, SiteRankingSearch, string, SearchCriteria<string>> mapping = new TableMappingByValue<SiteRanking, SiteRankingSearch, string, SearchCriteria<string>>(rows, x => x.TopLevelDomain, x => x.TopLevelDomain, StringComparer.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase);
+            return mapping.ExtractCriteria(search);
         }
 
         private static void TestGetScores(SiteRanking[] rows, SiteRankingSearch search, TableCriteriaScore expectedScore)
