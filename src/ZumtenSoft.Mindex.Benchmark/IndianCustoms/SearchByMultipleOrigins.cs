@@ -18,7 +18,7 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
             LookupTable = Imports.ToLookup(i => i.Origin);
         }
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public List<Import> SearchLinq() => Imports
             .Where(i => Origins.Contains(i.Origin))
             .ToList();

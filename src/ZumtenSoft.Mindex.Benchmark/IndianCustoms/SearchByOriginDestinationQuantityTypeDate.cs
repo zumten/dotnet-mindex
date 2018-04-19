@@ -4,6 +4,7 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using ZumtenSoft.Mindex.Criterias;
 using ZumtenSoft.Mindex.Stubs.IndianCustoms;
+using ZumtenSoft.Mindex.Utilities;
 
 namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
 {
@@ -39,7 +40,7 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
                 .ToArray();
         }
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public List<Import> SearchLinq() => Imports
             .Where(i => Origins.Contains(i.Origin) && Destinations.Contains(i.ImportState) && QuantityTypes.Contains(i.QuantityType) && i.Date >= MinimumDate && i.Date <= MaximumDate)
             .ToList();
@@ -54,7 +55,7 @@ namespace ZumtenSoft.Mindex.Benchmark.IndianCustoms
 
         [Benchmark]
         public Import[] SearchLookupWithBinarySearch() =>
-            new BinarySearchTable<Import>(_lookupSearchCriterias.Select(x => LookupWithBinarySearchTable.TryGetValue(x, out var grp) ? new ArraySegment<Import>(grp) : ArraySegment<Import>.Empty).ToArray(), true)
+            new BinarySearchTable<Import>(_lookupSearchCriterias.Select(x => LookupWithBinarySearchTable.TryGetValue(x, out var grp) ? new ArraySegment<Import>(grp) : ArrayUtilities<Import>.EmptySegment).ToArray(), true)
                 .ReduceByRange(i => i.Date, MinimumDate, MaximumDate, Comparer<DateTime>.Default)
                 .Materialize();
 
