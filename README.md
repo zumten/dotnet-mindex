@@ -149,54 +149,97 @@ Mindex is optimized to search over a bunch of different criterias. The more comp
 
 1. Simple search (1 criteria, single value) ([SearchBySingleOrigin.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/IndianCustoms/SearchBySingleOrigin.cs))
 
-``` ini
+```ini
 BenchmarkDotNet=v0.10.14, OS=Windows 10.0.14393.2189 (1607/AnniversaryUpdate/Redstone1)
 Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
 .NET Core SDK=2.1.104
-  [Host]     : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
-  DefaultJob : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  [Host]                   : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  .NET Core 2 (x64)        : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  .NET Framework 4.7 (x64) : .NET Framework 4.7.1 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2558.0
+  .NET Framework 4.7 (x86) : .NET Framework 4.7.1 (CLR 4.0.30319.42000), 32bit LegacyJIT-v4.7.2558.0
+
+Jit=RyuJit  
 ```
-|       Method |    N |       Mean |     Error |    StdDev |
-|------------- |----- |-----------:|----------:|----------:|
-|   SearchLinq | 1000 | 102.633 ms | 2.0321 ms | 3.5053 ms |
-| SearchLookup | 1000 |   3.479 ms | 0.0692 ms | 0.0850 ms |
-| SearchMindex | 1000 |   3.444 ms | 0.0685 ms | 0.0762 ms |
+       Method |                      Job | Platform | Runtime |       Mean |     Error |    StdDev | Scaled |  Gen 0 |  Gen 1 |  Gen 2 | Allocated |
+------------- |------------------------- |--------- |-------- |-----------:|----------:|----------:|-------:|-------:|-------:|-------:|----------:|
+   SearchLinq |        .NET Core 2 (x64) |      X64 |    Core | 104.148 ms | 2.0340 ms | 2.2608 ms |   1.00 |      - |      - |      - |      8 MB |
+ SearchLookup |        .NET Core 2 (x64) |      X64 |    Core |   3.655 ms | 0.0689 ms | 0.0644 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
+ SearchMindex |        .NET Core 2 (x64) |      X64 |    Core |   3.646 ms | 0.0695 ms | 0.0650 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
+              |                          |          |         |            |           |           |        |        |        |        |           |
+   SearchLinq | .NET Framework 4.7 (x64) |      X64 |     Clr | 104.811 ms | 1.8832 ms | 1.7615 ms |   1.00 |      - |      - |      - |      8 MB |
+ SearchLookup | .NET Framework 4.7 (x64) |      X64 |     Clr |   4.304 ms | 0.0771 ms | 0.0722 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
+ SearchMindex | .NET Framework 4.7 (x64) |      X64 |     Clr |   4.309 ms | 0.0545 ms | 0.0510 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
+              |                          |          |         |            |           |           |        |        |        |        |           |
+   SearchLinq | .NET Framework 4.7 (x86) |      X86 |     Clr |  54.385 ms | 1.6106 ms | 1.7233 ms |   1.00 |      - |      - |      - |      4 MB |
+ SearchLookup | .NET Framework 4.7 (x86) |      X86 |     Clr |   2.930 ms | 0.0570 ms | 0.0560 ms |   0.05 | 3.9063 | 3.9063 | 3.9063 |    1.4 MB |
+ SearchMindex | .NET Framework 4.7 (x86) |      X86 |     Clr |   2.935 ms | 0.0470 ms | 0.0439 ms |   0.05 | 3.9063 | 3.9063 | 3.9063 |    1.4 MB |
+
 
 
 
 
 2. Simple search (1 criteria, multiple values) ([SearchByMultipleOrigins.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/IndianCustoms/SearchByMultipleOrigins.cs))
 
-``` ini
+```ini
 BenchmarkDotNet=v0.10.14, OS=Windows 10.0.14393.2189 (1607/AnniversaryUpdate/Redstone1)
 Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
 .NET Core SDK=2.1.104
-  [Host]     : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
-  DefaultJob : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  [Host]                   : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  .NET Core 2 (x64)        : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  .NET Framework 4.7 (x64) : .NET Framework 4.7.1 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2558.0
+  .NET Framework 4.7 (x86) : .NET Framework 4.7.1 (CLR 4.0.30319.42000), 32bit LegacyJIT-v4.7.2558.0
+
+Jit=RyuJit  
 ```
-|       Method |    N |       Mean |     Error |    StdDev |     Median |
-|------------- |----- |-----------:|----------:|----------:|-----------:|
-|   SearchLinq | 1000 | 400.799 ms | 7.9923 ms | 6.6739 ms | 401.103 ms |
-| SearchLookup | 1000 |   7.684 ms | 0.2332 ms | 0.6876 ms |   8.045 ms |
-| SearchMindex | 1000 |   3.915 ms | 0.0741 ms | 0.0693 ms |   3.908 ms |
+       Method |                      Job | Platform | Runtime |       Mean |     Error |    StdDev |     Median | Scaled |   Gen 0 |  Gen 1 |  Gen 2 | Allocated |
+------------- |------------------------- |--------- |-------- |-----------:|----------:|----------:|-----------:|-------:|--------:|-------:|-------:|----------:|
+   SearchLinq |        .NET Core 2 (x64) |      X64 |    Core | 423.363 ms | 4.9383 ms | 4.6193 ms | 423.156 ms |  1.000 |       - |      - |      - |      8 MB |
+ SearchLookup |        .NET Core 2 (x64) |      X64 |    Core |   8.257 ms | 0.2228 ms | 0.6570 ms |   8.611 ms |  0.020 | 11.7188 | 7.8125 | 7.8125 |   8.69 MB |
+ SearchMindex |        .NET Core 2 (x64) |      X64 |    Core |   4.111 ms | 0.0699 ms | 0.0653 ms |   4.107 ms |  0.010 |  3.9063 | 3.9063 | 3.9063 |   3.13 MB |
+              |                          |          |         |            |           |           |            |        |         |        |        |           |
+   SearchLinq | .NET Framework 4.7 (x64) |      X64 |     Clr | 518.641 ms | 5.9218 ms | 5.5392 ms | 518.629 ms |  1.000 |       - |      - |      - |      8 MB |
+ SearchLookup | .NET Framework 4.7 (x64) |      X64 |     Clr |  42.552 ms | 0.7884 ms | 0.7375 ms |  42.237 ms |  0.082 |       - |      - |      - |      8 MB |
+ SearchMindex | .NET Framework 4.7 (x64) |      X64 |     Clr |   4.570 ms | 0.0890 ms | 0.0789 ms |   4.564 ms |  0.009 |  3.9063 | 3.9063 | 3.9063 |   3.13 MB |
+              |                          |          |         |            |           |           |            |        |         |        |        |           |
+   SearchLinq | .NET Framework 4.7 (x86) |      X86 |     Clr | 422.906 ms | 5.2074 ms | 4.8710 ms | 424.177 ms |  1.000 |       - |      - |      - |      4 MB |
+ SearchLookup | .NET Framework 4.7 (x86) |      X86 |     Clr |  30.837 ms | 0.6057 ms | 0.5665 ms |  30.739 ms |  0.073 |       - |      - |      - |      4 MB |
+ SearchMindex | .NET Framework 4.7 (x86) |      X86 |     Clr |   3.078 ms | 0.0582 ms | 0.0545 ms |   3.071 ms |  0.007 |  3.9063 | 3.9063 | 3.9063 |   1.56 MB |
+
 
 
 
 
 3. Search with 4 criterias (3 by values, 1 by range) ([SearchByOriginDestinationQuantityTypeDate.cs](https://github.com/zumten/mindex/blob/master/src/ZumtenSoft.Mindex.Benchmark/IndianCustoms/SearchByOriginDestinationQuantityTypeDate.cs))
 
-``` ini
+```ini
 BenchmarkDotNet=v0.10.14, OS=Windows 10.0.14393.2189 (1607/AnniversaryUpdate/Redstone1)
 Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
 .NET Core SDK=2.1.104
-  [Host]     : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
-  DefaultJob : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  [Host]                   : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  .NET Core 2 (x64)        : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  .NET Framework 4.7 (x64) : .NET Framework 4.7.1 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2558.0
+  .NET Framework 4.7 (x86) : .NET Framework 4.7.1 (CLR 4.0.30319.42000), 32bit LegacyJIT-v4.7.2558.0
+
+Jit=RyuJit  
 ```
-|                            Method |    N |         Mean |        Error |       StdDev |
-|---------------------------------- |----- |-------------:|-------------:|-------------:|
-|                        SearchLinq | 1000 | 309,498.1 us | 2,104.052 us | 1,756.979 us |
-|                      SearchLookup | 1000 |   2,777.5 us |    55.091 us |    75.409 us |
-|      SearchLookupWithBinarySearch | 1000 |     589.0 us |     7.527 us |     6.673 us |
-| SearchOrderedListWithBinarySearch | 1000 |     123.0 us |     2.389 us |     2.844 us |
-|                      SearchMindex | 1000 |     176.2 us |     3.499 us |     5.128 us |
+                            Method |                      Job | Platform | Runtime |         Mean |        Error |       StdDev | Scaled |   Gen 0 |   Gen 1 |  Gen 2 | Allocated |
+---------------------------------- |------------------------- |--------- |-------- |-------------:|-------------:|-------------:|-------:|--------:|--------:|-------:|----------:|
+                        SearchLinq |        .NET Core 2 (x64) |      X64 |    Core | 337,605.0 us | 6,579.583 us | 7,040.079 us |  1.000 |       - |       - |      - | 512.38 KB |
+                      SearchLookup |        .NET Core 2 (x64) |      X64 |    Core |   3,027.7 us |    60.232 us |   100.633 us |  0.009 | 11.7188 |       - |      - | 512.78 KB |
+      SearchLookupWithBinarySearch |        .NET Core 2 (x64) |      X64 |    Core |     116.5 us |     2.303 us |     2.912 us |  0.000 |  0.1221 |  0.1221 | 0.1221 | 171.74 KB |
+ SearchOrderedListWithBinarySearch |        .NET Core 2 (x64) |      X64 |    Core |     130.6 us |     2.542 us |     3.305 us |  0.000 |       - |       - |      - | 172.42 KB |
+                      SearchMindex |        .NET Core 2 (x64) |      X64 |    Core |     186.2 us |     3.551 us |     3.947 us |  0.001 |  0.2441 |       - |      - | 175.23 KB |
+                                   |                          |          |         |              |              |              |        |         |         |        |           |
+                        SearchLinq | .NET Framework 4.7 (x64) |      X64 |     Clr | 567,135.3 us | 5,345.796 us | 5,000.461 us |  1.000 |       - |       - |      - | 512.73 KB |
+                      SearchLookup | .NET Framework 4.7 (x64) |      X64 |     Clr |   2,859.2 us |    56.715 us |   103.706 us |  0.005 | 11.7188 |       - |      - | 512.85 KB |
+      SearchLookupWithBinarySearch | .NET Framework 4.7 (x64) |      X64 |     Clr |     191.4 us |    10.535 us |    31.063 us |  0.000 |  0.2441 |  0.2441 | 0.2441 | 171.99 KB |
+ SearchOrderedListWithBinarySearch | .NET Framework 4.7 (x64) |      X64 |     Clr |     163.1 us |     1.752 us |     1.463 us |  0.000 |       - |       - |      - | 172.42 KB |
+                      SearchMindex | .NET Framework 4.7 (x64) |      X64 |     Clr |     187.8 us |     3.709 us |     3.968 us |  0.000 |  0.2441 |       - |      - | 175.38 KB |
+                                   |                          |          |         |              |              |              |        |         |         |        |           |
+                        SearchLinq | .NET Framework 4.7 (x86) |      X86 |     Clr | 436,443.8 us | 8,532.892 us | 9,130.098 us |  1.000 |       - |       - |      - | 256.61 KB |
+                      SearchLookup | .NET Framework 4.7 (x86) |      X86 |     Clr |   2,894.3 us |    54.839 us |    48.613 us |  0.007 | 23.4375 | 23.4375 |      - | 256.52 KB |
+      SearchLookupWithBinarySearch | .NET Framework 4.7 (x86) |      X86 |     Clr |     131.3 us |     2.112 us |     1.976 us |  0.000 |  0.1221 |  0.1221 | 0.1221 |  86.15 KB |
+ SearchOrderedListWithBinarySearch | .NET Framework 4.7 (x86) |      X86 |     Clr |     126.0 us |     1.653 us |     1.546 us |  0.000 |       - |       - |      - |  86.43 KB |
+                      SearchMindex | .NET Framework 4.7 (x86) |      X86 |     Clr |     141.0 us |     2.008 us |     1.780 us |  0.000 |  0.4883 |  0.4883 |      - |   88.1 KB |
+
 
