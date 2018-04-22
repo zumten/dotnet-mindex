@@ -160,19 +160,19 @@ Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
 
 Jit=RyuJit  
 ```
-|      Method |                      Job |       Mean |     Error |    StdDev | Scaled |  Gen 0 |  Gen 1 |  Gen 2 | Allocated |
-|------------ |------------------------- |-----------:|----------:|----------:|-------:|-------:|-------:|-------:|----------:|
-|  SearchLinq |        .NET Core 2 (x64) | 104.148 ms | 2.0340 ms | 2.2608 ms |   1.00 |      - |      - |      - |      8 MB |
-|SearchLookup |        .NET Core 2 (x64) |   3.655 ms | 0.0689 ms | 0.0644 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
-|SearchMindex |        .NET Core 2 (x64) |   3.646 ms | 0.0695 ms | 0.0650 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
-|             |                          |            |           |           |        |        |        |        |           |
-|  SearchLinq | .NET Framework 4.7 (x64) | 104.811 ms | 1.8832 ms | 1.7615 ms |   1.00 |      - |      - |      - |      8 MB |
-|SearchLookup | .NET Framework 4.7 (x64) |   4.304 ms | 0.0771 ms | 0.0722 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
-|SearchMindex | .NET Framework 4.7 (x64) |   4.309 ms | 0.0545 ms | 0.0510 ms |   0.04 | 3.9063 | 3.9063 | 3.9063 |    2.8 MB |
-|             |                          |            |           |           |        |        |        |        |           |
-|  SearchLinq | .NET Framework 4.7 (x86) |  54.385 ms | 1.6106 ms | 1.7233 ms |   1.00 |      - |      - |      - |      4 MB |
-|SearchLookup | .NET Framework 4.7 (x86) |   2.930 ms | 0.0570 ms | 0.0560 ms |   0.05 | 3.9063 | 3.9063 | 3.9063 |    1.4 MB |
-|SearchMindex | .NET Framework 4.7 (x86) |   2.935 ms | 0.0470 ms | 0.0439 ms |   0.05 | 3.9063 | 3.9063 | 3.9063 |    1.4 MB |
+|      Method |                      Job |       Mean |    StdDev | Allocated |
+|------------ |------------------------- |-----------:|----------:|----------:|
+|  SearchLinq |        .NET Core 2 (x64) | 104.148 ms | 2.2608 ms |      8 MB |
+|SearchLookup |        .NET Core 2 (x64) |   3.655 ms | 0.0644 ms |    2.8 MB |
+|SearchMindex |        .NET Core 2 (x64) |   3.646 ms | 0.0650 ms |    2.8 MB |
+|             |                          |            |           |           |
+|  SearchLinq | .NET Framework 4.7 (x64) | 104.811 ms | 1.7615 ms |      8 MB |
+|SearchLookup | .NET Framework 4.7 (x64) |   4.304 ms | 0.0722 ms |    2.8 MB |
+|SearchMindex | .NET Framework 4.7 (x64) |   4.309 ms | 0.0510 ms |    2.8 MB |
+|             |                          |            |           |           |
+|  SearchLinq | .NET Framework 4.7 (x86) |  54.385 ms | 1.7233 ms |      4 MB |
+|SearchLookup | .NET Framework 4.7 (x86) |   2.930 ms | 0.0560 ms |    1.4 MB |
+|SearchMindex | .NET Framework 4.7 (x86) |   2.935 ms | 0.0439 ms |    1.4 MB |
 
 
 
@@ -191,19 +191,19 @@ Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
 
 Jit=RyuJit  
 ```
-|       Method |                      Job |       Mean |     Error |    StdDev |     Median | Scaled |   Gen 0 |  Gen 1 |  Gen 2 | Allocated |
-|------------- |------------------------- |-----------:|----------:|----------:|-----------:|-------:|--------:|-------:|-------:|----------:|
-|   SearchLinq |        .NET Core 2 (x64) | 423.363 ms | 4.9383 ms | 4.6193 ms | 423.156 ms |  1.000 |       - |      - |      - |      8 MB |
-| SearchLookup |        .NET Core 2 (x64) |   8.257 ms | 0.2228 ms | 0.6570 ms |   8.611 ms |  0.020 | 11.7188 | 7.8125 | 7.8125 |   8.69 MB |
-| SearchMindex |        .NET Core 2 (x64) |   4.111 ms | 0.0699 ms | 0.0653 ms |   4.107 ms |  0.010 |  3.9063 | 3.9063 | 3.9063 |   3.13 MB |
-|              |                          |            |           |           |            |        |         |        |        |           |
-|   SearchLinq | .NET Framework 4.7 (x64) | 518.641 ms | 5.9218 ms | 5.5392 ms | 518.629 ms |  1.000 |       - |      - |      - |      8 MB |
-| SearchLookup | .NET Framework 4.7 (x64) |  42.552 ms | 0.7884 ms | 0.7375 ms |  42.237 ms |  0.082 |       - |      - |      - |      8 MB |
-| SearchMindex | .NET Framework 4.7 (x64) |   4.570 ms | 0.0890 ms | 0.0789 ms |   4.564 ms |  0.009 |  3.9063 | 3.9063 | 3.9063 |   3.13 MB |
-|              |                          |            |           |           |            |        |         |        |        |           |
-|   SearchLinq | .NET Framework 4.7 (x86) | 422.906 ms | 5.2074 ms | 4.8710 ms | 424.177 ms |  1.000 |       - |      - |      - |      4 MB |
-| SearchLookup | .NET Framework 4.7 (x86) |  30.837 ms | 0.6057 ms | 0.5665 ms |  30.739 ms |  0.073 |       - |      - |      - |      4 MB |
-| SearchMindex | .NET Framework 4.7 (x86) |   3.078 ms | 0.0582 ms | 0.0545 ms |   3.071 ms |  0.007 |  3.9063 | 3.9063 | 3.9063 |   1.56 MB |
+|       Method |                      Job |       Mean |    StdDev | Allocated |
+|------------- |------------------------- |-----------:|----------:|----------:|
+|   SearchLinq |        .NET Core 2 (x64) | 423.363 ms | 4.6193 ms |      8 MB |
+| SearchLookup |        .NET Core 2 (x64) |   8.257 ms | 0.6570 ms |   8.69 MB |
+| SearchMindex |        .NET Core 2 (x64) |   4.111 ms | 0.0653 ms |   3.13 MB |
+|              |                          |            |           |           |
+|   SearchLinq | .NET Framework 4.7 (x64) | 518.641 ms | 5.5392 ms |      8 MB |
+| SearchLookup | .NET Framework 4.7 (x64) |  42.552 ms | 0.7375 ms |      8 MB |
+| SearchMindex | .NET Framework 4.7 (x64) |   4.570 ms | 0.0789 ms |   3.13 MB |
+|              |                          |            |           |           |
+|   SearchLinq | .NET Framework 4.7 (x86) | 422.906 ms | 4.8710 ms |      4 MB |
+| SearchLookup | .NET Framework 4.7 (x86) |  30.837 ms | 0.5665 ms |      4 MB |
+| SearchMindex | .NET Framework 4.7 (x86) |   3.078 ms | 0.0545 ms |   1.56 MB |
 
 
 
@@ -222,24 +222,24 @@ Intel Xeon CPU E5-2673 v3 2.40GHz, 1 CPU, 2 logical cores and 1 physical core
 
 Jit=RyuJit  
 ```
-|                            Method |                      Job |         Mean |        Error |       StdDev | Scaled |   Gen 0 |   Gen 1 |  Gen 2 | Allocated |
-|---------------------------------- |------------------------- |-------------:|-------------:|-------------:|-------:|--------:|--------:|-------:|----------:|
-|                        SearchLinq |        .NET Core 2 (x64) | 337,605.0 us | 6,579.583 us | 7,040.079 us |  1.000 |       - |       - |      - | 512.38 KB |
-|                      SearchLookup |        .NET Core 2 (x64) |   3,027.7 us |    60.232 us |   100.633 us |  0.009 | 11.7188 |       - |      - | 512.78 KB |
-|      SearchLookupWithBinarySearch |        .NET Core 2 (x64) |     116.5 us |     2.303 us |     2.912 us |  0.000 |  0.1221 |  0.1221 | 0.1221 | 171.74 KB |
-| SearchOrderedListWithBinarySearch |        .NET Core 2 (x64) |     130.6 us |     2.542 us |     3.305 us |  0.000 |       - |       - |      - | 172.42 KB |
-|                      SearchMindex |        .NET Core 2 (x64) |     186.2 us |     3.551 us |     3.947 us |  0.001 |  0.2441 |       - |      - | 175.23 KB |
-|                                   |                          |              |              |              |        |         |         |        |           |
-|                        SearchLinq | .NET Framework 4.7 (x64) | 567,135.3 us | 5,345.796 us | 5,000.461 us |  1.000 |       - |       - |      - | 512.73 KB |
-|                      SearchLookup | .NET Framework 4.7 (x64) |   2,859.2 us |    56.715 us |   103.706 us |  0.005 | 11.7188 |       - |      - | 512.85 KB |
-|      SearchLookupWithBinarySearch | .NET Framework 4.7 (x64) |     191.4 us |    10.535 us |    31.063 us |  0.000 |  0.2441 |  0.2441 | 0.2441 | 171.99 KB |
-| SearchOrderedListWithBinarySearch | .NET Framework 4.7 (x64) |     163.1 us |     1.752 us |     1.463 us |  0.000 |       - |       - |      - | 172.42 KB |
-|                      SearchMindex | .NET Framework 4.7 (x64) |     187.8 us |     3.709 us |     3.968 us |  0.000 |  0.2441 |       - |      - | 175.38 KB |
-|                                   |                          |              |              |              |        |         |         |        |           |
-|                        SearchLinq | .NET Framework 4.7 (x86) | 436,443.8 us | 8,532.892 us | 9,130.098 us |  1.000 |       - |       - |      - | 256.61 KB |
-|                      SearchLookup | .NET Framework 4.7 (x86) |   2,894.3 us |    54.839 us |    48.613 us |  0.007 | 23.4375 | 23.4375 |      - | 256.52 KB |
-|      SearchLookupWithBinarySearch | .NET Framework 4.7 (x86) |     131.3 us |     2.112 us |     1.976 us |  0.000 |  0.1221 |  0.1221 | 0.1221 |  86.15 KB |
-| SearchOrderedListWithBinarySearch | .NET Framework 4.7 (x86) |     126.0 us |     1.653 us |     1.546 us |  0.000 |       - |       - |      - |  86.43 KB |
-|                      SearchMindex | .NET Framework 4.7 (x86) |     141.0 us |     2.008 us |     1.780 us |  0.000 |  0.4883 |  0.4883 |      - |   88.1 KB |
+|                            Method |                      Job |         Mean |       StdDev | Allocated |
+|---------------------------------- |------------------------- |-------------:|-------------:|----------:|
+|                        SearchLinq |        .NET Core 2 (x64) | 337,605.0 us | 7,040.079 us | 512.38 KB |
+|                      SearchLookup |        .NET Core 2 (x64) |   3,027.7 us |   100.633 us | 512.78 KB |
+|      SearchLookupWithBinarySearch |        .NET Core 2 (x64) |     116.5 us |     2.912 us | 171.74 KB |
+| SearchOrderedListWithBinarySearch |        .NET Core 2 (x64) |     130.6 us |     3.305 us | 172.42 KB |
+|                      SearchMindex |        .NET Core 2 (x64) |     186.2 us |     3.947 us | 175.23 KB |
+|                                   |                          |              |              |           |
+|                        SearchLinq | .NET Framework 4.7 (x64) | 567,135.3 us | 5,000.461 us | 512.73 KB |
+|                      SearchLookup | .NET Framework 4.7 (x64) |   2,859.2 us |   103.706 us | 512.85 KB |
+|      SearchLookupWithBinarySearch | .NET Framework 4.7 (x64) |     191.4 us |    31.063 us | 171.99 KB |
+| SearchOrderedListWithBinarySearch | .NET Framework 4.7 (x64) |     163.1 us |     1.463 us | 172.42 KB |
+|                      SearchMindex | .NET Framework 4.7 (x64) |     187.8 us |     3.968 us | 175.38 KB |
+|                                   |                          |              |              |           |
+|                        SearchLinq | .NET Framework 4.7 (x86) | 436,443.8 us | 9,130.098 us | 256.61 KB |
+|                      SearchLookup | .NET Framework 4.7 (x86) |   2,894.3 us |    48.613 us | 256.52 KB |
+|      SearchLookupWithBinarySearch | .NET Framework 4.7 (x86) |     131.3 us |     1.976 us |  86.15 KB |
+| SearchOrderedListWithBinarySearch | .NET Framework 4.7 (x86) |     126.0 us |     1.546 us |  86.43 KB |
+|                      SearchMindex | .NET Framework 4.7 (x86) |     141.0 us |     1.780 us |   88.1 KB |
 
 
